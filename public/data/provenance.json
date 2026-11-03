@@ -1,0 +1,14 @@
+{
+  "en": {
+    "url": "https://cdn.jsdelivr.net/npm/quran-json@3.1.2/dist/quran_en.json",
+    "sha256": "bae3acab517304dc2684d65949a00f31000a92818041cefabc234663da99d7a3",
+    "chapters": 114,
+    "verses": 6236
+  },
+  "ur": {
+    "url": "https://cdn.jsdelivr.net/npm/quran-json@3.1.2/dist/quran_ur.json",
+    "sha256": "fe9c2ff72c287b3df8390b16eb27bb6de0210f20b417a5659b1fbdc29e58325f",
+    "chapters": 114,
+    "verses": 6236
+  }
+}
