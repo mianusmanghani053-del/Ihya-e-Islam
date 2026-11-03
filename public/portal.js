@@ -1,0 +1,679 @@
+/* Persistent portal integration for the original design. */
+let member = null,
+  resources = [],
+  records = [],
+  enrollments = [],
+  adminRecords = [],
+  loaded = false,
+  portalError = "";
+const h = esc;
+async function api(path, options = {}) {
+  const response = await fetch("/api" + path, {
+    ...options,
+    headers: { "Content-Type": "application/json", ...options.headers },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Request failed");
+  return data;
+}
+const send = (path, data, method = "POST") =>
+  api(path, { method, body: JSON.stringify(data) });
+const empty = (message) => `<p class="note">${h(message)}</p>`;
+const field = (name, label, type = "text", required = true) =>
+  `<div><label for="${name}">${label}</label><input name="${name}" id="${name}" type="${type}" ${required ? "required" : ""} ${type === "password" ? 'minlength="12" autocomplete="new-password"' : ""}></div>`;
+const action = (name, label, value = "", css = "") =>
+  `<button type="button" class="btn sm ${css}" data-live="${name}" data-value="${h(value)}">${h(label)}</button>`;
+function authView(register = false) {
+  return `<section class="sec"><div class="wrap"><div class="card login"><span class="eyebrow">Member portal</span><h2>${register ? "Join Ihya-e-Islam" : "Assalamu alaikum"}</h2><p>${register ? "Create your member account." : "Sign in to your saved donations, learning and volunteering."}</p><form class="form" data-live-form="${register ? "register" : "login"}" style="grid-template-columns:1fr">${register ? field("name", "Full name") : ""}${field("email", "Email", "email")}${field("password", "Password", "password")}<p class="err" role="alert"></p><button class="btn em">${register ? "Create account" : "Sign in"}</button></form><p>${action(register ? "show-login" : "show-register", register ? "Already a member? Sign in" : "Create an account")}</p></div></div></section>`;
+}
+V.portal = () =>
+  !loaded ? empty("Loading your portal…") : !member ? authView() : portalView();
+V.register = () => authView(true);
+function resourceCard(r) {
+  const joined = enrollments.find((x) => x.id === r.id);
+  return `<div class="card"><span class="eyebrow">${h(r.kind)}</span><h3>${h(r.data.title)}</h3><p>${h(r.data.description)}</p>${r.data.date ? `<p>${h(new Date(r.data.date).toLocaleString("en-PK"))} · ${h(r.data.location)}</p>` : ""}<div style="margin-top:12px">${action(joined ? "leave" : "join", joined ? "Cancel enrollment" : "Enroll / register", r.id)} ${r.kind === "course" && joined ? action("course", "Open course", r.id) : ""}${member?.role === "admin" ? " " + action("archive", "Archive", r.id) : ""}</div></div>`;
+}
+V.activities = () =>
+  `<section class="sec"><div class="wrap"><div class="sh"><div><span class="eyebrow">Community</span><h2>Events, shifts & courses</h2></div></div><div class="grid g2">${resources.map(resourceCard).join("") || empty("New activities will appear here when published by the team.")}</div></div></section>`;
+V.track = () =>
+  `<section class="sec"><div class="wrap"><div class="card login"><h2>Track a report</h2><p>Use the report number and private tracking key provided when you submitted it.</p><form class="form" data-live-form="track">${field("reportId", "Report number")}${field("secret", "Private tracking key")}<p class="err w" role="alert"></p><button class="btn em">Check status</button><div class="w" id="track-result"></div></form></div></div></section>`;
+function portalView() {
+  const tabs = [
+    ["over", "Overview"],
+    ["don", "Donations"],
+    ["vol", "Volunteering"],
+    ["learn", "Learning"],
+    ["rep", "My reports"],
+    ["settings", "Settings"],
+  ];
+  const mine = (kind) => records.filter((r) => r.kind === kind);
+  const cards = (rows) =>
+    rows
+      .map(
+        (r) =>
+          `<div class="card"><span class="tag m">${h(r.status.replaceAll("_", " "))}</span><h3>${h(r.kind === "donation" ? r.data.currency + " " + r.data.amount : r.data.category || r.data.unit || r.kind)}</h3><p>${h(r.id)} · ${h(r.created_at)}</p>${r.kind === "donation" && r.data.frequency === "month" ? `<p>Monthly pledge: ${h(r.data.currency)} ${h(r.data.pledgeAmount || r.data.amount)} · ${r.data.pledgePaused ? "Paused" : "Active (manual transfer)"}</p>${action("pledge", r.data.pledgePaused ? "Resume pledge" : "Pause pledge", r.id)}` : ""}${r.kind === "donation" && r.status === "confirmed" ? `<a class="btn sm" href="/api/receipt/${encodeURIComponent(r.id)}">Download receipt</a>` : ""}</div>`,
+      )
+      .join("") || empty("No records yet.");
+  const panes = {
+    over: () =>
+      `<div class="grid g3">${[
+        ["Donation records", mine("donation").length],
+        ["Applications", mine("volunteer").length],
+        ["Enrollments", enrollments.length],
+      ]
+        .map(
+          ([label, n]) =>
+            `<div class="card stat"><b style="color:var(--em)">${n}</b><span>${label}</span></div>`,
+        )
+        .join(
+          "",
+        )}</div><p class="note" style="margin-top:18px">Only your actual activity is shown here. Bank transfers appear as pending until the finance team confirms receipt.</p>`,
+    don: () => cards(mine("donation")),
+    vol: () =>
+      cards(mine("volunteer")) +
+      `<h3 style="margin:20px 0">Available shifts & events</h3><div class="grid g2">${
+        resources
+          .filter((r) => r.kind !== "course")
+          .map(resourceCard)
+          .join("") || empty("No shifts or events are currently published.")
+      }</div>`,
+    learn: () =>
+      `<div class="grid g2">${resources
+        .filter((r) => r.kind === "course")
+        .map(resourceCard)
+        .join("")}</div>`,
+    rep: () =>
+      cards(mine("report")) +
+      `<p><a href="#track">Track an anonymous report</a></p>`,
+    settings: () =>
+      `<div class="card"><h3>Change password</h3><p>Changing your password signs out every session.</p><form class="form" data-live-form="password">${field("currentPassword", "Current password", "password")}${field("password", "New password", "password")}<p class="err w"></p><button class="btn em">Update password</button></form></div>`,
+  };
+  return `<section class="sec"><div class="wrap"><div class="sh"><div><span class="eyebrow">Member portal</span><h2>Assalamu alaikum, ${h(member.name)}</h2><p>${h(member.email)}</p></div><div>${action("logout", "Sign out")} ${member.role === "admin" ? '<a href="#admin" class="btn sm">Administration</a>' : ""}</div></div>${portalError ? empty(portalError) : ""}<div class="pl"><div class="pside">${tabs.map(([key, label]) => `<button data-a="ptab" data-v="${key}" class="${S.pTab === key ? "on" : ""}">${label}</button>`).join("")}</div><div class="grid">${(panes[S.pTab] || panes.over)()}</div></div></div></section>`;
+}
+V.admin = () =>
+  member?.role !== "admin"
+    ? empty("Administrator access required.")
+    : `<section class="sec"><div class="wrap"><h2>Administration</h2><p>Private submissions are visible only to administrators. Report status records your team’s actual actions; it does not notify authorities automatically.</p><div class="card"><h3>Publish an activity</h3><form class="form" data-live-form="resource"><div><label for="kind">Type</label><select name="kind" id="kind"><option value="event">Event</option><option value="shift">Volunteer shift</option><option value="course">Course</option></select></div>${field("title", "Title")}${field("description", "Description")}${field("date", "Date and time", "datetime-local", false)}${field("location", "Location", "text", false)}<div class="w"><label for="lessons">Course lessons</label><div id="lesson-fields"><div class="lesson-fields"><label>Lesson title <input name="lessonTitle"></label><label>Lesson content <textarea name="lessonBody"></textarea></label></div></div>${action("add-lesson", "Add another lesson")}</div><p class="err w"></p><button class="btn em">Publish</button></form></div><h3 style="margin:24px 0">Submissions</h3><div class="grid">${adminRecords.map((r) => `<div class="card"><span class="eyebrow">${h(r.kind)}</span><h3>${h(r.id)}</h3><pre style="white-space:pre-wrap;overflow-wrap:anywhere">${h(JSON.stringify({ ...r.data, trackingHash: undefined, attachments: undefined }, null, 2))}</pre>${(r.data.attachments || []).map((key) => `<a class="btn sm" href="/api/attachments/${encodeURIComponent(key)}">Download private attachment</a>`).join("")}<label>Status <select data-live-status="${h(r.id)}">${{ report: ["received", "checked", "forwarded", "closed"], volunteer: ["received", "approved", "declined"], donation: ["awaiting_transfer", "confirmed", "cancelled"], newsletter: ["received", "unsubscribed"] }[r.kind].map((status) => `<option ${r.status === status ? "selected" : ""}>${status}</option>`).join("")}</select></label></div>`).join("") || empty("No submissions yet.")}</div></div></section>`;
+async function refresh() {
+  portalError = "";
+  try {
+    const session = await api("/auth/me");
+    member = session.user;
+    S.auth = !!member;
+    resources = (await api("/resources")).items;
+    if (member) {
+      records = (await api("/records")).items;
+      enrollments = (await api("/enrollments")).items;
+      S.book = new Set((await api("/bookmarks")).items);
+      if (member.role === "admin")
+        adminRecords = (await api("/admin/records")).items;
+    } else {
+      records = [];
+      enrollments = [];
+      S.book = new Set();
+    }
+  } catch (e) {
+    portalError = e.message;
+  }
+  loaded = true;
+  route();
+}
+async function bankDonation() {
+  if (!member) {
+    location.hash = "portal";
+    toast("Please sign in before donating.");
+    return;
+  }
+  const settings = await api("/donation-settings");
+  if (!settings.enabled) {
+    openMd(
+      "Donations opening soon",
+      empty(
+        "The organization has not published bank account details yet. No money has been collected.",
+      ),
+    );
+    return;
+  }
+  openMd(
+    "Bank transfer donation",
+    `<p class="note" style="white-space:pre-wrap">${h(settings.bankDetails)}</p><p>${h(settings.notice)}</p><form class="form" data-live-form="donation"><div><label>Fund</label><select name="fund">${FUNDS.map((f) => `<option value="${h(f.id)}">${h(f.n)}</option>`).join("")}</select></div><div><label>Currency</label><select name="currency"><option>PKR</option><option>USD</option></select></div>${field("amount", "Amount", "number")}<div>${action("open-zakat", "Calculate zakat")}</div><div><label>Frequency</label><select name="frequency"><option value="once">One-time</option><option value="month">Monthly pledge (manual transfer)</option></select></div>${field("reference", "Your bank transfer reference", "text", false)}<div><label><input name="anonymous" type="checkbox"> Keep my name off public donor lists</label></div><p class="err w"></p><button class="btn gold">Save transfer for review</button><p class="w note">Saving this record does not move money. Transfer through your own bank. A receipt becomes available after the finance team verifies payment.</p></form>`,
+  );
+}
+async function runAction(button) {
+  const key = button.dataset.live,
+    value = button.dataset.value;
+  if (key === "pledge") {
+    const r = records.find((x) => x.id === value);
+    await send(
+      "/records",
+      { id: value, paused: !r.data.pledgePaused },
+      "PATCH",
+    );
+    await refresh();
+    return;
+  }
+  if (key === "open-zakat") {
+    zakatMd();
+    return;
+  }
+  if (key === "share") {
+    const verse = button.closest(".verse");
+    const canvas = document.createElement("canvas");
+    canvas.width = 1200;
+    const ctx = canvas.getContext("2d");
+    function wrap(value, font) {
+      ctx.font = font;
+      const lines = [];
+      let line = "";
+      for (const word of value.split(/\s+/)) {
+        const next = line ? line + " " + word : word;
+        if (ctx.measureText(next).width > 1040 && line) {
+          lines.push(line);
+          line = word;
+        } else line = next;
+      }
+      if (line) lines.push(line);
+      return lines;
+    }
+    const arabic = wrap(verse.querySelector(".ar").textContent, "38px serif");
+    const translation = wrap(
+      verse.querySelector(".tr").textContent,
+      "28px sans-serif",
+    );
+    canvas.height = 300 + arabic.length * 58 + translation.length * 44;
+    ctx.fillStyle = "#0f3b2f";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "#c9973a";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(25, 25, 1150, canvas.height - 50);
+    let y = 85;
+    ctx.fillStyle = "#f3efe2";
+    ctx.font = "38px serif";
+    ctx.direction = "rtl";
+    ctx.textAlign = "right";
+    for (const line of arabic) {
+      ctx.fillText(line, 1120, y);
+      y += 58;
+    }
+    y += 24;
+    ctx.font = "28px sans-serif";
+    ctx.direction = quranLanguage === "ur" ? "rtl" : "ltr";
+    ctx.textAlign = quranLanguage === "ur" ? "right" : "left";
+    for (const line of translation) {
+      ctx.fillText(line, quranLanguage === "ur" ? 1120 : 80, y);
+      y += 44;
+    }
+    ctx.direction = "ltr";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#c9973a";
+    ctx.font = "22px sans-serif";
+    ctx.fillText(verse.querySelector(".ref b").textContent, 80, y + 30);
+    ctx.font = "18px sans-serif";
+    ctx.fillText(
+      "Ihya-e-Islam · Quran JSON 3.1.2 / Risan Bagja Pradana · CC BY-SA 4.0",
+      80,
+      canvas.height - 65,
+    );
+    const blob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, "image/png"),
+    );
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "ihya-e-islam-verse.png";
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    return;
+  }
+  if (key === "add-lesson") {
+    const block = document.createElement("div");
+    block.className = "lesson-fields";
+    block.innerHTML =
+      '<label>Lesson title <input name="lessonTitle"></label><label>Lesson content <textarea name="lessonBody"></textarea></label>';
+    $("#lesson-fields").append(block);
+    return;
+  }
+  if (key === "show-register") {
+    location.hash = "register";
+    return;
+  }
+  if (key === "show-login") {
+    location.hash = "portal";
+    return;
+  }
+  if (key === "logout") {
+    await send("/auth/logout", {});
+    await refresh();
+    return;
+  }
+  if (key === "join") {
+    if (!member) {
+      location.hash = "portal";
+      toast("Please sign in to enroll.");
+      return;
+    }
+    await send("/enrollments", { resourceId: value });
+    await refresh();
+    toast("Enrollment saved.");
+  }
+  if (key === "leave") {
+    await send("/enrollments", { resourceId: value }, "DELETE");
+    await refresh();
+  }
+  if (key === "archive") {
+    await api("/resources/" + encodeURIComponent(value), { method: "DELETE" });
+    await refresh();
+  }
+  if (key === "course") {
+    const r = resources.find((x) => x.id === value);
+    const enrolled = enrollments.find((x) => x.id === value);
+    openMd(
+      h(r.data.title),
+      r.data.lessons
+        .map(
+          (l, i) =>
+            `<article class="card" style="margin-bottom:12px"><h3>${h(l.title)}</h3><p style="white-space:pre-wrap">${h(l.body)}</p>${i < (enrolled?.progress || 0) ? '<span class="tag z">Completed</span>' : action("complete", "Mark lesson complete", r.id + ":" + (i + 1))}</article>`,
+        )
+        .join("") +
+        ((enrolled?.progress || 0) >= r.data.lessons.length
+          ? action("certificate", "Download completion certificate", r.id)
+          : ""),
+    );
+  }
+  if (key === "complete") {
+    const split = value.lastIndexOf(":");
+    await send(
+      "/enrollments",
+      { resourceId: value.slice(0, split), progress: +value.slice(split + 1) },
+      "PATCH",
+    );
+    enrollments = (await api("/enrollments")).items;
+    await runAction({
+      dataset: { live: "course", value: value.slice(0, split) },
+    });
+  }
+  if (key === "certificate") {
+    const r = resources.find((x) => x.id === value);
+    const blob = new Blob(
+      [
+        `Ihya-e-Islam\nCertificate of completion\n${member.name}\n${r.data.title}\nCompleted ${new Date().toLocaleDateString("en-PK")}\nSelf-paced learning acknowledgment; not a professional qualification.`,
+      ],
+      { type: "text/plain" },
+    );
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "completion.txt";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+}
+document.addEventListener(
+  "click",
+  (event) => {
+    const live = event.target.closest("[data-live]");
+    if (live) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      runAction(live).catch((e) => toast(e.message));
+      return;
+    }
+    const b = event.target.closest("[data-a]");
+    if (!b) return;
+    const a = b.dataset.a;
+    if (
+      ["donate", "enroll", "rsvp", "bm", "lang", "zuse", "zback"].includes(a)
+    ) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      (async () => {
+        if (a === "donate" || a === "zback") await bankDonation();
+        if (a === "zuse") {
+          S.D.amt = +b.dataset.v;
+          await bankDonation();
+        }
+        if (a === "enroll" || a === "rsvp") location.hash = "activities";
+        if (a === "bm") {
+          if (!member) {
+            toast("Sign in to save verses across devices.");
+            location.hash = "portal";
+            return;
+          }
+          const key = b.dataset.v;
+          await send(
+            "/bookmarks",
+            { key },
+            S.book.has(key) ? "DELETE" : "POST",
+          );
+          S.book.has(key) ? S.book.delete(key) : S.book.add(key);
+          go();
+        }
+        if (a === "lang") {
+          LANG = b.dataset.v;
+          localStorage.setItem("language", LANG);
+          go();
+        }
+      })().catch((e) => toast(e.message));
+    }
+    if (a === "toast") {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      toast("This document has not been published by the organization yet.");
+    }
+  },
+  true,
+);
+document.addEventListener(
+  "change",
+  (event) => {
+    const control = event.target.closest("[data-live-status]");
+    if (control)
+      send(
+        "/admin/records",
+        { id: control.dataset.liveStatus, status: control.value },
+        "PATCH",
+      )
+        .then(() => toast("Status saved."))
+        .catch((e) => toast(e.message));
+  },
+  true,
+);
+document.addEventListener(
+  "submit",
+  (event) => {
+    const form = event.target,
+      kind = form.dataset.liveForm || form.dataset.f;
+    if (!kind || ["v0", "v1", "qsearch"].includes(kind)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (form.dataset.busy) return;
+    form.dataset.busy = "1";
+    const button = form.querySelector(
+      'button[type="submit"],button:not([type])',
+    );
+    if (button) button.disabled = true;
+    const error = form.querySelector(".err");
+    if (error) error.textContent = "";
+    const f = Object.fromEntries(new FormData(form));
+    (async () => {
+      if (kind === "login" || kind === "register") {
+        await send("/auth/" + kind, f);
+        location.hash = "portal";
+        await refresh();
+      } else if (kind === "password") {
+        await send("/auth/password", f);
+        await refresh();
+        toast("Password updated. Please sign in again.");
+      } else if (kind === "resource") {
+        let lessons = [];
+        if (f.kind === "course") {
+          const entries = new FormData(form);
+          lessons = entries.getAll("lessonTitle").map((title, index) => ({
+            title,
+            body: entries.getAll("lessonBody")[index],
+          }));
+        }
+        await send("/resources", { ...f, lessons });
+        await refresh();
+        toast("Activity published.");
+      } else if (kind === "donation") {
+        const result = await send("/records", {
+          ...f,
+          kind,
+          anonymous: form.elements.anonymous.checked,
+        });
+        await refresh();
+        openMd(
+          "Transfer saved",
+          empty(
+            "Reference " +
+              result.id +
+              ". Status: awaiting transfer review. No payment has been processed by this website.",
+          ),
+        );
+      } else if (kind === "track") {
+        const result = await send("/track", {
+          id: f.reportId,
+          secret: f.secret,
+        });
+        $("#track-result").textContent =
+          "Status: " + result.status + " · Received " + result.created_at;
+      } else if (kind === "nl") {
+        await send("/records", { kind: "newsletter", email: $("#nle").value });
+        form.reset();
+        toast(
+          "Subscription request saved. Delivery begins when the team enables email.",
+        );
+      } else if (kind === "v2") {
+        if (!member) {
+          location.hash = "portal";
+          throw new Error(
+            "Please sign in before submitting your application. Your current form remains in this tab.",
+          );
+        }
+        const result = await send("/records", {
+          kind: "volunteer",
+          name: S.v.name,
+          phone: S.v.ph,
+          city: S.v.c,
+          unit: S.v.u.join(", "),
+          skills: (S.v.s || []).join(", "),
+          hours: S.v.h,
+          pledge: !!form.querySelector('input[type="checkbox"]:checked'),
+        });
+        await refresh();
+        openMd(
+          "Application received",
+          empty(
+            "Application " +
+              result.id +
+              " has been saved for coordinator review.",
+          ),
+        );
+      } else if (kind === "rep") {
+        const secret = crypto.randomUUID();
+        const file = $("#rf").files[0];
+        if (file && file.size > 10 * 1024 * 1024)
+          throw new Error("Choose an attachment under 10 MB.");
+        const result = await send("/records", {
+          kind: "report",
+          category: form.querySelector('[name="rc"]:checked').value,
+          location: $("#rl").value,
+          when: $("#rw").value,
+          description: $("#rd").value,
+          anonymous: $("#ranon").checked,
+          contact: $("#rn").value + " " + $("#rp").value,
+          truthful: $("#rt").checked,
+          trackingSecret: secret,
+        });
+        let uploadWarning = "";
+        if (file) {
+          try {
+            const r = await fetch(
+              "/api/uploads?record=" + encodeURIComponent(result.id),
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": file.type,
+                  "X-Tracking-Key": secret,
+                },
+                body: file,
+              },
+            );
+            if (!r.ok) throw new Error((await r.json()).error);
+          } catch (e) {
+            uploadWarning = " Attachment was not saved: " + e.message;
+          }
+        }
+        await refresh();
+        openMd(
+          "Report saved",
+          `<p>Keep both values below. Anonymous tracking keys cannot be recovered.</p><p class="note">Report: ${h(result.id)}<br>Private key: ${h(secret)}</p><p>Your report is awaiting review. It has not been forwarded to authorities automatically.</p>${uploadWarning ? empty(uploadWarning) : ""}<a class="btn" href="#track">Track report</a>`,
+        );
+      }
+    })()
+      .catch((e) => {
+        if (error) error.textContent = e.message;
+        else toast(e.message);
+      })
+      .finally(() => {
+        delete form.dataset.busy;
+        if (button) button.disabled = false;
+      });
+  },
+  true,
+);
+// Replace mock statistics and availability claims with the live activity catalogue.
+const originalHome = V.home;
+V.home = () => {
+  const template = document.createElement("template");
+  template.innerHTML = originalHome();
+  template.content
+    .querySelectorAll(".stat,.appeal")
+    .forEach((el) => el.closest("section")?.remove());
+  new Set(
+    [...template.content.querySelectorAll(".evt")].map(
+      (el) => el.parentElement.parentElement,
+    ),
+  ).forEach((column) => {
+    column.innerHTML =
+      '<h3>Upcoming activities</h3><p><a href="#activities">See the published schedule</a></p>';
+  });
+  return (
+    template.innerHTML +
+    `<section class="sec"><div class="wrap"><h2>Join our community</h2><p>Find published events, volunteer shifts and courses.</p><a class="btn em" href="#activities">View activities</a> <a class="btn" href="#track">Track a report</a></div></section>`
+  );
+};
+const oldVolunteer = V.volunteer;
+V.volunteer = () =>
+  oldVolunteer().replace(/\d+ volunteers enrolled/g, "Applications open");
+const oldReport = V.report;
+V.report = () =>
+  oldReport()
+    .replace(
+      'value="2026-11-03T20:00"',
+      `value="${new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}"`,
+    )
+    .replace(
+      "A trained reviewer checks the details within 24 hours. False reports are discarded.",
+      "Your submission is queued for review by the organization.",
+    )
+    .replace(
+      "You can check status with your tracking number in the portal.",
+      "Track status with your report number and private tracking key.",
+    );
+NAV.push(["activities", "Activities", "سرگرمیاں"]);
+LANG = localStorage.getItem("language") || "en";
+refresh();
+let quranData = [],
+  quranLanguage = localStorage.getItem("quran-language") || "en",
+  quranQuery = "",
+  quranLoaded = false;
+async function loadQuran() {
+  quranLoaded = false;
+  try {
+    const response = await fetch("/data/quran_" + quranLanguage + ".json");
+    if (!response.ok) throw new Error("Quran text could not be loaded.");
+    quranData = await response.json();
+    quranLoaded = true;
+    if (S.view === "quran") go();
+  } catch (e) {
+    toast(e.message);
+  }
+}
+V.quran = () =>
+  `<section class="band"><div class="wrap sec"><span class="eyebrow">The Noble Quran</span><h2>Read, reflect and save</h2><p>114 surahs · 6,236 ayat · Arabic with English or Urdu translation</p></div></section><section class="sec"><div class="wrap"><div class="tabs"><button data-a="qtab" data-v="surah" class="${S.qTab === "surah" ? "on" : ""}">Surahs</button><button data-a="qtab" data-v="theme" class="${S.qTab === "theme" ? "on" : ""}">Themes</button><button data-a="qtab" data-v="saved" class="${S.qTab === "saved" ? "on" : ""}">Saved verses</button></div><div class="ctl"><label for="q-lang">Translation <select id="q-lang"><option value="en" ${quranLanguage === "en" ? "selected" : ""}>English — Saheeh International</option><option value="ur" ${quranLanguage === "ur" ? "selected" : ""}>Urdu — Abul A’la Maududi</option></select></label><label for="q-select">Surah <select id="q-select">${quranData.map((c) => `<option value="${c.id}" ${c.id === S.qSel ? "selected" : ""}>${c.id}. ${h(c.transliteration)} — ${h(c.name)}</option>`).join("")}</select></label><label for="fs">Arabic size <input type="range" id="fs" min="22" max="44" value="${S.fs}"></label></div><form class="ctl" data-live-form="qsearch"><input name="query" aria-label="Search Arabic or translation" placeholder="Search Arabic or translation…" value="${h(quranQuery)}"><button class="btn">Search</button>${action("qsaved", "Saved verses")}</form><div class="card">${!quranLoaded ? empty("Loading Quran…") : renderQuran()}</div><p class="note" style="margin-top:18px">Arabic text: QuranEnc. English: Umm Muhammad (Saheeh International). Urdu: Abul A’la Maududi. Distributed through <a href="https://github.com/risan/quran-json/tree/v3.1.2" target="_blank" rel="noopener">Quran JSON 3.1.2, Risan Bagja Pradana</a>, <a href="/data/LICENSE-quran.txt">CC BY-SA 4.0</a>. Translation is an interpretation of meaning. Text is bundled verbatim; no independent scholarly review is claimed.</p></div></section>`;
+function renderQuran() {
+  if (S.qTab === "theme") return qTheme();
+  if (S.qTab === "saved") quranQuery = ":saved";
+  const selected = quranQuery
+    ? quranData
+    : quranData.filter((c) => c.id === S.qSel);
+  const rows = [];
+  for (const c of selected)
+    for (const v of c.verses) {
+      const key = "q" + c.id + ":" + v.id;
+      const match =
+        quranQuery === ":saved"
+          ? S.book.has(key)
+          : !quranQuery ||
+            (v.text + " " + v.translation + " " + c.transliteration)
+              .toLowerCase()
+              .includes(quranQuery.toLowerCase());
+      if (match)
+        rows.push(
+          verseBlock(
+            v.text,
+            `<span ${quranLanguage === "ur" ? 'lang="ur" dir="rtl"' : ""}>${h(v.translation)}</span>`,
+            h(c.transliteration) + " " + c.id + ":" + v.id,
+            key,
+          ),
+        );
+    }
+  if (quranQuery === ":saved")
+    for (const [key, verse] of Object.entries(AYAT)) {
+      if (S.book.has("a" + key))
+        rows.push(verseBlock(verse[0], h(verse[1]), h(verse[2]), "a" + key));
+    }
+  return rows.join("") || empty("No matching verses.");
+}
+document.addEventListener(
+  "change",
+  (event) => {
+    if (event.target.id === "q-lang") {
+      quranLanguage = event.target.value;
+      localStorage.setItem("quran-language", quranLanguage);
+      loadQuran();
+    }
+    if (event.target.id === "q-select") {
+      S.qSel = +event.target.value;
+      S.qTab = "surah";
+      quranQuery = "";
+      go();
+    }
+  },
+  true,
+);
+document.addEventListener(
+  "submit",
+  (event) => {
+    if (event.target.dataset.liveForm === "qsearch") {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      S.qTab = "surah";
+      quranQuery = new FormData(event.target).get("query").trim();
+      go();
+    }
+  },
+  true,
+);
+document.addEventListener(
+  "click",
+  (event) => {
+    const button = event.target.closest('[data-live="qsaved"]');
+    if (button) {
+      event.preventDefault();
+      S.qTab = "saved";
+      quranQuery = ":saved";
+      go();
+    }
+  },
+  true,
+);
+loadQuran();
+
+V.privacy = () =>
+  `<section class="sec"><div class="wrap"><div class="card"><h2>Privacy & service information</h2><p>Account details, applications, donations, enrollments and bookmarks are stored in the organization’s database. Reports and attachments are available to authorized administrators; attachments are not public.</p><p>Choosing anonymous reporting omits your account identity and contact details from the report. Keep the private tracking key to check its status. Infrastructure providers may still process connection metadata. This website is not an emergency service: use the emergency numbers listed on the reporting page.</p><p>Bank transfers are reviewed by the organization. The website never requests a bank password or card PIN. Subscription requests are saved; email delivery has not yet been enabled.</p><p>The organization must publish its contact information and retention policy before public launch. Contact an administrator to request correction or deletion of your records.</p></div></div></section>`;
+document
+  .querySelector("footer .wrap")
+  ?.insertAdjacentHTML(
+    "beforeend",
+    '<p><a href="#privacy">Privacy & service information</a> · <a href="#track">Track a report</a></p>',
+  );
+
+document.addEventListener(
+  "click",
+  (event) => {
+    const button = event.target.closest('[data-a="qtab"]');
+    if (button) quranQuery = "";
+  },
+  true,
+);

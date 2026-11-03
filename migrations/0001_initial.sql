@@ -1,0 +1,11 @@
+PRAGMA foreign_keys = ON;
+CREATE TABLE users(id TEXT PRIMARY KEY,email TEXT NOT NULL UNIQUE,name TEXT NOT NULL,password TEXT NOT NULL,role TEXT NOT NULL DEFAULT 'member',created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE sessions(token TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,expires INTEGER NOT NULL);
+CREATE TABLE records(id TEXT PRIMARY KEY,kind TEXT NOT NULL,user_id TEXT REFERENCES users(id),data TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'received',created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE INDEX records_owner ON records(user_id,kind);
+CREATE TABLE bookmarks(user_id TEXT NOT NULL REFERENCES users(id),key TEXT NOT NULL,PRIMARY KEY(user_id,key));
+CREATE TABLE resources(id TEXT PRIMARY KEY,kind TEXT NOT NULL,data TEXT NOT NULL,active INTEGER DEFAULT 1);
+CREATE TABLE enrollments(user_id TEXT NOT NULL REFERENCES users(id),resource_id TEXT NOT NULL REFERENCES resources(id),progress INTEGER DEFAULT 0,PRIMARY KEY(user_id,resource_id));
+CREATE TABLE rate_limits(key TEXT PRIMARY KEY,count INTEGER NOT NULL,reset INTEGER NOT NULL);
+INSERT INTO resources VALUES('seerah','course','{"title":"Seerah School","description":"Study the life of the Prophet ﷺ","lessons":[{"title":"Welcome to Seerah School","body":"Seerah studies the life, character and example of the Prophet Muhammad ﷺ. Begin with intention, read sources with care, and discuss questions with a qualified teacher. This introductory reading is the first lesson; further curriculum will be published by the teaching team."}]}',1);
+INSERT INTO resources VALUES('first-aid','course','{"title":"Ansar Corps orientation","description":"Safe and lawful community service","lessons":[{"title":"The volunteer pledge","body":"Serve without discrimination. Protect confidentiality. Carry no weapons and never confront a suspect. In an emergency contact the relevant emergency service. Follow your coordinator’s instructions and work within your training. Never collect money without an official receipt."}]}',1);
