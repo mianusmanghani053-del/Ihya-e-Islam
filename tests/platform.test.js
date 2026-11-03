@@ -374,6 +374,16 @@ test("Community platform: privacy, consent, dual control and persistence", async
     });
     assert.equal(r.status, 201);
     article = r.body.id;
+    assert.equal((await update("root", article, "reviewed")).status, 403);
+    assert.equal(
+      (
+        await call("root", "/v2/staff/roles", {
+          userId: people.root.id,
+          role: "scholar",
+        })
+      ).status,
+      200,
+    );
     assert.equal((await update("root", article, "published")).status, 400);
     assert.equal((await update("root", article, "reviewed")).status, 200);
     assert.equal(
