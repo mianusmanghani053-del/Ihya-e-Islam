@@ -1,6 +1,6 @@
 # Ihya-e-Islam
 
-A community website and member portal built for Cloudflare Pages, Pages Functions, D1, and private R2 storage. The original supplied mockup remains unchanged in `IhyaeIslam Web/`; the running application is in `public/`.
+A community website and member portal built for Cloudflare Pages, Pages Functions, D1, and private R2 storage. The running application is in `public/`. The prior static mockup is retained in Git history; the repository follows the latest Pages layout.
 
 ## Develop
 
