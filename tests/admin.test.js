@@ -223,4 +223,89 @@ test("local admin, bank-transfer review and resource management", async (t) => {
       );
     },
   );
+  await t.test(
+    "private account emails are hidden from other users but retained for their owner",
+    async () => {
+      const privateEmail = `private.name+${Date.now()}@example.com`;
+      const registration = await call(
+        "/auth/register",
+        {
+          email: privateEmail,
+          name: "Private account fixture",
+          password: "private-account-password-123",
+        },
+        "POST",
+        "",
+      );
+      assert.equal(registration.status, 200);
+      const privateCookie = registration.cookie.split(";")[0];
+      execFileSync(
+        process.execPath,
+        [
+          "node_modules/wrangler/bin/wrangler.js",
+          "d1",
+          "execute",
+          "DB",
+          "--local",
+          ...(process.env.TEST_STATE
+            ? ["--persist-to", process.env.TEST_STATE]
+            : []),
+          "--command",
+          `UPDATE users SET email_private=1 WHERE id='${registration.body.user.id}'`,
+        ],
+        { stdio: "pipe" },
+      );
+      const directory = await call("/v2/staff/users");
+      assert.equal(directory.status, 200);
+      assert.equal(
+        directory.body.items.find((u) => u.id === registration.body.user.id)
+          .email,
+        null,
+      );
+      assert.ok(!JSON.stringify(directory.body).includes(privateEmail));
+      assert.equal(
+        (await call("/auth/me", undefined, "GET", privateCookie)).body.user
+          .email,
+        privateEmail,
+      );
+      assert.equal(
+        (
+          await call(
+            "/auth/login",
+            { email: privateEmail, password: "private-account-password-123" },
+            "POST",
+            "",
+          )
+        ).body.user.email,
+        privateEmail,
+      );
+      const contact = await call(
+        "/contact",
+        {
+          name: "Private account fixture",
+          email: privateEmail,
+          topic: "General enquiry",
+          subject: "Private email check",
+          message: `Reply privately to ${privateEmail.toUpperCase()}`,
+          consent: true,
+        },
+        "POST",
+        privateCookie,
+      );
+      assert.equal(contact.status, 201);
+      const inbox = await call("/contact/messages");
+      const row = inbox.body.items.find((r) => r.id === contact.body.id);
+      assert.equal(row.data.email, "[private email]");
+      assert.ok(
+        !JSON.stringify(inbox.body)
+          .toLowerCase()
+          .includes(privateEmail.toLowerCase()),
+      );
+      const own = await call("/records", undefined, "GET", privateCookie);
+      assert.equal(
+        own.body.items.find((r) => r.id === contact.body.id).data.email,
+        privateEmail,
+      );
+    },
+  );
 });

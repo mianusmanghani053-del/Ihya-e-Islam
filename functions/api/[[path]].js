@@ -1,3 +1,4 @@
+import { redactPrivateEmails } from "../../lib/email-privacy.js";
 import { contact } from "../../lib/contact.js";
 import {
   platform,
@@ -7,7 +8,7 @@ import {
   audit,
 } from "../../lib/platform.js";
 const encoder = new TextEncoder();
-const json = (data, status = 200, headers = {}) =>
+const jsonResponse = (data, status = 200, headers = {}) =>
   new Response(JSON.stringify(data), {
     status,
     headers: {
@@ -153,6 +154,22 @@ export async function onRequest({ request, env, params }) {
           .bind(await digest(rawToken), Date.now())
           .first()
       : null;
+    const hiddenAddresses = (
+      await db
+        .prepare("SELECT email FROM users WHERE email_private=1 AND id<>?")
+        .bind(user?.id || "")
+        .all()
+    ).results.map((row) => row.email);
+    let responseOwnerEmail = user?.email;
+    const json = (data, status = 200, headers = {}) =>
+      jsonResponse(
+        redactPrivateEmails(
+          data,
+          hiddenAddresses.filter((address) => address !== responseOwnerEmail),
+        ),
+        status,
+        headers,
+      );
     const auth = () => {
       if (!user) fail("Please sign in.", 401);
       return user;
@@ -256,6 +273,7 @@ export async function onRequest({ request, env, params }) {
         if (!u || !same(candidate, u.password))
           fail("Email or password is incorrect.", 401);
       }
+      responseOwnerEmail = u.email;
       const token = hex(crypto.getRandomValues(new Uint8Array(32)));
       await db
         .prepare("INSERT INTO sessions VALUES(?,?,?)")
@@ -965,7 +983,7 @@ export async function onRequest({ request, env, params }) {
     fail("Not found.", 404);
   } catch (error) {
     if (!error.status) console.error("API failure", error.message);
-    return json(
+    return jsonResponse(
       {
         error: error.status
           ? error.message

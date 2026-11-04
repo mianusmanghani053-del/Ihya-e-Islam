@@ -383,7 +383,7 @@ async function loadStaff() {
   if (S.view === "staff" || S.view === "admin") go();
 }
 const userSelect = (name = "userId") =>
-  `<label class="service-field">Member<select name="${name}">${staffUsers.map((u) => `<option value="${u.id}">${safe(u.name)} — ${safe(u.email)}</option>`).join("")}</select></label>`;
+  `<label class="service-field">Member<select name="${name}">${staffUsers.map((u) => `<option value="${u.id}">${safe(u.name)} — ${u.email ? safe(u.email) : "Member " + safe(u.id.slice(0, 8))}</option>`).join("")}</select></label>`;
 V.staff = () => {
   if (!member) return requireMember();
   if (staffError) return block("Staff portal", empty(staffError));
