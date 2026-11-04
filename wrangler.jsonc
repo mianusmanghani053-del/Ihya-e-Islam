@@ -2,6 +2,7 @@
   "name": "ihya-e-islam",
   "pages_build_output_dir": "./public",
   "compatibility_date": "2026-10-01",
+  "vars": { "WHATSAPP_NUMBER": "923104234149" },
   "d1_databases": [
     {
       "binding": "DB",

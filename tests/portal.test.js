@@ -323,7 +323,10 @@ test("Contact form validates consent, saves enquiries and protects the inbox", a
   };
   const response = await call("/contact-settings", undefined, "GET", "");
   assert.equal(response.status, 200);
-  assert.equal(response.body.whatsapp, null);
+  assert.ok(
+    response.body.whatsapp === null ||
+      /^[1-9]\d{9,14}$/.test(response.body.whatsapp),
+  );
   assert.equal(
     (await call("/contact", { ...enquiry, consent: false }, "POST", "")).status,
     400,
