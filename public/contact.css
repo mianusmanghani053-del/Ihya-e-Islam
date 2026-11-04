@@ -99,7 +99,8 @@
 .contact-help-heading h2 {
   margin-top: 10px;
 }
-.contact-faq {
+.contact-faq.grid {
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: 18px;
 }
