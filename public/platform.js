@@ -1,5 +1,9 @@
 import { WORKFLOWS, GROUPS, STAFF_ROLES } from "./workflows.mjs";
 import { digitalSolutionsPage } from "./solutions.mjs";
+import { renderPortalOverview, clearOverview } from "./overview.mjs";
+import { installNavigation } from "./navigation.mjs";
+window.renderPortalOverview = renderPortalOverview;
+window.invalidatePortalOverview = clearOverview;
 V["digital-solutions"] = digitalSolutionsPage;
 let context = null,
   contextUser = null,
@@ -7,6 +11,7 @@ let context = null,
   serviceErrors = {},
   communityRows = null,
   queue = null,
+  staffError = "",
   staffUsers = [],
   payments = [],
   donationRows = [],
@@ -266,8 +271,9 @@ function verificationRoute() {
   const token = location.hash.slice("#verify/".length);
   if (!verifyResult) {
     verifyCredential(token).then((html) => {
+      if (location.hash !== "#verify/" + token) return;
       verifyResult = html;
-      document.getElementById("view").innerHTML = html;
+      go();
     });
     return empty("Checking credential…");
   }
@@ -345,7 +351,7 @@ const legacyPortalView = portalView;
 portalView = () =>
   legacyPortalView().replace(
     '<div class="pl">',
-    '<p class="service-actions"><a class="btn em" href="#hub">All member services</a><a class="btn" href="#donation-tracking">Track donations</a><a class="btn" href="#notifications">Alerts & reminders</a><a class="btn" href="#community">Community</a><a class="btn" href="#tools">Islamic tools</a><a class="btn" href="#transparency">Transparency</a></p><div class="pl">',
+    '<nav class="portal-toolbar" aria-label="Portal shortcuts"><a class="btn" href="#donation-tracking">Track donations</a><a class="btn" href="#notifications">Alerts & reminders</a><a class="btn" href="#community">Community</a><a class="btn" href="#tools">Islamic tools</a><a class="btn" href="#transparency">Transparency</a><a class="btn" href="#route-map">Route map</a><a class="btn portal-all-services" href="#hub">All Services</a></nav><div class="pl">',
   );
 const originalAdmin = V.admin;
 V["content-tools"] = () => {
@@ -377,12 +383,11 @@ const userSelect = (name = "userId") =>
   `<label class="service-field">Member<select name="${name}">${staffUsers.map((u) => `<option value="${u.id}">${safe(u.name)} — ${safe(u.email)}</option>`).join("")}</select></label>`;
 V.staff = () => {
   if (!member) return requireMember();
+  if (staffError) return block("Staff portal", empty(staffError));
   if (!queue) {
     loadStaff().catch((e) => {
-      document.getElementById("view").innerHTML = block(
-        "Staff portal",
-        empty(e.message),
-      );
+      staffError = e.message;
+      if (["staff", "admin"].includes(S.view)) go();
     });
     return block("Staff portal", empty("Loading your staff workspace…"));
   }
@@ -396,11 +401,13 @@ function financeView() {
   return `<h3 class="service-group-title">Finance & reconciliation</h3><div class="grid g2"><div class="card"><h3>Request an outgoing payment</h3><form class="service-form" data-platform-form="payment"><label>Approved help case reference (optional)<input name="caseId"></label><label>Amount (Rs)<input type="number" name="amount" min="0.01" step="0.01" required></label><label>Fund<select name="fund"><option value="general">General</option><option value="zakat">Zakat</option></select></label><label>Purpose (no personal details)<input name="purpose" required></label><p class="err"></p><button class="btn em">Request payment</button></form></div><div class="card"><h3>Allocate a donor’s confirmed gift</h3><form class="service-form" data-platform-form="allocation"><label>Confirmed donation reference<input name="donationId" required></label><label>Approved case reference<input name="caseId" required></label><label>Payment reference (optional)<input name="paymentId"></label><label>Amount<input type="number" name="amount" min="0.01" step="0.01" required></label><p class="err"></p><button class="btn">Save allocation</button></form></div></div><div class="card"><h3>Outgoing payments</h3><div class="tw"><table><thead><tr><th>Payment</th><th>Fund</th><th>Amount</th><th>Approvals</th><th>Status</th><th>Actions</th></tr></thead><tbody>${payments.map((p) => `<tr><td>${safe(p.id)}<br>${safe(p.purpose)}</td><td>${safe(p.fund)}</td><td>Rs ${p.amount_paisa / 100}</td><td>${p.approvals}/${p.amount_paisa > p.threshold_paisa ? 2 : 1}</td><td>${safe(p.state)}</td><td>${p.state === "pending" ? button("approve-payment", "Approve", p.id) : p.state === "approved" ? button("paid-payment", "Record bank payment", p.id) : ""}</td></tr>`).join("")}</tbody></table></div></div><div class="card"><h3>Incoming donations</h3><div class="tw"><table><thead><tr><th>Donation</th><th>Member</th><th>Fund</th><th>Amount</th><th>Status</th><th></th></tr></thead><tbody>${donationRows.map((r) => `<tr><td>${safe(r.id)}</td><td>${safe(r.user_id)}</td><td>${safe(r.data.fund)}</td><td>${safe(r.data.currency)} ${r.data.amount}</td><td>${safe(r.status)}</td><td>${button("reconcile", "Reconcile transfer", r.id)}</td></tr>`).join("")}</tbody></table></div></div>`;
 }
 function refreshPlatform() {
+  clearOverview();
   serviceRows = {};
   serviceErrors = {};
   context = null;
   contextUser = null;
   queue = null;
+  staffError = "";
   trackingRows = null;
   communityRows = null;
   alerts = null;
@@ -718,6 +725,7 @@ const platformBaseGo = go;
 go = () => {
   const next = member?.id || null;
   if (next !== cachedMemberId) {
+    clearOverview();
     if (cachedMemberId !== null) donationDraft = null;
     cachedMemberId = next;
     context = null;
@@ -725,6 +733,7 @@ go = () => {
     serviceRows = {};
     serviceErrors = {};
     queue = null;
+    staffError = "";
     staffUsers = [];
     payments = [];
     donationRows = [];
@@ -766,14 +775,14 @@ document.addEventListener(
     const link = event.target.closest("[data-solution-section]");
     if (!link) return;
     event.preventDefault();
-    document
-      .getElementById(link.dataset.solutionSection)
-      ?.scrollIntoView({
-        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "instant"
-          : "smooth",
-        block: "start",
-      });
+    document.getElementById(link.dataset.solutionSection)?.scrollIntoView({
+      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+      block: "start",
+    });
   },
   true,
 );
+
+installNavigation();

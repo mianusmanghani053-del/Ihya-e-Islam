@@ -604,4 +604,40 @@ test("Community platform: privacy, consent, dual control and persistence", async
       );
     },
   );
+  await t.test(
+    "overview is private and preserves separate currencies with real learning and shift data",
+    async () => {
+      assert.equal((await call("", "/v2/overview")).status, 401);
+      const usd = await call("donor", "/records", {
+        kind: "donation",
+        amount: 50,
+        currency: "USD",
+        fund: "gen",
+      });
+      assert.equal(usd.status, 201);
+      assert.equal(
+        (
+          await call(
+            "finance",
+            "/v2/staff/donations",
+            { id: usd.body.id, status: "confirmed", bankReference: "TEST-USD" },
+            "PATCH",
+          )
+        ).status,
+        200,
+      );
+      const result = await call("donor", "/v2/overview");
+      assert.equal(result.status, 200);
+      assert.equal(result.body.donations.totals.USD, 50);
+      assert.equal(result.body.donations.totals.PKR, 105125);
+      assert.equal(result.body.donations.receipts, 3);
+      assert.equal(result.body.volunteering.hours, 0);
+      assert.equal(result.body.nextShift.title, "Training-gated shift");
+      assert.equal(result.body.report, null);
+      const other = (await call("other", "/v2/overview")).body;
+      assert.deepEqual(other.donations.totals, {});
+      assert.equal(other.nextShift, null);
+      assert.equal(other.donations.receipts, 0);
+    },
+  );
 });
