@@ -1,0 +1,96 @@
+.impact-dock {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  writing-mode: vertical-rl;
+  background: var(--em);
+  color: #fff;
+  border: 1px solid var(--gold);
+  border-right: 0;
+  border-radius: 12px 0 0 12px;
+  padding: 18px 10px;
+  text-decoration: none;
+  font-weight: 700;
+  z-index: 35;
+  box-shadow: 0 3px 15px #003b3030;
+}
+.impact-dock:hover {
+  background: #064c3e;
+}
+.impact-dock:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+.impact-actions,
+.impact-filters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-block: 20px;
+}
+.impact-fund {
+  margin-block: 28px;
+}
+.impact-fund > h2 {
+  margin-top: 8px;
+}
+.impact-lead {
+  font-size: 18px;
+  color: var(--sub);
+}
+.impact-media {
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding-top: 20px;
+}
+.impact-media figure {
+  margin: 0;
+}
+.impact-media img,
+.impact-media video {
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+.impact-media figcaption {
+  color: var(--sub);
+  padding-top: 10px;
+}
+.temporary-password {
+  font-family: monospace;
+  overflow-wrap: anywhere;
+  user-select: all;
+  background: var(--bg);
+  padding: 12px;
+  margin: 8px 0;
+}
+.donation-thanks > .card {
+  margin-block: 18px;
+}
+.donation-thanks dd {
+  margin-inline-start: 0;
+}
+.donation-thanks dt {
+  font-weight: 700;
+  margin-top: 12px;
+}
+@media (max-width: 600px) {
+  .impact-dock {
+    font-size: 11px;
+    padding: 12px 6px;
+    right: 0;
+    max-height: 230px;
+  }
+  .impact-filters .btn {
+    flex: 1 1 42%;
+    white-space: normal;
+  }
+  .impact-fund {
+    padding: 20px;
+  }
+  .impact-actions .btn {
+    white-space: normal;
+  }
+}

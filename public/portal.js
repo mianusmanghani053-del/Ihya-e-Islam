@@ -25,11 +25,20 @@ const field = (name, label, type = "text", required = true) =>
   `<div><label for="${name}">${label}</label><input name="${name}" id="${name}" type="${type}" ${required ? "required" : ""} ${type === "password" ? 'minlength="12" autocomplete="new-password"' : ""}></div>`;
 const action = (name, label, value = "", css = "") =>
   `<button type="button" class="btn sm ${css}" data-live="${name}" data-value="${h(value)}">${h(label)}</button>`;
+function firstPasswordView() {
+  return `<section class="sec"><div class="wrap"><div class="card login"><span class="eyebrow">Secure your new account</span><h2>Change your temporary password</h2><p>You must choose a new password before tracking donations or using member services. Your email is ${h(member.email)}.</p><form class="form" data-live-form="password">${field("currentPassword", "Temporary password", "password")}${field("password", "New password (at least 12 characters)", "password")}<p class="err w" role="alert"></p><button class="btn em">Save new password</button></form><p>${action("logout", "Sign out")}</p></div></div></section>`;
+}
 function authView(register = false) {
   return `<section class="sec"><div class="wrap"><div class="card login"><span class="eyebrow">Member portal</span><h2>${register ? "Join Ihya-e-Islam" : "Assalamu alaikum"}</h2><p>${register ? "Create your member account." : "Sign in to your saved donations, learning and volunteering."}</p><form class="form" data-live-form="${register ? "register" : "login"}" style="grid-template-columns:1fr">${register ? field("name", "Full name") : ""}${field("email", "Email", "email")}${field("password", "Password", "password")}<p class="err" role="alert"></p><button class="btn em">${register ? "Create account" : "Sign in"}</button></form><p>${action(register ? "show-login" : "show-register", register ? "Already a member? Sign in" : "Create an account")}</p></div></div></section>`;
 }
 V.portal = () =>
-  !loaded ? empty("Loading your portal…") : !member ? authView() : portalView();
+  !loaded
+    ? empty("Loading your portal…")
+    : !member
+      ? authView()
+      : member.must_change_password
+        ? firstPasswordView()
+        : portalView();
 V.register = () => authView(true);
 function resourceCard(r) {
   const joined = enrollments.find((x) => x.id === r.id);
@@ -177,6 +186,17 @@ async function refresh() {
     const session = await api("/auth/me");
     member = session.user;
     S.auth = !!member;
+    if (member?.must_change_password) {
+      records = [];
+      enrollments = [];
+      adminRecords = [];
+      S.book = new Set();
+      loaded = true;
+      S.pTab = "settings";
+      location.hash = "portal";
+      route();
+      return;
+    }
     resources = (await api("/resources")).items;
     if (member) {
       records = (await api("/records")).items;
@@ -408,16 +428,9 @@ async function finishDonation() {
     );
     return;
   }
-  if (!member) {
-    openMd(
-      "Sign in to complete your donation",
-      `<p class="eyebrow">Step 3 of 3 · Bank transfer</p>${donationSummary()}<p>Please sign in to save your bank-transfer record and track it in the portal. Your entered details will remain in this tab; click Donate after signing in to resume.</p>${action("donation-login", "Sign in")}${action("donation-edit", "Back to details")}`,
-    );
-    return;
-  }
   openMd(
     "Bank transfer donation",
-    `<p class="eyebrow">Step 3 of 3 · Bank transfer</p>${donationSummary()}<p class="note" style="white-space:pre-wrap">${h(settings.bankDetails)}</p><p>${h(settings.notice)}</p><form class="form" data-live-form="donation"><div class="w"><label for="donation-reference">Your bank transfer reference (optional)</label><input id="donation-reference" name="reference" maxlength="200" value="${h(donationDraft.reference || "")}"></div><p class="err w" role="alert"></p><button class="btn gold">Save transfer for review</button>${action("donation-edit", "Back to details")}<p class="note w">Saving this record does not move money. Transfer through your own bank. A receipt becomes available after the finance team verifies payment.</p></form>`,
+    `<p class="eyebrow">Step 3 of 3 · Bank transfer</p>${donationSummary()}<p class="note" style="white-space:pre-wrap">${h(settings.bankDetails)}</p><p>${h(settings.notice)}</p><form class="form" data-live-form="donation">${!member ? `<div class="w note"><h3>Your donation tracking account</h3><p>Already a member? ${action("donation-login", "Sign in to continue")}</p><label class="chk"><input type="checkbox" name="createAccount" required> Create my member account using ${h(donationDraft.email)} so I can track this donation. My temporary password will be shown once after saving.</label></div>` : ""}<div class="w"><label for="donation-reference">Your bank transfer reference (optional)</label><input id="donation-reference" name="reference" maxlength="200" value="${h(donationDraft.reference || "")}"></div><p class="err w" role="alert"></p><button class="btn gold">Save transfer for review</button>${action("donation-edit", "Back to details")}<p class="note w">Saving this record does not move money. Transfer through your own bank. A receipt becomes available after the finance team verifies payment.</p></form>`,
   );
 }
 async function runAction(button) {
@@ -478,11 +491,19 @@ async function runAction(button) {
     return;
   }
   if (key === "donation-login") {
+    window.resumeDonationAfterLogin = true;
     closeAll();
     location.hash = "portal";
     return;
   }
-  if (key === "fund-media" || key === "fund-media-view") {
+  if (key === "fund-media") {
+    const form = $('[data-live-form="donation-details"]');
+    if (form) rememberDonation(form);
+    closeAll();
+    location.hash = "our-work/" + value;
+    return;
+  }
+  if (key === "fund-media-view") {
     const form = $('[data-live-form="donation-details"]');
     if (form) rememberDonation(form);
     await (key === "fund-media" ? fundMediaMd(value) : fundMediaView(value));
@@ -746,8 +767,17 @@ document.addEventListener(
     (async () => {
       if (kind === "login" || kind === "register") {
         await send("/auth/" + kind, f);
+        const destination = sessionStorage.getItem("donationLoginReturn");
+        sessionStorage.removeItem("donationLoginReturn");
         location.hash = "portal";
         await refresh();
+        if (!member?.must_change_password) {
+          if (window.resumeDonationAfterLogin && donationDraft) {
+            window.resumeDonationAfterLogin = false;
+            await finishDonation();
+          } else if (destination === "donation-tracking")
+            location.hash = destination;
+        }
       } else if (kind === "password") {
         await send("/auth/password", f);
         await refresh();
@@ -784,16 +814,14 @@ document.addEventListener(
           giftAmount: Number(donationDraft.amount),
           processingContribution: donationContribution(),
           kind,
+          createAccount:
+            !member && form.elements.createAccount?.checked === true,
         });
         donationDraft = null;
         await refresh();
         openMd(
-          "Transfer saved",
-          empty(
-            "Reference " +
-              result.id +
-              ". Status: awaiting transfer review. No payment has been processed by this website.",
-          ),
+          "JazakAllahu khayran — thank you for your generosity",
+          `<div class="donation-thanks"><p>Your bank-transfer record has been saved. May Allah accept your intention and generosity.</p><p class="note"><b>Reference: ${h(result.id)}</b><br>Awaiting Finance verification. Saving this record does not transfer money or confirm receipt.</p>${result.credentials ? `<section class="card"><h3>Your new member account</h3><p>Save these details privately. The temporary password is shown only here; it is not sent by email.</p><dl><dt>Login email</dt><dd>${h(result.credentials.email)}</dd><dt>Temporary password</dt><dd class="temporary-password">${h(result.credentials.temporaryPassword)}</dd></dl><p class="note"><b>You must change this password on your first login.</b></p></section>` : ""}<div class="seerah-links"><a class="btn em" href="#${result.credentials ? "portal" : "donation-tracking"}" data-donation-track>Track my donation</a><button class="btn" type="button" data-install-portal>Install the web portal</button></div><p>Keep the portal on your phone to follow donation status, receipts and recorded fieldwork.</p></div>`,
         );
       } else if (kind === "bench") {
         await send(

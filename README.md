@@ -135,3 +135,13 @@ Before opening public submissions, provide the organization's contact/retention 
 After deployment verify the actual HTTPS URL: health endpoint, signup/login/logout, D1 persistence, private R2 attachments, authorization boundaries, and a fictitious or explicitly controlled bank-transfer review. A successful local build is not evidence of a live deployment.
 
 The Pages project is Git-connected. Git builds use `npm run build` and output `public`; direct production deployment remains available through `npm run deploy`. Apply D1 migrations before releasing backend changes.
+
+### Fieldwork, donor checkout and the installable portal
+
+The fixed **Our Work & Your Impact** tab opens `#our-work`. Individual fund pages use `#our-work/gen`, `zakat`, `winter`, `orphan`, `ilm` and `water`; each donation card’s **See our work** link opens its matching fund. `#track-donation` separates public fieldwork from private member donation records.
+
+Publish approved fieldwork assets under `public/` and list them by fund in `public/data/fund-media.json`. Each item supports `type` (`image` or `video`), a root-relative `src`, `alt`, `caption`, optional `date` and a **general** `location`. Use only consented media; never include children’s locations, private contact details or identifying beneficiary information. Empty funds explicitly show that no media has been published, rather than showing invented project results.
+
+Bank checkout remains disabled until `BANK_DETAILS` is configured. When an unauthenticated donor explicitly agrees to create an account and saves a valid transfer record, the user and donation are inserted transactionally. A cryptographically random temporary password is returned only in that response and displayed in the thank-you popup; the database stores a salted PBKDF2 hash. Existing emails require sign-in. Migration `0005_donor_first_login.sql` adds the enforced password-change flag. The first login permits password replacement and sign-out, but blocks private service access until replacement. Changing a password revokes existing sessions. A saved bank record is **awaiting verification**, not proof of payment.
+
+The completion popup offers installation of the web portal. The web manifest and service worker support a standalone browser app and a generic offline screen. The service worker caches only that offline page; it never caches API responses, credentials or member data. Unsupported browsers receive home-screen/bookmark instructions. This is a web app, not an App Store or Play Store release.

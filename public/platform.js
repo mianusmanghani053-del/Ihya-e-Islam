@@ -1,3 +1,4 @@
+import { installImpact } from "./impact.mjs";
 import { installSeerah } from "./seerah.mjs";
 import { WORKFLOWS, GROUPS, STAFF_ROLES } from "./workflows.mjs";
 import { digitalSolutionsPage } from "./solutions.mjs";
@@ -781,5 +782,6 @@ document.addEventListener(
   true,
 );
 
+installImpact();
 installSeerah();
 installNavigation();

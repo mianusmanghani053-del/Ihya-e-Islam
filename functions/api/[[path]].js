@@ -147,7 +147,7 @@ export async function onRequest({ request, env, params }) {
     const user = rawToken
       ? await db
           .prepare(
-            "SELECT users.id,email,name,role FROM sessions JOIN users ON users.id=sessions.user_id WHERE token=? AND expires>?",
+            "SELECT users.id,email,name,role,must_change_password FROM sessions JOIN users ON users.id=sessions.user_id WHERE token=? AND expires>?",
           )
           .bind(await digest(rawToken), Date.now())
           .first()
@@ -164,6 +164,21 @@ export async function onRequest({ request, env, params }) {
     const cookie = (token, age) =>
       `session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${age}${url.protocol === "https:" ? "; Secure" : ""}`;
     const roles = await rolesFor(db, user);
+    if (
+      user?.must_change_password &&
+      ![
+        "/auth/me",
+        "/auth/password",
+        "/auth/logout",
+        "/health",
+        "/donation-settings",
+        "/resources",
+      ].includes(path)
+    )
+      fail(
+        "Change your temporary password before using your member account.",
+        403,
+      );
     if (path.startsWith("/v2/")) {
       const handled = await platform({
         db,
@@ -228,7 +243,15 @@ export async function onRequest({ request, env, params }) {
         .bind(await digest(token), u.id, Date.now() + 7 * 86400000)
         .run();
       return json(
-        { user: { id: u.id, name: u.name, email: u.email, role: u.role } },
+        {
+          user: {
+            id: u.id,
+            name: u.name,
+            email: u.email,
+            role: u.role,
+            must_change_password: u.must_change_password || 0,
+          },
+        },
         200,
         { "Set-Cookie": cookie(token, 604800) },
       );
@@ -260,9 +283,15 @@ export async function onRequest({ request, env, params }) {
         fail("Current password is incorrect.", 401);
       const next = text(b.password, 128);
       if (next.length < 12) fail("Use at least 12 characters.");
+      if (next === b.currentPassword)
+        fail(
+          "Choose a different password from your temporary or current password.",
+        );
       await db.batch([
         db
-          .prepare("UPDATE users SET password=? WHERE id=?")
+          .prepare(
+            "UPDATE users SET password=?,must_change_password=0 WHERE id=?",
+          )
           .bind(await password(next), user.id),
         db.prepare("DELETE FROM sessions WHERE user_id=?").bind(user.id),
       ]);
@@ -462,6 +491,8 @@ export async function onRequest({ request, env, params }) {
       let data = {},
         kind = b.kind,
         status = "received";
+      let newDonor = null,
+        temporaryPassword = null;
       if (kind === "volunteer") {
         auth();
         data = {
@@ -518,7 +549,7 @@ export async function onRequest({ request, env, params }) {
       } else if (kind === "newsletter") {
         data = { email: email(b.email) };
       } else if (kind === "donation") {
-        auth();
+        if (!user && b.createAccount !== true) auth();
         if (!env.BANK_DETAILS)
           fail(
             "Donations are not open yet. Bank details must be configured by the organization.",
@@ -546,29 +577,82 @@ export async function onRequest({ request, env, params }) {
           paymentMethod: "bank",
           amount,
           currency: b.currency,
-          donorName: text(b.donorName || user.name, 100),
-          email: email(b.email || user.email),
+          donorName: text(b.donorName || user?.name, 100),
+          email: email(b.email || user?.email),
           fund: text(b.fund, 100),
           frequency: b.frequency === "month" ? "month" : "once",
           reference: String(b.reference || "").slice(0, 200),
           anonymous: b.anonymous === true,
         };
+        if (!user) {
+          await limit(db, "donor-account:" + ip, 8);
+          const exists = await db
+            .prepare("SELECT id FROM users WHERE email=?")
+            .bind(data.email)
+            .first();
+          if (exists)
+            fail(
+              "Unable to create an account with this email. If you already have an account, sign in to continue.",
+              409,
+            );
+          temporaryPassword = hex(crypto.getRandomValues(new Uint8Array(18)));
+          newDonor = { id: id(), name: data.donorName, email: data.email };
+        }
         status = "awaiting_transfer";
       } else fail("Unknown submission type.");
       const rid = id();
-      await db
+      const recordInsert = db
         .prepare(
           "INSERT INTO records(id,kind,user_id,data,status) VALUES(?,?,?,?,?)",
         )
         .bind(
           rid,
           kind,
-          kind === "report" && data.anonymous ? null : user?.id || null,
+          kind === "report" && data.anonymous
+            ? null
+            : newDonor?.id || user?.id || null,
           JSON.stringify(data),
           status,
-        )
-        .run();
-      return json({ id: rid, status }, 201);
+        );
+      if (newDonor) {
+        // D1 batch is transactional: a failed donation cannot leave an orphaned account.
+        try {
+          await db.batch([
+            db
+              .prepare(
+                "INSERT INTO users(id,email,name,password,must_change_password) VALUES(?,?,?,?,1)",
+              )
+              .bind(
+                newDonor.id,
+                newDonor.email,
+                newDonor.name,
+                await password(temporaryPassword),
+              ),
+            recordInsert,
+          ]);
+        } catch {
+          fail(
+            "Unable to save your donation and account. Try signing in if you already have an account.",
+            409,
+          );
+        }
+      } else await recordInsert.run();
+      return json(
+        {
+          id: rid,
+          status,
+          ...(newDonor
+            ? {
+                credentials: {
+                  email: newDonor.email,
+                  temporaryPassword,
+                  mustChangePassword: true,
+                },
+              }
+            : {}),
+        },
+        201,
+      );
     }
     if (path === "/donation-settings")
       return json({

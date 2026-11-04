@@ -193,3 +193,121 @@ test("API access, durable member workflows and authorization", async (t) => {
     );
   });
 });
+
+test("Donation checkout creates a protected account with a required first-login password change", async () => {
+  const bank = process.env.TEST_BANK_URL || "http://127.0.0.1:8791";
+  async function request(path, data, session = "") {
+    const r = await fetch(bank + "/api" + path, {
+      method: data ? "POST" : "GET",
+      headers: { "Content-Type": "application/json", Cookie: session },
+      body: data ? JSON.stringify(data) : undefined,
+    });
+    return {
+      status: r.status,
+      data: await r.json(),
+      cookie: r.headers.get("set-cookie")?.split(";")[0],
+    };
+  }
+  const email = `checkout-${crypto.randomUUID()}@example.com`;
+  const donation = {
+    kind: "donation",
+    amount: 2500,
+    currency: "PKR",
+    fund: "water",
+    donorName: "New donor",
+    email,
+    createAccount: true,
+  };
+  const invalid = await request("/records", { ...donation, amount: -1 });
+  assert.equal(invalid.status, 400);
+  const saved = await request("/records", donation);
+  assert.equal(saved.status, 201);
+  assert.equal(saved.data.status, "awaiting_transfer");
+  const credentials = saved.data.credentials;
+  assert.equal(credentials.email, email);
+  assert.ok(credentials.temporaryPassword.length >= 24);
+  assert.equal(
+    (await request("/auth/me")).data.user,
+    null,
+    "Checkout must not sign in an email owner without verification of credentials",
+  );
+  assert.equal(
+    (await request("/records", donation)).status,
+    409,
+    "An existing account must never be overwritten",
+  );
+  const login = await request("/auth/login", {
+    email,
+    password: credentials.temporaryPassword,
+  });
+  assert.equal(login.status, 200);
+  assert.equal(login.data.user.must_change_password, 1);
+  const session = login.cookie;
+  assert.equal((await request("/records", undefined, session)).status, 403);
+  assert.equal(
+    (await request("/v2/donation-tracking", undefined, session)).status,
+    403,
+  );
+  assert.equal(
+    (
+      await request(
+        "/auth/password",
+        {
+          currentPassword: credentials.temporaryPassword,
+          password: credentials.temporaryPassword,
+        },
+        session,
+      )
+    ).status,
+    400,
+  );
+  const newPassword = "my-new-donation-password-123";
+  assert.equal(
+    (
+      await request(
+        "/auth/password",
+        {
+          currentPassword: credentials.temporaryPassword,
+          password: newPassword,
+        },
+        session,
+      )
+    ).status,
+    200,
+  );
+  assert.equal(
+    (await request("/auth/me", undefined, session)).data.user,
+    null,
+    "Password changes revoke old sessions",
+  );
+  assert.equal(
+    (
+      await request("/auth/login", {
+        email,
+        password: credentials.temporaryPassword,
+      })
+    ).status,
+    401,
+  );
+  const updated = await request("/auth/login", {
+    email,
+    password: newPassword,
+  });
+  assert.equal(updated.data.user.must_change_password, 0);
+  const records = await request("/records", undefined, updated.cookie);
+  assert.equal(records.status, 200);
+  assert.equal(records.data.items.length, 1);
+  assert.equal(records.data.items[0].id, saved.data.id);
+  assert.equal(records.data.items[0].data.temporaryPassword, undefined);
+  const next = await request(
+    "/records",
+    { ...donation, createAccount: false },
+    updated.cookie,
+  );
+  assert.equal(next.status, 201);
+  assert.equal(
+    next.data.credentials,
+    undefined,
+    "Existing members must never get replacement credentials",
+  );
+});

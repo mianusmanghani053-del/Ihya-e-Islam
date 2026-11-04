@@ -5,6 +5,16 @@ const publicPages = [
   ["quran", "Quran"],
   ["hadith", "Hadith"],
   ["seerah", "Seerah & Khulafa"],
+  ["our-work", "Our Work & Your Impact"],
+  ["track-donation", "Track your donation"],
+  ...[
+    ["gen", "Where most needed"],
+    ["zakat", "Zakat"],
+    ["winter", "Winter relief"],
+    ["orphan", "Orphan sponsorship"],
+    ["ilm", "Knowledge & Maktab"],
+    ["water", "Water wells & hand pumps"],
+  ].map(([id, label]) => ["our-work/" + id, label]),
   ["programs", "Programs"],
   ["volunteer", "Volunteer"],
   ["activities", "Activities"],
@@ -114,7 +124,12 @@ function routeMap() {
 function breadcrumb() {
   const raw = location.hash.slice(1) || "home";
   let rows = [{ label: "Home", href: "#home" }];
-  if (raw.startsWith("seerah/"))
+  if (raw.startsWith("our-work/"))
+    rows.push(
+      { label: "Our Work & Your Impact", href: "#our-work" },
+      { label: nameOf(raw) },
+    );
+  else if (raw.startsWith("seerah/"))
     rows.push(
       { label: "Seerah & Khulafa", href: "#seerah" },
       { label: nameOf(raw) },
