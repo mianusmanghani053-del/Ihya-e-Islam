@@ -76,7 +76,7 @@ function whatsapp() {
   }
   return `<div class="contact-channel-symbol" aria-hidden="true">↗</div><h2>Continue the conversation on WhatsApp</h2><p>For general enquiries, open a conversation with the trust’s published number. You choose whether to send the message.</p>${settings?.whatsapp ? `<a class="btn em" href="https://wa.me/${settings.whatsapp}?text=${encodeURIComponent("Assalamu alaikum. I would like help with an Ihya-e-Islam enquiry.")}" target="_blank" rel="noopener noreferrer">Open WhatsApp · +${esc(settings.whatsapp)}</a>` : `<p class="note">${settingsError ? "WhatsApp availability could not be checked. Please use the contact form." : "Our WhatsApp contact will appear here once the trust publishes its official number."}</p><a class="btn em" href="#contact/form">Use the contact form</a>`}<p><button class="btn gold" type="button" data-contact-private>Write a Private Message</button></p><p class="contact-small">WhatsApp is an external service. Do not send passwords, bank PINs, CNIC images or confidential case documents. This channel is not an emergency service.</p>`;
 }
-function serviceField() {
+function serviceField(selected = "") {
   return `<label>Related service<select name="service"><option value="">General enquiry / not sure</option>${[
     ...new Set(CONTACT_SERVICES.map((s) => s.group)),
   ]
@@ -85,13 +85,18 @@ function serviceField() {
         `<optgroup label="${esc(group)}">${CONTACT_SERVICES.filter(
           (s) => s.group === group,
         )
-          .map((s) => `<option value="${esc(s.id)}">${esc(s.label)}</option>`)
+          .map(
+            (s) =>
+              `<option value="${esc(s.id)}" ${s.id === selected ? "selected" : ""}>${esc(s.label)}</option>`,
+          )
           .join("")}</optgroup>`,
     )
     .join("")}</select></label>`;
 }
 function form() {
-  return `<div class="contact-form-layout"><div><span class="eyebrow">Send an enquiry</span><h2>How can we help?</h2><p>Tell us what you need and leave an email address so the team can respond.</p><div class="contact-guidance"><h3>Keep your message safe</h3><p>For a donation query, include the donation reference if you have one. Please leave out passwords, bank PINs and sensitive personal documents.</p><a href="#support-line">Need confidential support? →</a></div></div><form class="contact-form" data-contact-form><div class="contact-form-row"><label>Full name<input name="name" autocomplete="name" maxlength="100" required></label><label>Email address<input type="email" name="email" autocomplete="email" maxlength="254" required></label></div><div class="contact-form-row"><label>Phone / WhatsApp (optional)<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label><label>What is your enquiry about?<select name="topic" required><option value="">Choose a topic</option>${TOPICS.map((t) => `<option>${esc(t)}</option>`).join("")}</select></label></div>${serviceField()}<label>Subject<input name="subject" maxlength="150" required></label><label>Your message<textarea name="message" rows="6" minlength="10" maxlength="5000" required placeholder="Please include the details that will help us understand your enquiry."></textarea></label><div class="contact-honey" aria-hidden="true"><label>Leave this field empty<input name="website" tabindex="-1" autocomplete="off"></label></div><label class="contact-consent"><input name="consent" type="checkbox" required><span>I agree that the trust may use these details to respond to this enquiry. <a href="#privacy">Privacy information</a></span></label><p class="err" role="alert"></p><button class="btn gold" type="submit">Send my message <span aria-hidden="true">→</span></button><p class="contact-small">Your message is saved for the authorised team. We do not promise an immediate response or send an automatic email.</p></form></div>`;
+  const digital = sessionStorage.getItem("contactDigitalEnquiry") === "yes";
+  sessionStorage.removeItem("contactDigitalEnquiry");
+  return `<div class="contact-form-layout"><div><span class="eyebrow">Send an enquiry</span><h2>How can we help?</h2><p>Tell us what you need and leave an email address so the team can respond.</p><div class="contact-guidance"><h3>Keep your message safe</h3><p>For a donation query, include the donation reference if you have one. Please leave out passwords, bank PINs and sensitive personal documents.</p><a href="#support-line">Need confidential support? →</a></div></div><form class="contact-form" data-contact-form><div class="contact-form-row"><label>Full name<input name="name" autocomplete="name" maxlength="100" required></label><label>Email address<input type="email" name="email" autocomplete="email" maxlength="254" required></label></div><div class="contact-form-row"><label>Phone / WhatsApp (optional)<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label><label>What is your enquiry about?<select name="topic" required><option value="">Choose a topic</option>${TOPICS.map((t) => `<option ${digital && t === "Digital solutions" ? "selected" : ""}>${esc(t)}</option>`).join("")}</select></label></div>${serviceField(digital ? "services/digital_enquiry" : "")}<label>Subject<input name="subject" maxlength="150" required></label><label>Your message<textarea name="message" rows="6" minlength="10" maxlength="5000" required placeholder="Please include the details that will help us understand your enquiry."></textarea></label><div class="contact-honey" aria-hidden="true"><label>Leave this field empty<input name="website" tabindex="-1" autocomplete="off"></label></div><label class="contact-consent"><input name="consent" type="checkbox" required><span>I agree that the trust may use these details to respond to this enquiry. <a href="#privacy">Privacy information</a></span></label><p class="err" role="alert"></p><button class="btn gold" type="submit">Send my message <span aria-hidden="true">→</span></button><p class="contact-small">Your message is saved for the authorised team. We do not promise an immediate response or send an automatic email.</p></form></div>`;
 }
 function help() {
   return `<div class="contact-help-heading"><div><span class="eyebrow">Find your next step</span><h2>A little guidance, before you write</h2><p>Find answers and the right place to continue.</p></div><a class="btn" href="#contact/form">I still need help →</a></div><div class="grid g2 contact-faq">${FAQ.map(([q, a, label, href], i) => `<details ${i === 0 ? "open" : ""}><summary>${esc(q)}</summary><p>${esc(a)}</p><a href="${href}">${esc(label)} →</a></details>`).join("")}</div>`;
@@ -136,6 +141,14 @@ function privateMessage() {
   document.querySelector("#md textarea")?.focus();
 }
 export function installContact() {
+  document.addEventListener(
+    "click",
+    (event) => {
+      if (event.target.closest("[data-contact-digital]"))
+        sessionStorage.setItem("contactDigitalEnquiry", "yes");
+    },
+    true,
+  );
   document.addEventListener("click", (event) => {
     if (event.target.closest("[data-contact-private]")) privateMessage();
     const button = event.target.closest("[data-private-whatsapp]");
