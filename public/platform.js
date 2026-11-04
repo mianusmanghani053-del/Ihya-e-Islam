@@ -1,3 +1,4 @@
+import { installSeerah } from "./seerah.mjs";
 import { WORKFLOWS, GROUPS, STAFF_ROLES } from "./workflows.mjs";
 import { digitalSolutionsPage } from "./solutions.mjs";
 import { renderPortalOverview, clearOverview } from "./overview.mjs";
@@ -780,4 +781,5 @@ document.addEventListener(
   true,
 );
 
+installSeerah();
 installNavigation();

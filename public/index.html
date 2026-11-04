@@ -38,6 +38,7 @@
         display: none !important;
       }
     </style>
+    <link rel="stylesheet" href="/seerah.css" />
   </head>
   <body>
     <meta name="claude:viewport-fit-sides" content="cover" />
@@ -2769,7 +2770,7 @@
       function renderNav() {
         const h = NAV.map(
           ([id, en, ur]) =>
-            `<a href="#${id}" class="${S.view === id ? "on" : ""} ${id === "report" ? "rep" : ""}" ${S.view === id ? 'aria-current="page"' : ""}>${LANG === "ur" ? ur : en}</a>`,
+            `<a href="#${id}" class="${S.view === id || S.view.startsWith(id + "/") ? "on" : ""} ${id === "report" ? "rep" : ""}" ${S.view === id || S.view.startsWith(id + "/") ? 'aria-current="page"' : ""}>${LANG === "ur" ? ur : en}</a>`,
         ).join("");
         $("#nav").innerHTML = h;
         $("#mnav").innerHTML =

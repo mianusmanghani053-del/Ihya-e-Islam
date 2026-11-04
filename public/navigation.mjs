@@ -1,3 +1,4 @@
+import { READINGS } from "./seerah.mjs";
 import { WORKFLOWS, GROUPS } from "./workflows.mjs";
 const publicPages = [
   ["home", "Home"],
@@ -44,13 +45,24 @@ const staffPages = [
   ["content-tools", "Courses, events & shifts"],
 ];
 const nameOf = (route) =>
-  [...publicPages, ...memberPages, ...staffPages].find(
-    ([key]) => key === route,
-  )?.[1] ||
+  [
+    ...publicPages,
+    ...memberPages,
+    ...staffPages,
+    ...READINGS.map((r) => ["seerah/" + r.slug, r.title]),
+  ].find(([key]) => key === route)?.[1] ||
   WORKFLOWS[route.replace("services/", "")]?.title ||
   route.replaceAll("-", " ");
 function routeMap() {
   const groups = [
+    [
+      "Seerah reading library",
+      READINGS.map((r) => ({
+        route: "seerah/" + r.slug,
+        label: r.title,
+        access: "Public",
+      })),
+    ],
     [
       "Website",
       publicPages.map(([route, label]) => ({ route, label, access: "Public" })),
@@ -101,7 +113,12 @@ function routeMap() {
 function breadcrumb() {
   const raw = location.hash.slice(1) || "home";
   let rows = [{ label: "Home", href: "#home" }];
-  if (raw === "register")
+  if (raw.startsWith("seerah/"))
+    rows.push(
+      { label: "Seerah & Khulafa", href: "#seerah" },
+      { label: nameOf(raw) },
+    );
+  else if (raw === "register")
     rows.push(
       { label: "Portal", href: "#portal" },
       { label: "Create account" },
