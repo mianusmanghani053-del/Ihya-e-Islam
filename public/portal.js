@@ -113,6 +113,8 @@ async function refresh() {
   route();
 }
 let donationDraft = null;
+const HEART =
+  '<svg class="donation-heart" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.1 4.3 2.4.7-1.3 2.2-2.4 4.3-2.4 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg>';
 function rememberDonation(form) {
   const values = Object.fromEntries(new FormData(form));
   donationDraft = {
@@ -145,12 +147,94 @@ function donationSummary(includeDonor = true) {
   const d = donationDraft;
   return `<div class="sum"><div><span>Fund</span><b>${h(FUNDS.find((f) => f.id === d.fund)?.n || d.fund)}</b></div><div><span>Gift</span><b>${donationMoney(d.amount)}</b></div>${d.cover ? `<div><span>Optional processing contribution</span><b>${donationMoney(donationContribution())}</b></div>` : ""}<div class="tot"><span>Total</span><span>${donationMoney(donationTotal())}</span></div><div><span>Frequency</span><b>${d.frequency === "month" ? "Monthly pledge (manual transfer)" : "One-time"}</b></div>${includeDonor ? `<div><span>Donor</span><b>${h(d.donorName || "")}</b></div><div><span>Email</span><b>${h(d.email || "")}</b></div><div><span>Public name</span><b>${d.anonymous ? "Anonymous" : "May be shown"}</b></div>` : ""}</div>`;
 }
+const FUND_LOOK = {
+  gen: {
+    color: "#0f7a4f",
+    path: "M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21.2l8.8-8.8a5.5 5.5 0 0 0 0-7.8z",
+  },
+  zakat: {
+    color: "#b7791f",
+    path: "M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
+  },
+  winter: {
+    color: "#2563eb",
+    path: "M12 2v20M4.9 4.9l14.2 14.2M2 12h20M4.9 19.1L19.1 4.9M9 3l3 3 3-3M9 21l3-3 3 3",
+  },
+  orphan: {
+    color: "#c2417a",
+    path: "M9 7a3 3 0 1 0 0-.01M17 9a2.5 2.5 0 1 0 0-.01M3 21v-2a5 5 0 0 1 10 0v2M14 21v-1.5a4 4 0 0 1 7 0V21",
+  },
+  ilm: {
+    color: "#6d4aff",
+    path: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5zM20 17v4H6.5",
+  },
+  water: {
+    color: "#0891b2",
+    path: "M12 2.7l5.7 5.7a8 8 0 1 1-11.4 0z",
+  },
+};
+const fundIcon = (id) =>
+  `<span class="fund-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="${(FUND_LOOK[id] || FUND_LOOK.gen).path}"/></svg></span>`;
+const MEDIA_ICON =
+  '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M21 16l-5-5-8 8"/></svg>';
+let fundMedia = null;
+async function loadFundMedia() {
+  if (fundMedia) return fundMedia;
+  try {
+    const r = await fetch("/data/fund-media.json", { cache: "no-cache" });
+    fundMedia = r.ok ? await r.json() : {};
+  } catch {
+    fundMedia = {};
+  }
+  return fundMedia;
+}
+const safeMediaSrc = (src) =>
+  /^(\/|media\/|https:\/\/)/.test(String(src || "")) ? String(src) : "";
+function mediaHeader(id) {
+  return `<div class="fund-media-nav"><button type="button" class="fund-media-back" data-live="${id === undefined ? "donation-edit" : "fund-media"}" ${id === undefined ? "" : `data-value="${h(id)}"`}>← Back</button></div>`;
+}
+async function fundMediaMd(id) {
+  const fund = FUNDS.find((f) => f.id === id);
+  if (!fund) return;
+  const items = ((await loadFundMedia())[id] || []).filter((m) =>
+    safeMediaSrc(m.src),
+  );
+  const look = FUND_LOOK[id] || FUND_LOOK.gen;
+  const grid = items.length
+    ? `<div class="fund-media-grid">${items
+        .map(
+          (m, i) =>
+            `<figure>${
+              m.type === "video"
+                ? `<video src="${h(safeMediaSrc(m.src))}" ${m.poster ? `poster="${h(safeMediaSrc(m.poster))}"` : ""} controls preload="metadata" playsinline></video>`
+                : `<button type="button" class="fund-media-thumb" data-live="fund-media-view" data-value="${h(id)}:${i}" aria-label="Open photo${m.caption ? ": " + h(m.caption) : ""}"><img src="${h(safeMediaSrc(m.src))}" alt="${h(m.alt || m.caption || fund.n)}" loading="lazy"></button>`
+            }${m.caption ? `<figcaption>${h(m.caption)}</figcaption>` : ""}</figure>`,
+        )
+        .join("")}</div>`
+    : `<div class="fund-media-empty" style="--fund:${look.color}">${fundIcon(id)}<p><b>Photos and videos are on their way</b><br>Pictures of our ${h(fund.n.toLowerCase())} work will be shared here soon, in sha Allah.</p></div>`;
+  openMd(
+    `${h(fund.n)}: our work`,
+    `${mediaHeader()}<div class="fund-media-head" style="--fund:${look.color}">${fundIcon(id)}<div><b>${h(fund.n)}</b><small>${h(fund.d)}</small></div></div>${grid}<button type="button" class="btn gold donation-next" data-live="donation-fund-give" data-value="${h(id)}">Give to ${h(fund.n)}</button>`,
+  );
+  $("#md").classList.add("donation-modal", "fund-media-modal");
+}
+async function fundMediaView(value) {
+  const [id, index] = String(value).split(":");
+  const fund = FUNDS.find((f) => f.id === id);
+  const m = ((await loadFundMedia())[id] || [])[Number(index)];
+  if (!fund || !m || !safeMediaSrc(m.src)) return fundMediaMd(id);
+  openMd(
+    `${h(fund.n)}: our work`,
+    `${mediaHeader(id)}<figure class="fund-media-full"><img src="${h(safeMediaSrc(m.src))}" alt="${h(m.alt || m.caption || fund.n)}">${m.caption ? `<figcaption>${h(m.caption)}</figcaption>` : ""}</figure>`,
+  );
+  $("#md").classList.add("donation-modal", "fund-media-modal");
+}
 async function bankDonation(fund) {
   donationDraft = {
     amount: 10000,
     currency: "PKR",
     fund: "gen",
-    frequency: "once",
+    frequency: "month",
     donorName: member?.name || "",
     email: member?.email || "",
     anonymous: false,
@@ -173,11 +257,11 @@ async function bankDonation(fund) {
     ]
       .map(
         ([value, label]) =>
-          `<button type="button" class="${d.frequency === value ? "on" : ""}" aria-pressed="${d.frequency === value}" data-live="donation-frequency" data-value="${value}">${label}</button>`,
+          `<button type="button" class="${d.frequency === value ? "on" : ""}" aria-pressed="${d.frequency === value}" data-live="donation-frequency" data-value="${value}">${value === "month" ? HEART : ""}${label}</button>`,
       )
       .join(
         "",
-      )}</div><div class="donation-amount-heading"><label class="lb" for="donation-amount">Amount</label><div class="seg donation-currency" role="group" aria-label="Currency">${["PKR", "USD"].map((value) => `<button type="button" class="${d.currency === value ? "on" : ""}" aria-pressed="${d.currency === value}" data-live="donation-currency" data-value="${value}">${value}</button>`).join("")}</div></div><div class="amts">${AMTS[d.currency].map((amount) => `<button type="button" class="${Number(d.amount) === amount ? "on" : ""}" aria-pressed="${Number(d.amount) === amount}" data-live="donation-preset" data-value="${amount}">${donationMoney(amount)}</button>`).join("")}</div><div class="amtin"><span aria-hidden="true">${d.currency === "PKR" ? "Rs" : "$"}</span><input id="donation-amount" name="amount" type="number" min="0.01" max="10000000" step="0.01" value="${h(d.amount)}" required></div><span class="lb" id="donation-fund-label">Fund</span><div class="funds" role="group" aria-labelledby="donation-fund-label">${FUNDS.map((f) => `<button type="button" class="${d.fund === f.id ? "on" : ""}" aria-pressed="${d.fund === f.id}" data-live="donation-fund" data-value="${f.id}"><b>${h(f.n)}</b><small>${h(f.d)}</small></button>`).join("")}</div>${d.fund === "zakat" ? `<p style="margin:10px 0">${action("open-zakat", "Calculate zakat")}</p>` : ""}<div class="chk donation-cover"><input id="donation-cover" name="cover" type="checkbox" ${d.cover ? "checked" : ""}><label for="donation-cover" id="donation-cover-label">Add ${donationMoney(donationProcessingCost())} toward processing costs</label></div><p class="err" role="alert"></p><button id="donation-next" class="btn gold donation-next">Donate ${donationMoney(donationTotal())}${d.frequency === "month" ? " monthly" : ""}</button><p class="donation-footnote">Review your details next · No money is collected here</p></form>`,
+      )}</div>${d.frequency === "once" ? `<div class="donation-monthly-nudge" role="note"><p>${HEART}<span>Thank you for your generosity. If you are able, please consider giving monthly instead. A regular gift, even a smaller one, helps us plan steady support for families all year round. You can pause or stop it at any time.</span></p><button type="button" data-live="donation-frequency" data-value="month">Make it monthly</button></div>` : ""}<div class="donation-amount-heading"><label class="lb" for="donation-amount">Amount</label><div class="seg donation-currency" role="group" aria-label="Currency">${["PKR", "USD"].map((value) => `<button type="button" class="${d.currency === value ? "on" : ""}" aria-pressed="${d.currency === value}" data-live="donation-currency" data-value="${value}">${value}</button>`).join("")}</div></div><div class="amts">${AMTS[d.currency].map((amount) => `<button type="button" class="${Number(d.amount) === amount ? "on" : ""}" aria-pressed="${Number(d.amount) === amount}" data-live="donation-preset" data-value="${amount}">${donationMoney(amount)}</button>`).join("")}</div><div class="amtin"><span aria-hidden="true">${d.currency === "PKR" ? "Rs" : "$"}</span><input id="donation-amount" name="amount" type="number" min="0.01" max="10000000" step="0.01" value="${h(d.amount)}" required></div><span class="lb" id="donation-fund-label">Fund</span><div class="funds" role="group" aria-labelledby="donation-fund-label">${FUNDS.map((f) => `<div class="fund-card${d.fund === f.id ? " on" : ""}" style="--fund:${(FUND_LOOK[f.id] || FUND_LOOK.gen).color}"><button type="button" class="fund-pick" aria-pressed="${d.fund === f.id}" data-live="donation-fund" data-value="${f.id}">${fundIcon(f.id)}<span><b>${h(f.n)}</b><small>${h(f.d)}</small></span></button><button type="button" class="fund-media-link" data-live="fund-media" data-value="${f.id}" aria-label="See our work: ${h(f.n)}">${MEDIA_ICON}See our work</button></div>`).join("")}</div>${d.fund === "zakat" ? `<p style="margin:10px 0">${action("open-zakat", "Calculate zakat")}</p>` : ""}<div class="chk donation-cover"><input id="donation-cover" name="cover" type="checkbox" ${d.cover ? "checked" : ""}><label for="donation-cover" id="donation-cover-label">Add ${donationMoney(donationProcessingCost())} toward processing costs</label></div><p class="err" role="alert"></p><button id="donation-next" class="btn gold donation-next">Donate ${donationMoney(donationTotal())}${d.frequency === "month" ? " monthly" : ""}</button><p class="donation-footnote">Review your details next · No money is collected here</p></form>`,
   );
   $("#md").classList.add("donation-modal");
 }
@@ -308,6 +392,17 @@ async function runAction(button) {
   if (key === "donation-login") {
     closeAll();
     location.hash = "portal";
+    return;
+  }
+  if (key === "fund-media" || key === "fund-media-view") {
+    const form = $('[data-live-form="donation-details"]');
+    if (form) rememberDonation(form);
+    await (key === "fund-media" ? fundMediaMd(value) : fundMediaView(value));
+    return;
+  }
+  if (key === "donation-fund-give") {
+    donationDraft = { ...donationDraft, fund: value };
+    await bankDonation(value);
     return;
   }
   if (key === "open-zakat") {
