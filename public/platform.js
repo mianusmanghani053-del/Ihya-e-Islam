@@ -121,7 +121,7 @@ V.hub = () => {
     .catch((e) => toast(e.message));
   return block(
     "Your services",
-    `<div data-context-ready="${context ? "yes" : ""}"></div><div class="service-actions"><a class="btn em" href="#donation-tracking">Track & confirm donations</a><a class="btn" href="#notifications">Alerts & reminders</a><a class="btn" href="#credentials">My verified credentials</a><a class="btn" href="#unit-profile">Unit & blood profile</a>${context?.staff ? '<a class="btn" href="#staff">Staff portal</a>' : ""}</div>${Object.entries(
+    `<div data-context-ready="${context ? "yes" : ""}"></div><div class="service-actions"><a class="btn em" href="#donation-tracking">Track & confirm donations</a><a class="btn" href="#notifications">Alerts & reminders</a><a class="btn" href="#credentials">My verified credentials</a><a class="btn" href="#unit-profile">Unit & blood profile</a><a class="btn" href="#community">Community</a><a class="btn" href="#tools">Islamic tools</a><a class="btn" href="#transparency">Transparency</a>${context?.staff ? '<a class="btn" href="#staff">Staff portal</a>' : ""}</div>${Object.entries(
       GROUPS,
     )
       .filter(([key]) => key !== "staff" || context?.staff)
@@ -343,7 +343,7 @@ const legacyPortalView = portalView;
 portalView = () =>
   legacyPortalView().replace(
     '<div class="pl">',
-    '<p class="service-actions"><a class="btn em" href="#hub">All member services</a><a class="btn" href="#donation-tracking">Track donations</a><a class="btn" href="#notifications">Alerts & reminders</a></p><div class="pl">',
+    '<p class="service-actions"><a class="btn em" href="#hub">All member services</a><a class="btn" href="#donation-tracking">Track donations</a><a class="btn" href="#notifications">Alerts & reminders</a><a class="btn" href="#community">Community</a><a class="btn" href="#tools">Islamic tools</a><a class="btn" href="#transparency">Transparency</a></p><div class="pl">',
   );
 const originalAdmin = V.admin;
 V["content-tools"] = () => {
@@ -697,17 +697,11 @@ document.addEventListener(
   },
   true,
 );
-NAV.push(
-  ["hub", "Services", "خدمات"],
-  ["community", "Community", "برادری"],
-  ["tools", "Islamic tools", "اسلامی ٹولز"],
-  ["transparency", "Transparency", "شفافیت"],
-);
 document
   .querySelector("footer .wrap")
   ?.insertAdjacentHTML(
     "beforeend",
-    '<p><a href="#transparency">Fund transparency</a> · <a href="#support-line">Confidential support</a> · <a href="#tools">Islamic tools</a></p>',
+    '<p><a href="#support-line">Confidential support</a></p>',
   );
 route();
 

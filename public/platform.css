@@ -169,7 +169,7 @@ details > summary {
     border-color: black !important;
   }
 }
-@media (max-width: 1550px) {
+@media (max-width: 1199px) {
   .nav {
     display: none;
   }
@@ -178,5 +178,46 @@ details > summary {
   }
   .hbtns {
     margin-left: auto;
+  }
+}
+
+/* Keep the public masthead focused; additional services live in the portal. */
+.hd .wrap {
+  max-width: 1440px;
+  gap: 20px;
+  padding-block: 16px;
+}
+.nav {
+  gap: 4px;
+}
+.nav a {
+  padding: 9px 10px;
+  font-size: 14px;
+}
+.hbtns {
+  gap: 10px;
+}
+@media (min-width: 1200px) {
+  .hd .wrap {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .nav {
+    display: flex;
+  }
+  .burger {
+    display: none;
+  }
+  .logo small {
+    font-size: 10.5px;
+  }
+}
+@media (max-width: 599px) {
+  .hd .wrap {
+    gap: 8px;
+    padding-block: 12px;
+  }
+  .hbtns {
+    gap: 6px;
   }
 }
