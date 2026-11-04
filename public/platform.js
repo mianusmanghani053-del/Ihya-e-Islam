@@ -716,6 +716,7 @@ const platformBaseGo = go;
 go = () => {
   const next = member?.id || null;
   if (next !== cachedMemberId) {
+    if (cachedMemberId !== null) donationDraft = null;
     cachedMemberId = next;
     context = null;
     contextUser = null;

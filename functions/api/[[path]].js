@@ -482,6 +482,8 @@ export async function onRequest({ request, env, params }) {
         data = {
           amount,
           currency: b.currency,
+          donorName: text(b.donorName || user.name, 100),
+          email: email(b.email || user.email),
           fund: text(b.fund, 100),
           frequency: b.frequency === "month" ? "month" : "once",
           reference: String(b.reference || "").slice(0, 200),

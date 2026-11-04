@@ -118,25 +118,68 @@ async function refresh() {
   loaded = true;
   route();
 }
-async function bankDonation() {
-  if (!member) {
-    location.hash = "portal";
-    toast("Please sign in before donating.");
-    return;
+let donationDraft = null;
+function rememberDonation(form) {
+  const values = Object.fromEntries(new FormData(form));
+  donationDraft = {
+    ...donationDraft,
+    ...values,
+    anonymous:
+      form.elements.anonymous?.checked ?? donationDraft?.anonymous ?? false,
+  };
+}
+function donationSummary() {
+  const d = donationDraft;
+  return `<div class="sum"><div><span>Fund</span><b>${h(FUNDS.find((f) => f.id === d.fund)?.n || d.fund)}</b></div><div><span>Amount</span><b>${h(d.currency)} ${Number(d.amount).toLocaleString("en-PK", { maximumFractionDigits: 2 })}</b></div><div><span>Frequency</span><b>${d.frequency === "month" ? "Monthly pledge (manual transfer)" : "One-time"}</b></div><div><span>Donor</span><b>${h(d.donorName)}</b></div><div><span>Email</span><b>${h(d.email)}</b></div><div><span>Public name</span><b>${d.anonymous ? "Anonymous" : "May be shown"}</b></div></div>`;
+}
+async function bankDonation(fund) {
+  if (!donationDraft)
+    donationDraft = {
+      amount: "",
+      currency: "PKR",
+      fund: "gen",
+      frequency: "once",
+      donorName: member?.name || "",
+      email: member?.email || "",
+      anonymous: false,
+      reference: "",
+    };
+  if (FUNDS.some((f) => f.id === fund)) donationDraft.fund = fund;
+  if (member) {
+    donationDraft.donorName ||= member.name;
+    donationDraft.email ||= member.email;
   }
+  const d = donationDraft;
+  openMd(
+    "Donation details",
+    `<p class="eyebrow">Step 1 of 3 · Your gift</p><form class="form" data-live-form="donation-details"><div><label for="donation-fund">Fund</label><select id="donation-fund" name="fund">${FUNDS.map((f) => `<option value="${h(f.id)}" ${d.fund === f.id ? "selected" : ""}>${h(f.n)}</option>`).join("")}</select></div><div><label for="donation-currency">Currency</label><select id="donation-currency" name="currency"><option ${d.currency === "PKR" ? "selected" : ""}>PKR</option><option ${d.currency === "USD" ? "selected" : ""}>USD</option></select></div><div><label for="donation-amount">Amount</label><input id="donation-amount" name="amount" type="number" min="0.01" max="10000000" step="0.01" value="${h(d.amount)}" required></div><div><label for="donation-frequency">Frequency</label><select id="donation-frequency" name="frequency"><option value="once" ${d.frequency === "once" ? "selected" : ""}>One-time</option><option value="month" ${d.frequency === "month" ? "selected" : ""}>Monthly pledge (manual transfer)</option></select></div><div><label for="donation-name">Full name</label><input id="donation-name" name="donorName" value="${h(d.donorName)}" autocomplete="name" maxlength="100" required></div><div><label for="donation-email">Email</label><input id="donation-email" name="email" type="email" value="${h(d.email)}" autocomplete="email" maxlength="254" required></div><div class="w chk"><input id="donation-anonymous" name="anonymous" type="checkbox" ${d.anonymous ? "checked" : ""}><label for="donation-anonymous">Keep my name off public donor lists</label></div><div class="w">${action("open-zakat", "Calculate zakat")}</div><p class="err w" role="alert"></p><button class="btn gold">Review donation</button><p class="note w">Review your details before continuing. No money is taken at this step. Monthly pledges require manual bank transfers.</p></form>`,
+  );
+}
+function reviewDonation() {
+  openMd(
+    "Review your donation",
+    `<p class="eyebrow">Step 2 of 3 · Review</p>${donationSummary()}<div class="service-actions">${action("donation-edit", "Back to details")}${action("donation-final", "Continue to payment")}</div><p class="note">Your details are held only in this open tab until you submit an available bank-transfer record.</p>`,
+  );
+}
+async function finishDonation() {
   const settings = await api("/donation-settings");
   if (!settings.enabled) {
     openMd(
       "Donations opening soon",
-      empty(
-        "The organization has not published bank account details yet. No money has been collected.",
-      ),
+      `<p class="eyebrow">Step 3 of 3 · Payment availability</p>${donationSummary()}${empty("The organization has not published bank account details yet. No money has been collected.")}<p>No donation record has been saved.</p>${action("donation-edit", "Back to details")}`,
+    );
+    return;
+  }
+  if (!member) {
+    openMd(
+      "Sign in to complete your donation",
+      `<p class="eyebrow">Step 3 of 3 · Bank transfer</p>${donationSummary()}<p>Please sign in to save your bank-transfer record and track it in the portal. Your entered details will remain in this tab; click Donate after signing in to resume.</p>${action("donation-login", "Sign in")}${action("donation-edit", "Back to details")}`,
     );
     return;
   }
   openMd(
     "Bank transfer donation",
-    `<p class="note" style="white-space:pre-wrap">${h(settings.bankDetails)}</p><p>${h(settings.notice)}</p><form class="form" data-live-form="donation"><div><label>Fund</label><select name="fund">${FUNDS.map((f) => `<option value="${h(f.id)}">${h(f.n)}</option>`).join("")}</select></div><div><label>Currency</label><select name="currency"><option>PKR</option><option>USD</option></select></div>${field("amount", "Amount", "number")}<div>${action("open-zakat", "Calculate zakat")}</div><div><label>Frequency</label><select name="frequency"><option value="once">One-time</option><option value="month">Monthly pledge (manual transfer)</option></select></div>${field("reference", "Your bank transfer reference", "text", false)}<div><label><input name="anonymous" type="checkbox"> Keep my name off public donor lists</label></div><p class="err w"></p><button class="btn gold">Save transfer for review</button><p class="w note">Saving this record does not move money. Transfer through your own bank. A receipt becomes available after the finance team verifies payment.</p></form>`,
+    `<p class="eyebrow">Step 3 of 3 · Bank transfer</p>${donationSummary()}<p class="note" style="white-space:pre-wrap">${h(settings.bankDetails)}</p><p>${h(settings.notice)}</p><form class="form" data-live-form="donation"><div class="w"><label for="donation-reference">Your bank transfer reference (optional)</label><input id="donation-reference" name="reference" maxlength="200" value="${h(donationDraft.reference || "")}"></div><p class="err w" role="alert"></p><button class="btn gold">Save transfer for review</button>${action("donation-edit", "Back to details")}<p class="note w">Saving this record does not move money. Transfer through your own bank. A receipt becomes available after the finance team verifies payment.</p></form>`,
   );
 }
 async function runAction(button) {
@@ -152,7 +195,22 @@ async function runAction(button) {
     await refresh();
     return;
   }
+  if (key === "donation-edit") {
+    await bankDonation();
+    return;
+  }
+  if (key === "donation-final") {
+    await finishDonation();
+    return;
+  }
+  if (key === "donation-login") {
+    closeAll();
+    location.hash = "portal";
+    return;
+  }
   if (key === "open-zakat") {
+    const form = $('[data-live-form="donation-details"]');
+    if (form) rememberDonation(form);
     zakatMd();
     return;
   }
@@ -325,10 +383,17 @@ document.addEventListener(
       event.preventDefault();
       event.stopImmediatePropagation();
       (async () => {
-        if (a === "donate" || a === "zback") await bankDonation();
+        if (a === "donate" || a === "zback")
+          await bankDonation(a === "donate" ? b.dataset.v : undefined);
         if (a === "zuse") {
           S.D.amt = +b.dataset.v;
-          await bankDonation();
+          donationDraft = {
+            ...donationDraft,
+            amount: S.D.amt,
+            currency: "PKR",
+            fund: "zakat",
+          };
+          await bankDonation("zakat");
         }
         if (a === "enroll" || a === "rsvp") location.hash = "activities";
         if (a === "bm") {
@@ -414,12 +479,22 @@ document.addEventListener(
         await send("/resources", { ...f, lessons });
         await refresh();
         toast("Activity published.");
+      } else if (kind === "donation-details") {
+        rememberDonation(form);
+        if (
+          !Number.isFinite(Number(donationDraft.amount)) ||
+          Number(donationDraft.amount) <= 0 ||
+          Number(donationDraft.amount) > 10000000
+        )
+          throw new Error("Enter a valid donation amount.");
+        reviewDonation();
       } else if (kind === "donation") {
+        donationDraft.reference = f.reference || "";
         const result = await send("/records", {
-          ...f,
+          ...donationDraft,
           kind,
-          anonymous: form.elements.anonymous.checked,
         });
+        donationDraft = null;
         await refresh();
         openMd(
           "Transfer saved",
