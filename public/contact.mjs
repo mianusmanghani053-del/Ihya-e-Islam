@@ -1,3 +1,4 @@
+let digitalEnquiryRequested = false;
 import { CONTACT_SERVICES } from "./contact-options.mjs";
 const TOPICS = [
   "Donation & receipt",
@@ -94,8 +95,8 @@ function serviceField(selected = "") {
     .join("")}</select></label>`;
 }
 function form() {
-  const digital = sessionStorage.getItem("contactDigitalEnquiry") === "yes";
-  sessionStorage.removeItem("contactDigitalEnquiry");
+  const digital = digitalEnquiryRequested;
+  digitalEnquiryRequested = false;
   return `<div class="contact-form-layout"><div><span class="eyebrow">Send an enquiry</span><h2>How can we help?</h2><p>Tell us what you need and leave an email address so the team can respond.</p><div class="contact-guidance"><h3>Keep your message safe</h3><p>For a donation query, include the donation reference if you have one. Please leave out passwords, bank PINs and sensitive personal documents.</p><a href="#support-line">Need confidential support? →</a></div></div><form class="contact-form" data-contact-form><div class="contact-form-row"><label>Full name<input name="name" autocomplete="name" maxlength="100" required></label><label>Email address<input type="email" name="email" autocomplete="email" maxlength="254" required></label></div><div class="contact-form-row"><label>Phone / WhatsApp (optional)<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label><label>What is your enquiry about?<select name="topic" required><option value="">Choose a topic</option>${TOPICS.map((t) => `<option ${digital && t === "Digital solutions" ? "selected" : ""}>${esc(t)}</option>`).join("")}</select></label></div>${serviceField(digital ? "services/digital_enquiry" : "")}<label>Subject<input name="subject" maxlength="150" required></label><label>Your message<textarea name="message" rows="6" minlength="10" maxlength="5000" required placeholder="Please include the details that will help us understand your enquiry."></textarea></label><div class="contact-honey" aria-hidden="true"><label>Leave this field empty<input name="website" tabindex="-1" autocomplete="off"></label></div><label class="contact-consent"><input name="consent" type="checkbox" required><span>I agree that the trust may use these details to respond to this enquiry. <a href="#privacy">Privacy information</a></span></label><p class="err" role="alert"></p><button class="btn gold" type="submit">Send my message <span aria-hidden="true">→</span></button><p class="contact-small">Your message is saved for the authorised team. We do not promise an immediate response or send an automatic email.</p></form></div>`;
 }
 function help() {
@@ -145,7 +146,7 @@ export function installContact() {
     "click",
     (event) => {
       if (event.target.closest("[data-contact-digital]"))
-        sessionStorage.setItem("contactDigitalEnquiry", "yes");
+        digitalEnquiryRequested = true;
     },
     true,
   );
@@ -175,6 +176,13 @@ export function installContact() {
       );
     }
   });
+  // Keep old saved/bookmarked enquiry links on the same public contact form.
+  V["services/digital_enquiry"] = () => {
+    digitalEnquiryRequested = true;
+    history.replaceState(null, "", "/#contact/form");
+    S.view = "contact/form";
+    return page("form");
+  };
   V.contact = () => page();
   for (const tab of ["help", "form", "whatsapp"])
     V["contact/" + tab] = () => page(tab);

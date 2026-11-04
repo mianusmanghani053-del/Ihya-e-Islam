@@ -1,8 +1,8 @@
-import { installContact } from "./contact.mjs";
+import { installContact } from "./contact.mjs?v=contact-form-2";
 import { installImpact } from "./impact.mjs";
 import { installSeerah } from "./seerah.mjs";
 import { WORKFLOWS, GROUPS, STAFF_ROLES } from "./workflows.mjs";
-import { digitalSolutionsPage } from "./solutions.mjs";
+import { digitalSolutionsPage } from "./solutions.mjs?v=contact-form-2";
 import { renderPortalOverview, clearOverview } from "./overview.mjs";
 import { installNavigation } from "./navigation.mjs";
 window.renderPortalOverview = renderPortalOverview;
