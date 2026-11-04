@@ -9,7 +9,7 @@ const publicPages = [
   ["activities", "Activities"],
   ["digital-solutions", "Our Digital Solutions"],
   ["report", "Report a Crime"],
-  ["track", "Track a report"],
+  ["track", "Track a report or idea"],
   ["community", "Community"],
   ["tools", "Islamic tools"],
   ["transparency", "Fund transparency"],
@@ -40,6 +40,7 @@ const memberPages = [
 ];
 const staffPages = [
   ["staff", "Staff portal"],
+  ["decision-bench", "Decision Bench"],
   ["admin", "Administration (staff portal)"],
   ["content-tools", "Courses, events & shifts"],
 ];

@@ -67,6 +67,23 @@ Each fund card in the donation popup has a **See our work** button that opens a 
 
 Only publish media with the consent of the people shown. Do not show children's faces or exact locations of beneficiaries.
 
+## Share an idea and the Decision Bench
+
+A sticky **Share an idea** button (bottom-left, opposite **Report a Crime**) appears on every public and portal page. It opens a 4-step popup:
+
+1. **What:** idea, improvement, problem or appreciation, and the area (programs and their activities, live activities, funds, portal services, other).
+2. **Your idea:** one line (required unless a voice note is recorded), optional details, optional voice note (up to 2 minutes), urgency, and "I would like to help". Urgent items point to Report a Crime / 15.
+3. **Contact:** WhatsApp, call, SMS or no reply, then mobile number, name and city.
+4. **Send:** review with edit links. The person receives a reference and a private tracking key, plus a timeline (Received → Team review → Decision Bench → We update you).
+
+Each step tells the person their suggestion will be reviewed and decided at the Decision Bench.
+
+- **Storage:** records of kind `suggestion`. Voice notes go in D1 (`suggestion_audio`, migration `0004`, max 1 MB), so they work without R2.
+- **Review:** `#decision-bench`, linked from the Staff portal, for admins, the chairman and trustees. Leadership can play voice notes, open WhatsApp or call, set the stage (Received, Under review, At the Decision Bench, Accepted, Planned, Not taken forward, Done) and write a decision note. Every decision and voice-note play is audit-logged.
+- **Tracking:** people see the stage and the decision note on `#track` with their reference and key. Signed-in members also see them under My reports.
+
+Apply `npm run db:remote` (migration `0004_suggestions.sql`) before deploying this version.
+
 ## Validation
 
 ```sh

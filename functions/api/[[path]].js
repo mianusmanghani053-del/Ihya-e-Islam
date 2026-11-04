@@ -19,6 +19,27 @@ const fail = (message, status = 400) => {
   throw Object.assign(new Error(message), { status });
 };
 const id = () => crypto.randomUUID();
+const SUGGESTION_TYPES = ["idea", "improve", "problem", "appreciation"];
+const SUGGESTION_STATES = [
+  "received",
+  "under_review",
+  "decision_bench",
+  "accepted",
+  "planned",
+  "declined",
+  "done",
+];
+const AUDIO_TYPES = ["audio/webm", "audio/ogg", "audio/mp4", "audio/mpeg"];
+const AUDIO_MAX = 1024 * 1024;
+const optional = (value, max) =>
+  typeof value === "string" ? value.trim().slice(0, max) : "";
+function phoneNumber(value) {
+  const raw = optional(value, 40);
+  const digits = raw.replace(/[\s()-]/g, "");
+  if (!/^\+?\d{10,15}$/.test(digits))
+    fail("Enter a valid mobile or WhatsApp number, e.g. 0300 1234567.");
+  return digits;
+}
 const hex = (bytes) =>
   Array.from(new Uint8Array(bytes), (b) =>
     b.toString(16).padStart(2, "0"),
@@ -466,6 +487,34 @@ export async function onRequest({ request, env, params }) {
         data.trackingHash = await digest(
           (b.trackingSecret = text(b.trackingSecret, 100)),
         );
+      } else if (kind === "suggestion") {
+        if (!SUGGESTION_TYPES.includes(b.type))
+          fail("Choose what you would like to share.");
+        const contactPref = ["whatsapp", "call", "sms", "none"].includes(
+          b.contactPref,
+        )
+          ? b.contactPref
+          : "none";
+        data = {
+          type: b.type,
+          area: text(b.area, 150),
+          areaGroup: optional(b.areaGroup, 60),
+          summary: text(b.summary, 140),
+          details: optional(b.details, 1500),
+          urgency: ["can_wait", "soon", "urgent"].includes(b.urgency)
+            ? b.urgency
+            : "can_wait",
+          wantsToHelp: b.wantsToHelp === true,
+          contactPref,
+          name: optional(b.name, 100),
+          phone: contactPref === "none" && !b.phone ? "" : phoneNumber(b.phone),
+          city: optional(b.city, 100),
+          voiceNote: false,
+          decisionNote: "",
+        };
+        data.trackingHash = await digest(
+          (b.trackingSecret = text(b.trackingSecret, 100)),
+        );
       } else if (kind === "newsletter") {
         data = { email: email(b.email) };
       } else if (kind === "donation") {
@@ -534,7 +583,7 @@ export async function onRequest({ request, env, params }) {
       const b = await body(request);
       const row = await db
         .prepare(
-          "SELECT id,status,created_at,data FROM records WHERE id=? AND kind='report'",
+          "SELECT id,kind,status,created_at,data FROM records WHERE id=? AND kind IN ('report','suggestion')",
         )
         .bind(text(b.id, 100))
         .first();
@@ -545,11 +594,113 @@ export async function onRequest({ request, env, params }) {
           await digest(text(b.secret, 100)),
         )
       )
-        fail("Report or tracking key not found.", 404);
+        fail("Reference or tracking key not found.", 404);
       return json({
         id: row.id,
+        kind: row.kind,
         status: row.status,
         created_at: row.created_at,
+        ...(row.kind === "suggestion"
+          ? { decisionNote: JSON.parse(row.data).decisionNote || "" }
+          : {}),
+      });
+    }
+    const audioMatch = path.match(/^\/suggestions\/([0-9a-f-]{36})\/audio$/);
+    if (audioMatch && method === "POST") {
+      await limit(db, "voice:" + ip, 10);
+      const row = await db
+        .prepare("SELECT * FROM records WHERE id=? AND kind='suggestion'")
+        .bind(audioMatch[1])
+        .first();
+      const secret = request.headers.get("X-Tracking-Key");
+      if (
+        !row ||
+        !secret ||
+        !same(await digest(secret), JSON.parse(row.data).trackingHash)
+      )
+        fail("Access denied.", 403);
+      const type = (request.headers.get("content-type") || "")
+        .split(";")[0]
+        .trim();
+      if (!AUDIO_TYPES.includes(type))
+        fail("Voice notes must be WebM, Ogg, MP4 or MP3 audio.");
+      if (Number(request.headers.get("content-length")) > AUDIO_MAX)
+        fail("Voice notes must be under 1 MB (about 2 minutes).", 413);
+      const bytes = await request.arrayBuffer();
+      if (!bytes.byteLength || bytes.byteLength > AUDIO_MAX)
+        fail("Voice notes must be under 1 MB (about 2 minutes).", 413);
+      const saved = await db
+        .prepare(
+          "INSERT OR IGNORE INTO suggestion_audio(record_id,mime,size,data) VALUES(?,?,?,?)",
+        )
+        .bind(row.id, type, bytes.byteLength, bytes)
+        .run();
+      if (!saved.meta?.changes)
+        fail("A voice note was already added to this suggestion.", 409);
+      const data = JSON.parse(row.data);
+      data.voiceNote = true;
+      await db
+        .prepare("UPDATE records SET data=? WHERE id=?")
+        .bind(JSON.stringify(data), row.id)
+        .run();
+      return json({ ok: true }, 201);
+    }
+    const bench = () => {
+      auth();
+      if (!permitted(roles, ["trustee"]))
+        fail("Decision Bench access is for leadership.", 403);
+    };
+    if (path === "/suggestions" && method === "GET") {
+      bench();
+      const rows = (
+        await db
+          .prepare(
+            "SELECT id,status,created_at,data FROM records WHERE kind='suggestion' ORDER BY created_at DESC LIMIT 500",
+          )
+          .all()
+      ).results.map(unpack);
+      for (const row of rows) delete row.data.trackingHash;
+      return json({ items: rows });
+    }
+    const benchMatch = path.match(/^\/suggestions\/([0-9a-f-]{36})$/);
+    if (benchMatch && method === "PATCH") {
+      bench();
+      const b = await body(request);
+      if (!SUGGESTION_STATES.includes(b.status)) fail("Invalid stage.");
+      const row = await db
+        .prepare("SELECT data FROM records WHERE id=? AND kind='suggestion'")
+        .bind(benchMatch[1])
+        .first();
+      if (!row) fail("Not found.", 404);
+      const data = JSON.parse(row.data);
+      if (typeof b.decisionNote === "string")
+        data.decisionNote = b.decisionNote.trim().slice(0, 1000);
+      data.reviewedBy = user.name;
+      data.reviewedAt = new Date().toISOString();
+      await db
+        .prepare("UPDATE records SET status=?, data=? WHERE id=?")
+        .bind(b.status, JSON.stringify(data), benchMatch[1])
+        .run();
+      await audit(db, user.id, "suggestion.decision", benchMatch[1], {
+        status: b.status,
+      });
+      return json({ ok: true });
+    }
+    if (audioMatch && method === "GET") {
+      bench();
+      const file = await db
+        .prepare("SELECT mime,data FROM suggestion_audio WHERE record_id=?")
+        .bind(audioMatch[1])
+        .first();
+      if (!file) fail("Voice note not found.", 404);
+      await audit(db, user.id, "suggestion.voice", audioMatch[1]);
+      return new Response(new Uint8Array(file.data), {
+        headers: {
+          "Content-Type": file.mime,
+          "Cache-Control": "no-store",
+          "X-Content-Type-Options": "nosniff",
+          "Content-Disposition": "inline",
+        },
       });
     }
     if (path === "/uploads" && method === "POST") {
