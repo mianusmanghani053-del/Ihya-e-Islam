@@ -3089,7 +3089,9 @@
         },
         ptab: (b) => {
           S.pTab = b.dataset.v;
-          go();
+          const target = S.pTab === "over" ? "#portal" : "#portal/" + S.pTab;
+          if (location.hash === target) go();
+          else location.hash = target;
         },
       };
       document.addEventListener("click", (e) => {
@@ -3195,6 +3197,7 @@
     <script src="/portal.js"></script>
     <link rel="stylesheet" href="/platform.css" />
     <link rel="stylesheet" href="/solutions.css" />
+    <link rel="stylesheet" href="/dashboard.css" />
     <script type="module" src="/platform.js"></script>
   </body>
 </html>

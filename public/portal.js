@@ -14,6 +14,8 @@ async function api(path, options = {}) {
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || "Request failed");
+  if (options.method && !["GET", "HEAD"].includes(options.method))
+    window.invalidatePortalOverview?.();
   return data;
 }
 const send = (path, data, method = "POST") =>
@@ -56,18 +58,9 @@ function portalView() {
       .join("") || empty("No records yet.");
   const panes = {
     over: () =>
-      `<div class="grid g3">${[
-        ["Donation records", mine("donation").length],
-        ["Applications", mine("volunteer").length],
-        ["Enrollments", enrollments.length],
-      ]
-        .map(
-          ([label, n]) =>
-            `<div class="card stat"><b style="color:var(--em)">${n}</b><span>${label}</span></div>`,
-        )
-        .join(
-          "",
-        )}</div><p class="note" style="margin-top:18px">Only your actual activity is shown here. Bank transfers appear as pending until the finance team confirms receipt.</p>`,
+      window.renderPortalOverview
+        ? window.renderPortalOverview()
+        : empty("Loading your overview…"),
     don: () => cards(mine("donation")),
     vol: () =>
       cards(mine("volunteer")) +
@@ -88,13 +81,14 @@ function portalView() {
     settings: () =>
       `<div class="card"><h3>Change password</h3><p>Changing your password signs out every session.</p><form class="form" data-live-form="password">${field("currentPassword", "Current password", "password")}${field("password", "New password", "password")}<p class="err w"></p><button class="btn em">Update password</button></form></div>`,
   };
-  return `<section class="sec"><div class="wrap"><div class="sh"><div><span class="eyebrow">Member portal</span><h2>Assalamu alaikum, ${h(member.name)}</h2><p>${h(member.email)}</p></div><div>${action("logout", "Sign out")} ${member.role === "admin" ? '<a href="#admin" class="btn sm">Administration</a>' : ""}</div></div>${portalError ? empty(portalError) : ""}<div class="pl"><div class="pside">${tabs.map(([key, label]) => `<button data-a="ptab" data-v="${key}" class="${S.pTab === key ? "on" : ""}">${label}</button>`).join("")}</div><div class="grid">${(panes[S.pTab] || panes.over)()}</div></div></div></section>`;
+  return `<section class="sec"><div class="wrap"><div class="sh"><div><span class="eyebrow">Member portal</span><h2>Assalamu alaikum, ${h(member.name)}</h2><p>${h(member.email)}</p></div><div><button class="btn gold" data-a="donate">Give again</button> ${action("logout", "Sign out")} ${member.role === "admin" ? '<a href="#admin" class="btn sm">Administration</a>' : ""}</div></div>${portalError ? empty(portalError) : ""}<div class="pl"><div class="pside">${tabs.map(([key, label]) => `<button data-a="ptab" data-v="${key}" class="${S.pTab === key ? "on" : ""}">${label}</button>`).join("")}</div><div class="grid">${(panes[S.pTab] || panes.over)()}</div></div></div></section>`;
 }
 V.admin = () =>
   member?.role !== "admin"
     ? empty("Administrator access required.")
     : `<section class="sec"><div class="wrap"><h2>Administration</h2><p>Private submissions are visible only to administrators. Report status records your team’s actual actions; it does not notify authorities automatically.</p><div class="card"><h3>Publish an activity</h3><form class="form" data-live-form="resource"><div><label for="kind">Type</label><select name="kind" id="kind"><option value="event">Event</option><option value="shift">Volunteer shift</option><option value="course">Course</option></select></div>${field("title", "Title")}${field("description", "Description")}${field("date", "Date and time", "datetime-local", false)}${field("location", "Location", "text", false)}<div class="w"><label for="lessons">Course lessons</label><div id="lesson-fields"><div class="lesson-fields"><label>Lesson title <input name="lessonTitle"></label><label>Lesson content <textarea name="lessonBody"></textarea></label></div></div>${action("add-lesson", "Add another lesson")}</div><p class="err w"></p><button class="btn em">Publish</button></form></div><h3 style="margin:24px 0">Submissions</h3><div class="grid">${adminRecords.map((r) => `<div class="card"><span class="eyebrow">${h(r.kind)}</span><h3>${h(r.id)}</h3><pre style="white-space:pre-wrap;overflow-wrap:anywhere">${h(JSON.stringify({ ...r.data, trackingHash: undefined, attachments: undefined }, null, 2))}</pre>${(r.data.attachments || []).map((key) => `<a class="btn sm" href="/api/attachments/${encodeURIComponent(key)}">Download private attachment</a>`).join("")}<label>Status <select data-live-status="${h(r.id)}">${{ report: ["received", "checked", "forwarded", "closed"], volunteer: ["received", "approved", "declined"], donation: ["awaiting_transfer", "confirmed", "cancelled"], newsletter: ["received", "unsubscribed"] }[r.kind].map((status) => `<option ${r.status === status ? "selected" : ""}>${status}</option>`).join("")}</select></label></div>`).join("") || empty("No submissions yet.")}</div></div></section>`;
 async function refresh() {
+  window.invalidatePortalOverview?.();
   portalError = "";
   try {
     const session = await api("/auth/me");
