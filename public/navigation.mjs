@@ -205,11 +205,6 @@ export function installNavigation() {
     });
     document.querySelector(".route-map-count").textContent = count + " pages";
   });
-  document
-    .querySelector("footer .wrap")
-    ?.insertAdjacentHTML(
-      "beforeend",
-      '<p><a href="#route-map">Website & portal route map</a></p>',
-    );
+
   route();
 }

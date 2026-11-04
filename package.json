@@ -14,7 +14,7 @@
     "deploy": "wrangler pages deploy public --project-name ihya-e-islam --branch main",
     "test": "node scripts/test.mjs",
     "test:browser": "RUN_BROWSER=1 node scripts/test.mjs",
-    "format": "prettier --write public/index.html public/portal.js public/portal.css public/platform.js public/platform.css public/workflows.mjs public/solutions.mjs public/solutions.css public/overview.mjs public/navigation.mjs public/dashboard.css functions lib scripts tests/*.js wrangler.jsonc package.json README.md"
+    "format": "prettier --write public/index.html public/portal.js public/portal.css public/platform.js public/platform.css public/workflows.mjs public/solutions.mjs public/solutions.css public/overview.mjs public/navigation.mjs public/dashboard.css public/footer.css functions lib scripts tests/*.js wrangler.jsonc package.json README.md"
   },
   "repository": {
     "type": "git",

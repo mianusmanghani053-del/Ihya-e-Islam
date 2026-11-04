@@ -848,12 +848,6 @@ loadQuran();
 
 V.privacy = () =>
   `<section class="sec"><div class="wrap"><div class="card"><h2>Privacy & service information</h2><p>Account details, applications, donations, enrollments and bookmarks are stored in the organization’s database. Reports and attachments are available to authorized administrators; attachments are not public.</p><p>Choosing anonymous reporting omits your account identity and contact details from the report. Keep the private tracking key to check its status. Infrastructure providers may still process connection metadata. This website is not an emergency service: use the emergency numbers listed on the reporting page.</p><p>Bank transfers are reviewed by the organization. The website never requests a bank password or card PIN. Subscription requests are saved; email delivery has not yet been enabled.</p><p>The organization must publish its contact information and retention policy before public launch. Contact an administrator to request correction or deletion of your records.</p></div></div></section>`;
-document
-  .querySelector("footer .wrap")
-  ?.insertAdjacentHTML(
-    "beforeend",
-    '<p><a href="#privacy">Privacy & service information</a> · <a href="#track">Track a report</a></p>',
-  );
 
 document.addEventListener(
   "click",

@@ -712,12 +712,7 @@ document.addEventListener(
   },
   true,
 );
-document
-  .querySelector("footer .wrap")
-  ?.insertAdjacentHTML(
-    "beforeend",
-    '<p><a href="#support-line">Confidential support</a></p>',
-  );
+
 route();
 
 let cachedMemberId = null;
