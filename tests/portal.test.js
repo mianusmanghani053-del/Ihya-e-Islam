@@ -311,3 +311,77 @@ test("Donation checkout creates a protected account with a required first-login 
     "Existing members must never get replacement credentials",
   );
 });
+
+test("Contact form validates consent, saves enquiries and protects the inbox", async () => {
+  const enquiry = {
+    name: "Contact visitor",
+    email: "visitor@example.com",
+    topic: "Member portal",
+    subject: "Help with sign-in",
+    message: "I need help accessing my portal account.",
+    consent: true,
+  };
+  const response = await call("/contact-settings", undefined, "GET", "");
+  assert.equal(response.status, 200);
+  assert.equal(response.body.whatsapp, null);
+  assert.equal(
+    (await call("/contact", { ...enquiry, consent: false }, "POST", "")).status,
+    400,
+  );
+  assert.equal(
+    (await call("/contact", { ...enquiry, topic: "invalid" }, "POST", ""))
+      .status,
+    400,
+  );
+  assert.equal(
+    (await call("/contact", { ...enquiry, email: "not-an-email" }, "POST", ""))
+      .status,
+    400,
+  );
+  assert.equal(
+    (await call("/contact", { ...enquiry, website: "spam" }, "POST", ""))
+      .status,
+    400,
+  );
+  const saved = await call(
+    "/contact",
+    { ...enquiry, service: "services/zakat" },
+    "POST",
+    "",
+  );
+  assert.equal(saved.status, 201);
+  assert.equal(saved.body.status, "received");
+  assert.equal(
+    (
+      await call(
+        "/contact",
+        { ...enquiry, service: "not-a-real-service" },
+        "POST",
+        "",
+      )
+    ).status,
+    400,
+  );
+  assert.match(saved.body.id, /^[0-9a-f-]{36}$/);
+  assert.equal(
+    (await call("/contact/messages", undefined, "GET", "")).status,
+    401,
+  );
+  const login = await call(
+    "/auth/login",
+    { email: userEmail, password: "test-password-1234" },
+    "POST",
+    "",
+  );
+  assert.equal(
+    (
+      await call(
+        "/contact/messages",
+        undefined,
+        "GET",
+        login.cookie.split(";")[0],
+      )
+    ).status,
+    403,
+  );
+});

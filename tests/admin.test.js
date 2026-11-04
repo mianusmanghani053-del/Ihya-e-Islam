@@ -171,4 +171,56 @@ test("local admin, bank-transfer review and resource management", async (t) => {
       );
     },
   );
+  await t.test(
+    "authorised team can review and close contact enquiries",
+    async () => {
+      const message = await call(
+        "/contact",
+        {
+          name: "A visitor",
+          email: "contact@example.com",
+          topic: "General enquiry",
+          service: "services/zakat",
+          subject: "Community question",
+          message: "Please tell me more about community programmes.",
+          consent: true,
+        },
+        "POST",
+        "",
+      );
+      assert.equal(message.status, 201);
+      const inbox = await call("/contact/messages");
+      assert.equal(inbox.status, 200);
+      assert.equal(
+        inbox.body.items.find((r) => r.id === message.body.id).data.email,
+        "contact@example.com",
+      );
+      assert.equal(
+        (
+          await call(
+            "/contact/messages",
+            { id: message.body.id, status: "closed" },
+            "PATCH",
+          )
+        ).status,
+        200,
+      );
+      assert.equal(
+        (
+          await call(
+            "/contact/messages",
+            { id: message.body.id, status: "published" },
+            "PATCH",
+          )
+        ).status,
+        400,
+      );
+      assert.equal(
+        (await call("/contact/messages")).body.items.find(
+          (r) => r.id === message.body.id,
+        ).status,
+        "closed",
+      );
+    },
+  );
 });

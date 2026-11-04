@@ -2,6 +2,10 @@ import { READINGS } from "./seerah.mjs";
 import { WORKFLOWS, GROUPS } from "./workflows.mjs";
 const publicPages = [
   ["home", "Home"],
+  ["contact", "Contact Us"],
+  ["contact/help", "Help & Support"],
+  ["contact/form", "Contact Us Form"],
+  ["contact/whatsapp", "WhatsApp"],
   ["quran", "Quran"],
   ["hadith", "Hadith"],
   ["seerah", "Seerah & Khulafa"],
@@ -51,6 +55,7 @@ const memberPages = [
 ];
 const staffPages = [
   ["staff", "Staff portal"],
+  ["contact-inbox", "Contact enquiries inbox"],
   ["decision-bench", "Decision Bench"],
   ["admin", "Administration (staff portal)"],
   ["content-tools", "Courses, events & shifts"],
@@ -124,7 +129,12 @@ function routeMap() {
 function breadcrumb() {
   const raw = location.hash.slice(1) || "home";
   let rows = [{ label: "Home", href: "#home" }];
-  if (raw.startsWith("our-work/"))
+  if (raw.startsWith("contact/"))
+    rows.push(
+      { label: "Contact Us", href: "#contact" },
+      { label: nameOf(raw) },
+    );
+  else if (raw.startsWith("our-work/"))
     rows.push(
       { label: "Our Work & Your Impact", href: "#our-work" },
       { label: nameOf(raw) },

@@ -1,3 +1,4 @@
+import { contact } from "../../lib/contact.js";
 import {
   platform,
   rolesFor,
@@ -179,6 +180,24 @@ export async function onRequest({ request, env, params }) {
         "Change your temporary password before using your member account.",
         403,
       );
+    if (path.startsWith("/contact")) {
+      const handled = await contact({
+        path,
+        method,
+        db,
+        user,
+        roles,
+        env,
+        request,
+        json,
+        fail,
+        body,
+        text,
+        id,
+        limit,
+      });
+      if (handled) return handled;
+    }
     if (path.startsWith("/v2/")) {
       const handled = await platform({
         db,

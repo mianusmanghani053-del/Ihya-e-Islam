@@ -1,0 +1,32 @@
+import { WORKFLOWS, GROUPS } from "./workflows.mjs";
+export const CONTACT_SERVICES = [
+  ...Object.entries(WORKFLOWS).map(([key, workflow]) => ({
+    id: "services/" + key,
+    label: workflow.title,
+    group: GROUPS[workflow.group] || "Other services",
+  })),
+  ...[
+    ["portal", "Portal overview / account access"],
+    ["portal/don", "Donations & receipts"],
+    ["donation-tracking", "Track & confirm donations"],
+    ["notifications", "Alerts & reminders"],
+    ["credentials", "Verified credentials"],
+    ["unit-profile", "Unit & blood profile"],
+    ["portal/vol", "My volunteering"],
+    ["portal/learn", "My learning & enrollments"],
+    ["portal/rep", "My reports"],
+    ["portal/settings", "Account settings / password"],
+    ["hub", "All Services"],
+    ["community", "Community listings"],
+    ["tools", "Islamic tools"],
+    ["transparency", "Fund transparency"],
+    ["support-line", "Confidential support"],
+    ["track", "Track a report or idea"],
+    ["activities", "Events, shifts & courses"],
+    ["digital-solutions", "Our Digital Solutions"],
+    ["our-work", "Our Work & Your Impact"],
+    ["staff", "Staff portal / roles"],
+    ["content-tools", "Courses, events & shifts administration"],
+    ["decision-bench", "Suggestions / Decision Bench"],
+  ].map(([id, label]) => ({ id, label, group: "Portal & website support" })),
+];
