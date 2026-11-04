@@ -1,0 +1,6 @@
+{
+  "water": [
+    { "type": "image", "src": "/media/test.png", "caption": "TEST image" },
+    { "type": "image", "src": "/media/test.png", "caption": "TEST 2" }
+  ]
+}

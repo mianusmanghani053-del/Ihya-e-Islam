@@ -224,3 +224,139 @@ textarea {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+.donation-picker .funds .fund-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  overflow: hidden;
+}
+.donation-picker .funds .fund-card.on {
+  border-color: var(--em);
+  background: var(--tint);
+  box-shadow: 0 0 0 1px var(--em);
+}
+.donation-picker .funds .fund-pick {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-height: 64px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+.donation-picker .funds .fund-card.on .fund-pick {
+  background: none;
+}
+.fund-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  color: #fff;
+  background: var(--fund, var(--em));
+}
+.donation-picker .funds .fund-media-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  border: 0;
+  border-top: 1px solid var(--line);
+  padding: 7px 10px;
+  background: color-mix(in srgb, var(--fund, var(--em)) 10%, transparent);
+  color: var(--fund, var(--em));
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: left;
+  min-height: 0;
+  border-radius: 0;
+}
+.donation-picker .funds .fund-media-link:hover {
+  background: color-mix(in srgb, var(--fund, var(--em)) 18%, transparent);
+}
+.fund-media-nav {
+  margin-bottom: 12px;
+}
+.fund-media-back {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 10px;
+  padding: 7px 14px;
+  font-weight: 600;
+}
+.fund-media-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.fund-media-head .fund-icon {
+  width: 44px;
+  height: 44px;
+}
+.fund-media-head b {
+  display: block;
+  font-size: 17px;
+}
+.fund-media-head small {
+  color: var(--sub);
+}
+.fund-media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+}
+.fund-media-grid figure,
+.fund-media-full {
+  margin: 0;
+}
+.fund-media-thumb {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--tint);
+}
+.fund-media-grid img,
+.fund-media-grid video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #000;
+}
+.fund-media-full img {
+  display: block;
+  width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #000;
+}
+.fund-media-grid figcaption,
+.fund-media-full figcaption {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--sub);
+}
+.fund-media-empty {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  background: var(--tint);
+}
+.fund-media-empty p {
+  margin: 0;
+  font-size: 14px;
+}

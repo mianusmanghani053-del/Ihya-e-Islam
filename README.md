@@ -40,6 +40,33 @@ The member portal now includes donor, volunteer, student, beneficiary and commun
 
 Original sample members, payment histories, impact figures and event registrations are not used as real account data. Two introductory courses are seeded; the teaching team must publish the actual curriculum. Government registration certificates, audited accounts and policies must be supplied by the organization. The language toggle covers the original Urdu navigation/home content; the full portal UI is currently English, and Quran translation can be switched independently.
 
+## Fund photos and videos
+
+Each fund card in the donation popup has a **See our work** button that opens a gallery. The gallery reads `public/data/fund-media.json`; a fund with no items shows a "photos are on their way" message.
+
+1. Put files in `public/media/<fund>/`, for example `public/media/water/pump-sanghar.jpg`. Keep photos under about 300 KB and videos short (MP4, H.264).
+2. List them under the fund's id (`gen`, `zakat`, `winter`, `orphan`, `ilm`, `water`):
+
+```json
+{
+  "water": [
+    {
+      "type": "image",
+      "src": "/media/water/pump-sanghar.jpg",
+      "caption": "New hand pump, Sanghar, Oct 2026"
+    },
+    {
+      "type": "video",
+      "src": "/media/water/handover.mp4",
+      "poster": "/media/water/handover.jpg",
+      "caption": "Handover to the village"
+    }
+  ]
+}
+```
+
+Only publish media with the consent of the people shown. Do not show children's faces or exact locations of beneficiaries.
+
 ## Validation
 
 ```sh
