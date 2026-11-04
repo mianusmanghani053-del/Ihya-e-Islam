@@ -176,7 +176,8 @@ export async function onRequest({ request, env, params }) {
     };
     const admin = () => {
       auth();
-      if (user.role !== "admin") fail("Administrator access required.", 403);
+      // The chairman is the organisation's super administrator.
+      if (!permitted(roles, [])) fail("Administrator access required.", 403);
     };
     const ip = request.headers.get("CF-Connecting-IP") || "local";
     const cookie = (token, age) =>
@@ -360,24 +361,49 @@ export async function onRequest({ request, env, params }) {
       else fail("Method not allowed.", 405);
       return json({ ok: true });
     }
+    const publisher = () => {
+      auth();
+      if (!permitted(roles, ["scholar", "city_coordinator"]))
+        fail("Content publisher access required.", 403);
+    };
+    if (
+      path === "/resources" &&
+      method === "GET" &&
+      url.searchParams.get("manage") === "1"
+    ) {
+      publisher();
+      const rows = (
+        await db.prepare("SELECT * FROM resources ORDER BY active DESC").all()
+      ).results;
+      const counts = Object.fromEntries(
+        (
+          await db
+            .prepare(
+              "SELECT resource_id, COUNT(*) n FROM enrollments GROUP BY resource_id",
+            )
+            .all()
+        ).results.map((r) => [r.resource_id, r.n]),
+      );
+      return json({
+        items: rows.map((r) => ({
+          ...unpack(r),
+          active: !!r.active,
+          enrolled: counts[r.id] || 0,
+        })),
+      });
+    }
     if (path === "/resources" && method === "GET")
       return json({
         items: (
           await db.prepare("SELECT * FROM resources WHERE active=1").all()
         ).results.map(unpack),
       });
-    if (path === "/resources" && method === "POST") {
-      auth();
-      if (!permitted(roles, ["scholar", "city_coordinator"]))
-        fail("Content publisher access required.", 403);
-      const b = await body(request);
-      if (!["event", "shift", "course"].includes(b.kind))
-        fail("Invalid resource type.");
+    const resourceData = (b, kind) => {
       const data = {
         title: text(b.title, 200),
         description: text(b.description, 3000),
       };
-      if (b.kind !== "course") {
+      if (kind !== "course") {
         if (b.requiredTraining)
           data.requiredTraining = text(b.requiredTraining, 100);
         data.date = text(b.date, 40);
@@ -395,17 +421,50 @@ export async function onRequest({ request, env, params }) {
           body: text(l.body, 20000),
         }));
       }
+      return data;
+    };
+    if (path === "/resources" && method === "POST") {
+      publisher();
+      const b = await body(request);
+      if (!["event", "shift", "course"].includes(b.kind))
+        fail("Invalid resource type.");
+      const data = resourceData(b, b.kind);
       const rid = id();
       await db
         .prepare("INSERT INTO resources VALUES(?,?,?,1)")
         .bind(rid, b.kind, JSON.stringify(data))
         .run();
+      await audit(db, user.id, "resource.create", rid, { kind: b.kind });
       return json({ id: rid }, 201);
     }
+    const resourceMatch = path.match(/^\/resources\/([^/]+)$/);
+    if (resourceMatch && method === "PATCH") {
+      publisher();
+      const rid = decodeURIComponent(resourceMatch[1]);
+      const row = await db
+        .prepare("SELECT kind FROM resources WHERE id=?")
+        .bind(rid)
+        .first();
+      if (!row) fail("Activity not found.", 404);
+      const b = await body(request);
+      if (b.restore === true) {
+        await db
+          .prepare("UPDATE resources SET active=1 WHERE id=?")
+          .bind(rid)
+          .run();
+        await audit(db, user.id, "resource.restore", rid);
+        return json({ ok: true });
+      }
+      await db
+        .prepare("UPDATE resources SET data=? WHERE id=?")
+        .bind(JSON.stringify(resourceData(b, row.kind)), rid)
+        .run();
+      await audit(db, user.id, "resource.edit", rid);
+      return json({ ok: true });
+    }
     if (path.startsWith("/resources/") && method === "DELETE") {
-      auth();
-      if (!permitted(roles, ["scholar", "city_coordinator"]))
-        fail("Content publisher access required.", 403);
+      publisher();
+      await audit(db, user.id, "resource.remove", path.split("/")[2]);
       await db
         .prepare("UPDATE resources SET active=0 WHERE id=?")
         .bind(path.split("/")[2])

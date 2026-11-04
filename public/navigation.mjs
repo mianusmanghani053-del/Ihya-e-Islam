@@ -57,8 +57,9 @@ const staffPages = [
   ["staff", "Staff portal"],
   ["contact-inbox", "Contact enquiries inbox"],
   ["decision-bench", "Decision Bench"],
+  ["submissions", "Website submissions"],
   ["admin", "Administration (staff portal)"],
-  ["content-tools", "Courses, events & shifts"],
+  ["content-tools", "Manage events & courses"],
 ];
 const nameOf = (route) =>
   [
@@ -176,11 +177,13 @@ function breadcrumb() {
       "staff",
       "admin",
       "content-tools",
+      "decision-bench",
+      "submissions",
     ].includes(S.view)
   )
     rows.push(
       { label: "Portal", href: "#portal" },
-      ...(S.view === "content-tools"
+      ...(["content-tools", "decision-bench", "submissions"].includes(S.view)
         ? [{ label: "Staff portal", href: "#staff" }]
         : []),
       { label: nameOf(S.view) },

@@ -357,6 +357,42 @@ portalView = () =>
     '<nav class="portal-toolbar" aria-label="Portal shortcuts"><a class="btn" href="#donation-tracking">Track donations</a><a class="btn" href="#notifications">Alerts & reminders</a><a class="btn" href="#community">Community</a><a class="btn" href="#tools">Islamic tools</a><a class="btn" href="#transparency">Transparency</a><a class="btn" href="#route-map">Route map</a><a class="btn portal-all-services" href="#hub">All Services</a></nav><div class="pl">',
   );
 const originalAdmin = V.admin;
+let managed = null,
+  managedError = "";
+window.reloadManagedResources = async () => {
+  try {
+    managed = (await api("/resources?manage=1")).items;
+    window.managedResources = managed;
+    managedError = "";
+  } catch (e) {
+    managedError = e.message;
+  }
+  if (S.view === "content-tools") go();
+};
+const TRAININGS = [
+  "First aid",
+  "Fire safety",
+  "Child safeguarding",
+  "Reporting without confronting",
+];
+function resourceForm(r) {
+  const d = r?.data || {};
+  const kind = r?.kind || "event";
+  const local = d.date
+    ? new Date(
+        new Date(d.date).getTime() -
+          new Date(d.date).getTimezoneOffset() * 60000,
+      )
+        .toISOString()
+        .slice(0, 16)
+    : "";
+  const lessons = d.lessons?.length ? d.lessons : [{ title: "", body: "" }];
+  return `<div class="card manage-form"><h3>${r ? "Edit: " + safe(d.title) : "Add a new event, shift or course"}</h3><form class="service-form" data-live-form="resource">${r ? `<input type="hidden" name="id" value="${safe(r.id)}"><input type="hidden" name="kind" value="${safe(kind)}"><p class="note">Type: ${safe(kind)}. To change the type, remove this and add a new one.</p>` : `<label>Type<select name="kind" id="kind"><option value="event">Event</option><option value="shift">Volunteer shift</option><option value="course">Course</option></select></label>`}<label>Title<input name="title" id="title" required maxlength="200" value="${safe(d.title || "")}"></label><label>Description<textarea name="description" id="description" required maxlength="3000" rows="3">${safe(d.description || "")}</textarea></label>${kind === "course" && r ? "" : `<label>Date and time<input name="date" type="datetime-local" value="${local}"></label><label>Location<input name="location" maxlength="300" value="${safe(d.location || "")}"></label><label>Required training (shifts)<select name="requiredTraining"><option></option>${TRAININGS.map((t) => `<option ${d.requiredTraining === t ? "selected" : ""}>${t}</option>`).join("")}</select></label>`}${kind === "course" || !r ? `<div id="lesson-fields">${lessons.map((l) => `<label>Lesson title<input name="lessonTitle" value="${safe(l.title)}"></label><label>Lesson content<textarea name="lessonBody">${safe(l.body)}</textarea></label>`).join("")}</div><button type="button" class="btn" data-live="add-lesson">Add another lesson</button>` : ""}<p class="err"></p><div class="service-actions"><button class="btn em">${r ? "Save changes" : "Publish"}</button>${r ? '<button type="button" class="btn" data-live="cancel-edit">Cancel</button>' : ""}</div></form>${r ? "" : '<p class="note">Events and shifts need a date and location. Courses need at least one lesson.</p>'}</div>`;
+}
+function managedCard(r) {
+  const d = r.data;
+  return `<div class="card manage-item${r.active ? "" : " removed"}"><div class="service-actions" style="margin:0 0 6px"><span class="tag m">${safe(r.kind)}</span>${r.active ? '<span class="tag s">Live</span>' : '<span class="tag r">Removed</span>'}<span class="tag">${r.enrolled} registered</span></div><h3>${safe(d.title)}</h3>${d.date ? `<p>${safe(new Date(d.date).toLocaleString("en-PK"))}${d.location ? " · " + safe(d.location) : ""}</p>` : ""}${d.lessons ? `<p>${d.lessons.length} lesson${d.lessons.length === 1 ? "" : "s"}</p>` : ""}<div class="service-actions"><button type="button" class="btn sm" data-live="edit-resource" data-value="${safe(r.id)}">Edit</button>${r.active ? `<button type="button" class="btn sm" data-live="archive" data-value="${safe(r.id)}">Remove</button>` : `<button type="button" class="btn sm em" data-live="restore-resource" data-value="${safe(r.id)}">Restore</button>`}</div></div>`;
+}
 V["content-tools"] = () => {
   if (!member) return requireMember();
   if (!context) {
@@ -365,11 +401,25 @@ V["content-tools"] = () => {
   }
   if (!staffRole(["scholar", "city_coordinator"]))
     return empty("Content publisher access required.");
+  if (managedError)
+    return block("Manage events & courses", empty(managedError));
+  if (!managed) {
+    window.reloadManagedResources();
+    return block("Manage events & courses", empty("Loading activities…"));
+  }
+  const editing = managed.find((r) => r.id === window.editingResource);
+  const live = managed.filter((r) => r.active),
+    removed = managed.filter((r) => !r.active);
   return block(
-    "Courses, events & shifts",
-    `<div class="card"><form class="service-form" data-live-form="resource"><label>Type<select name="kind" id="kind"><option value="event">Event</option><option value="shift">Volunteer shift</option><option value="course">Course</option></select></label><label>Title<input name="title" id="title" required></label><label>Description<input name="description" id="description" required></label><label>Date<input name="date" type="datetime-local"></label><label>Location<input name="location"></label><label>Required training (shifts)<select name="requiredTraining"><option></option><option>First aid</option><option>Fire safety</option><option>Child safeguarding</option><option>Reporting without confronting</option></select></label><div id="lesson-fields"><label>Lesson title<input name="lessonTitle"></label><label>Lesson content<textarea name="lessonBody"></textarea></label></div><button type="button" class="btn" data-live="add-lesson">Add another lesson</button><p class="err"></p><button class="btn em">Publish</button></form></div>`,
+    "Manage events & courses",
+    `<p><a class="btn sm" href="#staff">← Staff portal</a></p>${resourceForm(editing)}<h3 style="margin:24px 0 10px">On the website (${live.length})</h3><div class="grid g2">${live.map(managedCard).join("") || empty("Nothing published yet. Add your first event above.")}</div>${removed.length ? `<h3 style="margin:24px 0 10px">Removed (${removed.length})</h3><div class="grid g2">${removed.map(managedCard).join("")}</div>` : ""}`,
   );
 };
+V.submissions = () =>
+  originalAdmin().replace(
+    "<h2>Administration</h2>",
+    '<p><a class="btn sm" href="#staff">← Staff portal</a></p><h2>Website submissions</h2>',
+  );
 async function loadStaff() {
   await ensureContext();
   if (!context.staff) throw new Error("Staff access required.");
@@ -396,7 +446,7 @@ V.staff = () => {
   }
   return block(
     "Staff portal",
-    `<p class="note">Staff member reference: ${safe(member.id)}. Case contents require assignment; opening a case is logged.</p><div class="service-actions">${staffRole(["trustee"]) ? '<a class="btn gold" href="#decision-bench">Decision Bench · Suggestions</a>' : ""}<a class="btn" href="#services/article">Reviewed publishing</a><a class="btn" href="#services/volunteer_review">Volunteer checks</a><a class="btn" href="#services/callout">Emergency call-out</a><a class="btn" href="#services/training">Training & badges</a>${staffRole(["scholar", "city_coordinator"]) ? '<a class="btn" href="#content-tools">Courses & shifts</a>' : ""}</div>${staffRole(["trustee", "city_coordinator"]) ? `<details class="card"><summary>Roles, assignments & unit verification</summary><div class="grid g2"><form class="service-form" data-platform-form="assign"><h3>Assign a case handler</h3>${userSelect()}<label>Case / report reference<input name="caseId" required></label><p class="err"></p><button class="btn">Assign handler</button></form><form class="service-form" data-platform-form="verify-unit"><h3>Verify unit membership</h3>${userSelect()}<label><input name="verified" type="checkbox"> Verified city, unit and wing</label><p class="err"></p><button class="btn">Save verification</button></form>${staffRole(["trustee"]) ? `<form class="service-form" data-platform-form="role"><h3>Staff roles</h3>${userSelect()}<label>Role<select name="role">${STAFF_ROLES.map((r) => `<option>${r}</option>`).join("")}</select></label><label><input type="checkbox" name="remove"> Remove role</label><p class="err"></p><button class="btn">Save role</button></form><form class="service-form" data-platform-form="settings"><h3>Trust settings</h3><label>Two-approver threshold (Rs)<input name="paymentThreshold" type="number" min="1" value="${context.paymentThreshold}" required></label><label><input type="checkbox" name="taxExempt" ${context.taxExempt ? "checked" : ""}> Trust has verified tax-exempt status</label><label>Tax registration reference<input name="taxRegistration"></label><p class="err"></p><button class="btn">Save settings</button></form>` : ""}</div></details>` : ""}<h3 class="service-group-title">Case review queues</h3><div class="card"><div class="tw"><table><thead><tr><th>Reference</th><th>Service</th><th>Status</th><th>Action</th></tr></thead><tbody>${[...queue.items, ...queue.reports, ...(queue.support || []).map((r) => ({ ...r, kind: "anonymous_support" }))].map((r) => `<tr><td>${safe(r.id)}</td><td>${safe(WORKFLOWS[r.kind]?.title || r.kind)}</td><td>${safe(r.status)}</td><td>${button(r.kind === "report" ? "report" : r.kind === "anonymous_support" ? "support-case" : "open", "Open assigned case", r.id)}</td></tr>`).join("")}</tbody></table></div></div>${staffRole(["finance", "trustee"]) ? financeView() : ""}${staffRole(["trustee"]) ? button("audit", "View access & change audit") : ""}`,
+    `<p class="note">Staff member reference: ${safe(member.id)}. Case contents require assignment; opening a case is logged.</p><div class="service-actions">${staffRole(["trustee"]) ? '<a class="btn gold" href="#decision-bench">Decision Bench · Suggestions</a>' : ""}<a class="btn" href="#services/article">Reviewed publishing</a><a class="btn" href="#services/volunteer_review">Volunteer checks</a><a class="btn" href="#services/callout">Emergency call-out</a><a class="btn" href="#services/training">Training & badges</a>${staffRole(["scholar", "city_coordinator"]) ? '<a class="btn gold" href="#content-tools">Manage events & courses</a>' : ""}${staffRole([]) ? '<a class="btn" href="#submissions">Website submissions</a>' : ""}</div>${staffRole(["trustee", "city_coordinator"]) ? `<details class="card"><summary>Roles, assignments & unit verification</summary><div class="grid g2"><form class="service-form" data-platform-form="assign"><h3>Assign a case handler</h3>${userSelect()}<label>Case / report reference<input name="caseId" required></label><p class="err"></p><button class="btn">Assign handler</button></form><form class="service-form" data-platform-form="verify-unit"><h3>Verify unit membership</h3>${userSelect()}<label><input name="verified" type="checkbox"> Verified city, unit and wing</label><p class="err"></p><button class="btn">Save verification</button></form>${staffRole(["trustee"]) ? `<form class="service-form" data-platform-form="role"><h3>Staff roles</h3>${userSelect()}<label>Role<select name="role">${STAFF_ROLES.map((r) => `<option>${r}</option>`).join("")}</select></label><label><input type="checkbox" name="remove"> Remove role</label><p class="err"></p><button class="btn">Save role</button></form><form class="service-form" data-platform-form="settings"><h3>Trust settings</h3><label>Two-approver threshold (Rs)<input name="paymentThreshold" type="number" min="1" value="${context.paymentThreshold}" required></label><label><input type="checkbox" name="taxExempt" ${context.taxExempt ? "checked" : ""}> Trust has verified tax-exempt status</label><label>Tax registration reference<input name="taxRegistration"></label><p class="err"></p><button class="btn">Save settings</button></form>` : ""}</div></details>` : ""}<h3 class="service-group-title">Case review queues</h3><div class="card"><div class="tw"><table><thead><tr><th>Reference</th><th>Service</th><th>Status</th><th>Action</th></tr></thead><tbody>${[...queue.items, ...queue.reports, ...(queue.support || []).map((r) => ({ ...r, kind: "anonymous_support" }))].map((r) => `<tr><td>${safe(r.id)}</td><td>${safe(WORKFLOWS[r.kind]?.title || r.kind)}</td><td>${safe(r.status)}</td><td>${button(r.kind === "report" ? "report" : r.kind === "anonymous_support" ? "support-case" : "open", "Open assigned case", r.id)}</td></tr>`).join("")}</tbody></table></div></div>${staffRole(["finance", "trustee"]) ? financeView() : ""}${staffRole(["trustee"]) ? button("audit", "View access & change audit") : ""}`,
   );
 };
 const staffContactBase = V.staff;

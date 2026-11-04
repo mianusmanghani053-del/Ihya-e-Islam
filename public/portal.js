@@ -21,6 +21,37 @@ async function api(path, options = {}) {
 const send = (path, data, method = "POST") =>
   api(path, { method, body: JSON.stringify(data) });
 const empty = (message) => `<p class="note">${h(message)}</p>`;
+const STAFF_ROLE_NAMES = [
+  "admin",
+  "chairman",
+  "trustee",
+  "finance",
+  "scholar",
+  "city_coordinator",
+  "unit_lead",
+  "field_officer",
+];
+// Chairman and admin pass every check (super administrator).
+const hasRole = (needed = []) =>
+  !!member?.roles?.some((r) => ["admin", "chairman", ...needed].includes(r));
+const isSuper = () => hasRole();
+const canPublish = () => hasRole(["scholar", "city_coordinator"]);
+const isStaffMember = () => hasRole(STAFF_ROLE_NAMES);
+function staffToolbar() {
+  if (!isStaffMember()) return "";
+  const links = [
+    ["#staff", "Staff portal"],
+    ...(canPublish() ? [["#content-tools", "Manage events & courses"]] : []),
+    ...(hasRole(["trustee"]) ? [["#decision-bench", "Decision Bench"]] : []),
+    ...(isSuper() ? [["#submissions", "Website submissions"]] : []),
+  ];
+  const label = member.roles.includes("chairman")
+    ? "Chairman · Super admin"
+    : member.roles.includes("admin")
+      ? "Administrator"
+      : "Staff";
+  return `<nav class="staff-toolbar" aria-label="Staff tools"><span class="staff-badge">${h(label)}</span>${links.map(([href, text]) => `<a class="btn sm" href="${href}">${h(text)}</a>`).join("")}</nav>`;
+}
 const field = (name, label, type = "text", required = true) =>
   `<div><label for="${name}">${label}</label><input name="${name}" id="${name}" type="${type}" ${required ? "required" : ""} ${type === "password" ? 'minlength="12" autocomplete="new-password"' : ""}></div>`;
 const action = (name, label, value = "", css = "") =>
@@ -42,10 +73,10 @@ V.portal = () =>
 V.register = () => authView(true);
 function resourceCard(r) {
   const joined = enrollments.find((x) => x.id === r.id);
-  return `<div class="card"><span class="eyebrow">${h(r.kind)}</span><h3>${h(r.data.title)}</h3><p>${h(r.data.description)}</p>${r.data.date ? `<p>${h(new Date(r.data.date).toLocaleString("en-PK"))} · ${h(r.data.location)}</p>` : ""}<div style="margin-top:12px">${action(joined ? "leave" : "join", joined ? "Cancel enrollment" : "Enroll / register", r.id)} ${r.kind === "course" && joined ? action("course", "Open course", r.id) : ""}${member?.role === "admin" ? " " + action("archive", "Archive", r.id) : ""}</div></div>`;
+  return `<div class="card"><span class="eyebrow">${h(r.kind)}</span><h3>${h(r.data.title)}</h3><p>${h(r.data.description)}</p>${r.data.date ? `<p>${h(new Date(r.data.date).toLocaleString("en-PK"))} · ${h(r.data.location)}</p>` : ""}<div style="margin-top:12px">${action(joined ? "leave" : "join", joined ? "Cancel enrollment" : "Enroll / register", r.id)} ${r.kind === "course" && joined ? action("course", "Open course", r.id) : ""}${canPublish() ? " " + action("edit-resource", "Edit", r.id) + " " + action("archive", "Remove", r.id) : ""}</div></div>`;
 }
 V.activities = () =>
-  `<section class="sec"><div class="wrap"><div class="sh"><div><span class="eyebrow">Community</span><h2>Events, shifts & courses</h2></div></div><div class="grid g2">${resources.map(resourceCard).join("") || empty("New activities will appear here when published by the team.")}</div></div></section>`;
+  `<section class="sec"><div class="wrap"><div class="sh"><div><span class="eyebrow">Community</span><h2>Events, shifts & courses</h2></div>${canPublish() ? '<a class="btn gold" href="#content-tools">+ Add or manage events</a>' : ""}</div><div class="grid g2">${resources.map(resourceCard).join("") || empty("New activities will appear here when published by the team.")}</div></div></section>`;
 V.track = () =>
   `<section class="sec"><div class="wrap"><div class="card login"><h2>Track a report or suggestion</h2><p>Use the reference number and private tracking key you were given when you sent it.</p><form class="form" data-live-form="track">${field("reportId", "Reference number")}${field("secret", "Private tracking key")}<p class="err w" role="alert"></p><button class="btn em">Check status</button><div class="w" id="track-result"></div></form></div></div></section>`;
 function portalView() {
@@ -98,7 +129,7 @@ function portalView() {
     settings: () =>
       `<div class="card"><h3>Change password</h3><p>Changing your password signs out every session.</p><form class="form" data-live-form="password">${field("currentPassword", "Current password", "password")}${field("password", "New password", "password")}<p class="err w"></p><button class="btn em">Update password</button></form></div>`,
   };
-  return `<section class="sec"><div class="wrap"><div class="sh"><div><span class="eyebrow">Member portal</span><h2>Assalamu alaikum, ${h(member.name)}</h2><p>${h(member.email)}</p></div><div><button class="btn gold" data-a="donate">Give again</button> ${action("logout", "Sign out")} ${member.role === "admin" ? '<a href="#admin" class="btn sm">Administration</a>' : ""}</div></div>${portalError ? empty(portalError) : ""}<div class="pl"><div class="pside">${tabs.map(([key, label]) => `<button data-a="ptab" data-v="${key}" class="${S.pTab === key ? "on" : ""}">${label}</button>`).join("")}</div><div class="grid">${(panes[S.pTab] || panes.over)()}</div></div></div></section>`;
+  return `<section class="sec"><div class="wrap"><div class="sh"><div><span class="eyebrow">Member portal</span><h2>Assalamu alaikum, ${h(member.name)}</h2><p>${h(member.email)}</p></div><div><button class="btn gold" data-a="donate">Give again</button> ${action("logout", "Sign out")} </div></div>${staffToolbar()}${portalError ? empty(portalError) : ""}<div class="pl"><div class="pside">${tabs.map(([key, label]) => `<button data-a="ptab" data-v="${key}" class="${S.pTab === key ? "on" : ""}">${label}</button>`).join("")}</div><div class="grid">${(panes[S.pTab] || panes.over)()}</div></div></div></section>`;
 }
 const SUGGESTION_STAGE = {
   received: "Received",
@@ -168,7 +199,7 @@ function decisionBench() {
   }</div>`;
 }
 V.admin = () =>
-  member?.role !== "admin"
+  !isSuper()
     ? empty("Administrator access required.")
     : `<section class="sec"><div class="wrap"><h2>Administration</h2><p>Private submissions are visible only to administrators. Report status records your team’s actual actions; it does not notify authorities automatically.</p><div class="card"><h3>Publish an activity</h3><form class="form" data-live-form="resource"><div><label for="kind">Type</label><select name="kind" id="kind"><option value="event">Event</option><option value="shift">Volunteer shift</option><option value="course">Course</option></select></div>${field("title", "Title")}${field("description", "Description")}${field("date", "Date and time", "datetime-local", false)}${field("location", "Location", "text", false)}<div class="w"><label for="lessons">Course lessons</label><div id="lesson-fields"><div class="lesson-fields"><label>Lesson title <input name="lessonTitle"></label><label>Lesson content <textarea name="lessonBody"></textarea></label></div></div>${action("add-lesson", "Add another lesson")}</div><p class="err w"></p><button class="btn em">Publish</button></form></div><h3 style="margin:24px 0">Submissions</h3><div class="grid">${
         adminRecords
@@ -202,8 +233,7 @@ async function refresh() {
       records = (await api("/records")).items;
       enrollments = (await api("/enrollments")).items;
       S.book = new Set((await api("/bookmarks")).items);
-      if (member.role === "admin")
-        adminRecords = (await api("/admin/records")).items;
+      if (isSuper()) adminRecords = (await api("/admin/records")).items;
     } else {
       records = [];
       enrollments = [];
@@ -624,8 +654,39 @@ async function runAction(button) {
     await refresh();
   }
   if (key === "archive") {
+    const r =
+      resources.find((x) => x.id === value) ||
+      window.managedResources?.find((x) => x.id === value);
+    if (
+      !confirm(
+        `Remove "${r?.data?.title || "this activity"}" from the website? You can restore it later from Manage events & courses.`,
+      )
+    )
+      return;
     await api("/resources/" + encodeURIComponent(value), { method: "DELETE" });
     await refresh();
+    window.reloadManagedResources?.();
+    toast("Removed from the website.");
+  }
+  if (key === "restore-resource") {
+    await send(
+      "/resources/" + encodeURIComponent(value),
+      { restore: true },
+      "PATCH",
+    );
+    await refresh();
+    window.reloadManagedResources?.();
+    toast("Restored on the website.");
+  }
+  if (key === "edit-resource") {
+    window.editingResource = value;
+    if (location.hash === "#content-tools") go();
+    else location.hash = "content-tools";
+    window.scrollTo(0, 0);
+  }
+  if (key === "cancel-edit") {
+    window.editingResource = null;
+    go();
   }
   if (key === "course") {
     const r = resources.find((x) => x.id === value);
@@ -791,9 +852,17 @@ document.addEventListener(
             body: entries.getAll("lessonBody")[index],
           }));
         }
-        await send("/resources", { ...f, lessons });
+        if (f.id) {
+          await send(
+            "/resources/" + encodeURIComponent(f.id),
+            { ...f, lessons },
+            "PATCH",
+          );
+          window.editingResource = null;
+        } else await send("/resources", { ...f, lessons });
         await refresh();
-        toast("Activity published.");
+        window.reloadManagedResources?.();
+        toast(f.id ? "Changes saved." : "Activity published.");
       } else if (kind === "donation-details") {
         rememberDonation(form);
         if (
