@@ -38,7 +38,7 @@ function resourceCard(r) {
 V.activities = () =>
   `<section class="sec"><div class="wrap"><div class="sh"><div><span class="eyebrow">Community</span><h2>Events, shifts & courses</h2></div></div><div class="grid g2">${resources.map(resourceCard).join("") || empty("New activities will appear here when published by the team.")}</div></div></section>`;
 V.track = () =>
-  `<section class="sec"><div class="wrap"><div class="card login"><h2>Track a report</h2><p>Use the report number and private tracking key provided when you submitted it.</p><form class="form" data-live-form="track">${field("reportId", "Report number")}${field("secret", "Private tracking key")}<p class="err w" role="alert"></p><button class="btn em">Check status</button><div class="w" id="track-result"></div></form></div></div></section>`;
+  `<section class="sec"><div class="wrap"><div class="card login"><h2>Track a report or suggestion</h2><p>Use the reference number and private tracking key you were given when you sent it.</p><form class="form" data-live-form="track">${field("reportId", "Reference number")}${field("secret", "Private tracking key")}<p class="err w" role="alert"></p><button class="btn em">Check status</button><div class="w" id="track-result"></div></form></div></div></section>`;
 function portalView() {
   const tabs = [
     ["over", "Overview"],
@@ -77,16 +77,99 @@ function portalView() {
         .join("")}</div>`,
     rep: () =>
       cards(mine("report")) +
-      `<p><a href="#track">Track an anonymous report</a></p>`,
+      `<h3 style="margin:18px 0 8px">My suggestions</h3>` +
+      (mine("suggestion")
+        .map(
+          (r) =>
+            `<div class="card"><span class="tag m">${h(SUGGESTION_STAGE[r.status] || r.status)}</span><h3>${h(r.data.summary)}</h3><p>${h(r.data.area)} · ${h(r.id)}</p>${r.data.decisionNote ? `<p class="note">${h(r.data.decisionNote)}</p>` : ""}</div>`,
+        )
+        .join("") ||
+        `<p class="note">No suggestions yet. Use <b>Share an idea</b> at the bottom of the screen.</p>`) +
+      `<p><a href="#track">Track an anonymous report or suggestion</a></p>`,
     settings: () =>
       `<div class="card"><h3>Change password</h3><p>Changing your password signs out every session.</p><form class="form" data-live-form="password">${field("currentPassword", "Current password", "password")}${field("password", "New password", "password")}<p class="err w"></p><button class="btn em">Update password</button></form></div>`,
   };
   return `<section class="sec"><div class="wrap"><div class="sh"><div><span class="eyebrow">Member portal</span><h2>Assalamu alaikum, ${h(member.name)}</h2><p>${h(member.email)}</p></div><div><button class="btn gold" data-a="donate">Give again</button> ${action("logout", "Sign out")} ${member.role === "admin" ? '<a href="#admin" class="btn sm">Administration</a>' : ""}</div></div>${portalError ? empty(portalError) : ""}<div class="pl"><div class="pside">${tabs.map(([key, label]) => `<button data-a="ptab" data-v="${key}" class="${S.pTab === key ? "on" : ""}">${label}</button>`).join("")}</div><div class="grid">${(panes[S.pTab] || panes.over)()}</div></div></div></section>`;
 }
+const SUGGESTION_STAGE = {
+  received: "Received",
+  under_review: "Under review",
+  decision_bench: "At the Decision Bench",
+  accepted: "Accepted",
+  planned: "Planned",
+  declined: "Not taken forward",
+  done: "Done",
+};
+const SUGGESTION_TYPE = {
+  idea: "New idea",
+  improve: "Improvement",
+  problem: "Problem",
+  appreciation: "Appreciation",
+};
+const waLink = (phone) => {
+  let d = String(phone || "").replace(/\D/g, "");
+  if (d.startsWith("0")) d = "92" + d.slice(1);
+  return d ? "https://wa.me/" + d : "";
+};
+let benchItems = null,
+  benchError = "";
+async function loadBench() {
+  try {
+    benchItems = (await api("/suggestions")).items;
+    benchError = "";
+  } catch (e) {
+    benchError = e.message;
+  }
+  if (S.view === "decision-bench") go();
+}
+V["decision-bench"] = () => {
+  if (!member)
+    return `<section class="sec"><div class="wrap">${empty("Please sign in to open the Decision Bench.")}<p><a class="btn em" href="#portal">Sign in</a></p></div></section>`;
+  if (benchError)
+    return `<section class="sec"><div class="wrap"><h2>Decision Bench</h2>${empty(benchError)}</div></section>`;
+  if (!benchItems) {
+    loadBench();
+    return `<section class="sec"><div class="wrap"><h2>Decision Bench</h2>${empty("Loading suggestions…")}</div></section>`;
+  }
+  return `<section class="sec"><div class="wrap"><p style="display:flex;gap:8px"><a class="btn sm" href="#staff">← Staff portal</a>${action("bench-refresh", "Refresh")}</p>${decisionBench()}</div></section>`;
+};
+function decisionBench() {
+  const items = benchItems || [];
+  const open = items.filter((r) => !["declined", "done"].includes(r.status));
+  return `<h2 style="margin:0 0 6px">Decision Bench</h2><p style="margin:0 0 12px;color:var(--sub)">${open.length} open of ${items.length}. Every suggestion is reviewed; record the decision and a short note the person will see when they track it.</p><div class="grid g2">${
+    items
+      .map((r) => {
+        const d = r.data;
+        const contact =
+          d.contactPref === "none" || !d.phone
+            ? "Does not need a reply"
+            : `${h(d.name || "Unnamed")} · ${h(d.phone)} · prefers ${h(d.contactPref)}${d.city ? " · " + h(d.city) : ""}`;
+        return `<div class="card bench-card"><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="tag m">${h(SUGGESTION_TYPE[d.type] || d.type)}</span>${d.urgency === "urgent" ? '<span class="tag r">Urgent</span>' : d.urgency === "soon" ? '<span class="tag s">Soon</span>' : ""}${d.wantsToHelp ? '<span class="tag s">Wants to help</span>' : ""}</div><h3 style="margin-top:8px">${h(d.summary)}</h3><p style="margin:4px 0;color:var(--sub)">${h(d.areaGroup ? d.areaGroup + " · " : "")}${h(d.area)} · ${h(r.created_at)}</p>${d.details ? `<p style="white-space:pre-wrap">${h(d.details)}</p>` : ""}${d.voiceNote ? `<audio controls preload="none" src="/api/suggestions/${encodeURIComponent(r.id)}/audio" style="width:100%;margin:6px 0"></audio>` : ""}<p style="margin:6px 0">${contact}</p>${d.phone && d.contactPref === "whatsapp" ? `<a class="btn sm" href="${h(waLink(d.phone))}" target="_blank" rel="noopener">Open WhatsApp</a> ` : ""}${d.phone && d.contactPref !== "none" ? `<a class="btn sm" href="tel:${h(d.phone)}">Call</a>` : ""}<form class="form" data-live-form="bench" data-id="${h(r.id)}" style="margin-top:10px"><div class="w"><label>Stage <select name="status">${Object.entries(
+          SUGGESTION_STAGE,
+        )
+          .map(
+            ([k, v]) =>
+              `<option value="${k}" ${r.status === k ? "selected" : ""}>${v}</option>`,
+          )
+          .join(
+            "",
+          )}</select></label></div><div class="w"><label>Decision note (shown to the person) <textarea name="decisionNote" maxlength="1000" rows="2">${h(d.decisionNote || "")}</textarea></label></div><p class="err w" role="alert"></p><button class="btn em sm">Save decision</button>${d.reviewedBy ? `<small style="color:var(--sub)"> Last updated by ${h(d.reviewedBy)}</small>` : ""}</form></div>`;
+      })
+      .join("") || empty("No suggestions yet.")
+  }</div>`;
+}
 V.admin = () =>
   member?.role !== "admin"
     ? empty("Administrator access required.")
-    : `<section class="sec"><div class="wrap"><h2>Administration</h2><p>Private submissions are visible only to administrators. Report status records your team’s actual actions; it does not notify authorities automatically.</p><div class="card"><h3>Publish an activity</h3><form class="form" data-live-form="resource"><div><label for="kind">Type</label><select name="kind" id="kind"><option value="event">Event</option><option value="shift">Volunteer shift</option><option value="course">Course</option></select></div>${field("title", "Title")}${field("description", "Description")}${field("date", "Date and time", "datetime-local", false)}${field("location", "Location", "text", false)}<div class="w"><label for="lessons">Course lessons</label><div id="lesson-fields"><div class="lesson-fields"><label>Lesson title <input name="lessonTitle"></label><label>Lesson content <textarea name="lessonBody"></textarea></label></div></div>${action("add-lesson", "Add another lesson")}</div><p class="err w"></p><button class="btn em">Publish</button></form></div><h3 style="margin:24px 0">Submissions</h3><div class="grid">${adminRecords.map((r) => `<div class="card"><span class="eyebrow">${h(r.kind)}</span><h3>${h(r.id)}</h3><pre style="white-space:pre-wrap;overflow-wrap:anywhere">${h(JSON.stringify({ ...r.data, trackingHash: undefined, attachments: undefined }, null, 2))}</pre>${(r.data.attachments || []).map((key) => `<a class="btn sm" href="/api/attachments/${encodeURIComponent(key)}">Download private attachment</a>`).join("")}<label>Status <select data-live-status="${h(r.id)}">${{ report: ["received", "checked", "forwarded", "closed"], volunteer: ["received", "approved", "declined"], donation: ["awaiting_transfer", "confirmed", "cancelled"], newsletter: ["received", "unsubscribed"] }[r.kind].map((status) => `<option ${r.status === status ? "selected" : ""}>${status}</option>`).join("")}</select></label></div>`).join("") || empty("No submissions yet.")}</div></div></section>`;
+    : `<section class="sec"><div class="wrap"><h2>Administration</h2><p>Private submissions are visible only to administrators. Report status records your team’s actual actions; it does not notify authorities automatically.</p><div class="card"><h3>Publish an activity</h3><form class="form" data-live-form="resource"><div><label for="kind">Type</label><select name="kind" id="kind"><option value="event">Event</option><option value="shift">Volunteer shift</option><option value="course">Course</option></select></div>${field("title", "Title")}${field("description", "Description")}${field("date", "Date and time", "datetime-local", false)}${field("location", "Location", "text", false)}<div class="w"><label for="lessons">Course lessons</label><div id="lesson-fields"><div class="lesson-fields"><label>Lesson title <input name="lessonTitle"></label><label>Lesson content <textarea name="lessonBody"></textarea></label></div></div>${action("add-lesson", "Add another lesson")}</div><p class="err w"></p><button class="btn em">Publish</button></form></div><h3 style="margin:24px 0">Submissions</h3><div class="grid">${
+        adminRecords
+          .filter((r) => r.kind !== "suggestion")
+          .map(
+            (r) =>
+              `<div class="card"><span class="eyebrow">${h(r.kind)}</span><h3>${h(r.id)}</h3><pre style="white-space:pre-wrap;overflow-wrap:anywhere">${h(JSON.stringify({ ...r.data, trackingHash: undefined, attachments: undefined }, null, 2))}</pre>${(r.data.attachments || []).map((key) => `<a class="btn sm" href="/api/attachments/${encodeURIComponent(key)}">Download private attachment</a>`).join("")}<label>Status <select data-live-status="${h(r.id)}">${{ report: ["received", "checked", "forwarded", "closed"], volunteer: ["received", "approved", "declined"], donation: ["awaiting_transfer", "confirmed", "cancelled"], newsletter: ["received", "unsubscribed"] }[r.kind].map((status) => `<option ${r.status === status ? "selected" : ""}>${status}</option>`).join("")}</select></label></div>`,
+          )
+          .join("") || empty("No submissions yet.")
+      }</div></div></section>`;
 async function refresh() {
   window.invalidatePortalOverview?.();
   portalError = "";
@@ -387,6 +470,11 @@ async function runAction(button) {
   }
   if (key === "donation-final") {
     await finishDonation();
+    return;
+  }
+  if (key === "bench-refresh") {
+    benchItems = null;
+    go();
     return;
   }
   if (key === "donation-login") {
@@ -707,13 +795,25 @@ document.addEventListener(
               ". Status: awaiting transfer review. No payment has been processed by this website.",
           ),
         );
+      } else if (kind === "bench") {
+        await send(
+          "/suggestions/" + encodeURIComponent(form.dataset.id),
+          { status: f.status, decisionNote: f.decisionNote || "" },
+          "PATCH",
+        );
+        await loadBench();
+        toast("Decision saved.");
       } else if (kind === "track") {
         const result = await send("/track", {
-          id: f.reportId,
-          secret: f.secret,
+          id: f.reportId.trim(),
+          secret: f.secret.trim(),
         });
-        $("#track-result").textContent =
-          "Status: " + result.status + " · Received " + result.created_at;
+        $("#track-result").innerHTML =
+          result.kind === "suggestion"
+            ? `<p><b>Suggestion status:</b> ${h(SUGGESTION_STAGE[result.status] || result.status)}</p><p style="color:var(--sub)">Received ${h(result.created_at)}</p>${result.decisionNote ? `<p class="note"><b>Note from the team:</b> ${h(result.decisionNote)}</p>` : ""}`
+            : h(
+                "Status: " + result.status + " · Received " + result.created_at,
+              );
       } else if (kind === "nl") {
         await send("/records", { kind: "newsletter", email: $("#nle").value });
         form.reset();
