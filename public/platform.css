@@ -221,3 +221,27 @@ details > summary {
     gap: 6px;
   }
 }
+
+.portal-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  padding: 8px 0;
+  color: var(--em);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.portal-back span {
+  font-size: 22px;
+  line-height: 1;
+}
+.portal-back:hover {
+  text-decoration: underline;
+}
+.portal-back:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 5px;
+  border-radius: 4px;
+}

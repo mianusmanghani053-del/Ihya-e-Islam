@@ -408,6 +408,12 @@ function refreshPlatform() {
 async function handleAction(b) {
   const key = b.dataset.platform,
     val = b.dataset.value;
+  if (key === "portal-home") {
+    S.pTab = "over";
+    if (location.hash === "#portal") go();
+    else location.hash = "portal";
+    return;
+  }
   if (key === "open") return openRecord(val);
   if (key === "print") {
     window.print();
@@ -724,4 +730,29 @@ go = () => {
     alerts = null;
   }
   platformBaseGo();
+  const subpage =
+    S.view.startsWith("services/") ||
+    [
+      "hub",
+      "donation-tracking",
+      "notifications",
+      "unit-profile",
+      "credentials",
+      "staff",
+      "admin",
+      "content-tools",
+      "community",
+      "tools",
+      "transparency",
+      "support-line",
+    ].includes(S.view) ||
+    (S.view === "portal" && S.pTab !== "over");
+  if (member && subpage) {
+    const wrap = document.querySelector("#view .wrap");
+    if (wrap)
+      wrap.insertAdjacentHTML(
+        "afterbegin",
+        '<a class="portal-back" href="#portal" data-platform="portal-home"><span aria-hidden="true">←</span> Back to portal</a>',
+      );
+  }
 };
