@@ -84,3 +84,109 @@ textarea {
   left: 0;
   top: 0;
 }
+
+.donation-picker .donation-amount-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+.donation-amount-heading .lb {
+  margin: 0;
+}
+.donation-currency {
+  width: 140px;
+  padding: 3px;
+}
+.donation-currency button {
+  padding: 5px;
+}
+.donation-picker .lb {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+}
+.donation-picker .amtin input {
+  min-width: 0;
+}
+.donation-picker .funds button {
+  min-height: 72px;
+}
+.donation-picker .funds small {
+  display: block;
+  margin-top: 4px;
+}
+.donation-cover {
+  margin-top: 16px;
+  font-size: 14px;
+}
+.donation-next {
+  width: 100%;
+  padding: 15px;
+  margin-top: 12px;
+  min-height: 51px;
+}
+.donation-picker .err {
+  margin: 4px 0;
+  min-height: 12px;
+}
+.donation-footnote {
+  text-align: center;
+  font-size: 12px;
+  color: var(--sub);
+  margin: 10px 0 0;
+}
+.donation-contact {
+  margin-top: 18px;
+}
+.donation-modal .mb {
+  padding: 20px 22px 22px;
+}
+@media (max-width: 600px) {
+  .donation-picker .funds {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .donation-picker .amts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .donation-modal .mb {
+    padding: 16px;
+  }
+  .donation-picker .funds button {
+    padding: 9px;
+  }
+  .donation-picker .funds button b {
+    font-size: 13px;
+  }
+}
+
+.donation-review-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+.donation-contact .pm button {
+  min-height: 44px;
+}
+.donation-picker .amtin {
+  min-height: 64px;
+}
+@media (max-width: 450px) {
+  .donation-review-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .donation-review-actions .btn {
+    width: 100%;
+  }
+}
+.donation-picker .amtin > span {
+  flex: none;
+  white-space: nowrap;
+}
+.donation-picker .amtin > input {
+  flex: 1;
+  width: 0;
+}

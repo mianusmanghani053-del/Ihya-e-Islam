@@ -126,24 +126,45 @@ function rememberDonation(form) {
     ...values,
     anonymous:
       form.elements.anonymous?.checked ?? donationDraft?.anonymous ?? false,
+    cover: form.elements.cover?.checked ?? donationDraft?.cover ?? true,
   };
 }
-function donationSummary() {
+function donationProcessingCost() {
+  return Math.round(Number(donationDraft.amount) * 2.5) / 100;
+}
+function donationContribution() {
+  return donationDraft?.cover ? donationProcessingCost() : 0;
+}
+function donationTotal() {
+  return (
+    Math.round((Number(donationDraft.amount) + donationContribution()) * 100) /
+    100
+  );
+}
+function donationMoney(value) {
+  return (
+    (donationDraft.currency === "PKR" ? "Rs " : "$") +
+    Number(value).toLocaleString("en-PK", { maximumFractionDigits: 2 })
+  );
+}
+function donationSummary(includeDonor = true) {
   const d = donationDraft;
-  return `<div class="sum"><div><span>Fund</span><b>${h(FUNDS.find((f) => f.id === d.fund)?.n || d.fund)}</b></div><div><span>Amount</span><b>${h(d.currency)} ${Number(d.amount).toLocaleString("en-PK", { maximumFractionDigits: 2 })}</b></div><div><span>Frequency</span><b>${d.frequency === "month" ? "Monthly pledge (manual transfer)" : "One-time"}</b></div><div><span>Donor</span><b>${h(d.donorName)}</b></div><div><span>Email</span><b>${h(d.email)}</b></div><div><span>Public name</span><b>${d.anonymous ? "Anonymous" : "May be shown"}</b></div></div>`;
+  return `<div class="sum"><div><span>Fund</span><b>${h(FUNDS.find((f) => f.id === d.fund)?.n || d.fund)}</b></div><div><span>Gift</span><b>${donationMoney(d.amount)}</b></div>${d.cover ? `<div><span>Optional processing contribution</span><b>${donationMoney(donationContribution())}</b></div>` : ""}<div class="tot"><span>Total</span><span>${donationMoney(donationTotal())}</span></div><div><span>Frequency</span><b>${d.frequency === "month" ? "Monthly pledge (manual transfer)" : "One-time"}</b></div>${includeDonor ? `<div><span>Donor</span><b>${h(d.donorName || "")}</b></div><div><span>Email</span><b>${h(d.email || "")}</b></div><div><span>Public name</span><b>${d.anonymous ? "Anonymous" : "May be shown"}</b></div>` : ""}</div>`;
 }
 async function bankDonation(fund) {
-  if (!donationDraft)
-    donationDraft = {
-      amount: "",
-      currency: "PKR",
-      fund: "gen",
-      frequency: "once",
-      donorName: member?.name || "",
-      email: member?.email || "",
-      anonymous: false,
-      reference: "",
-    };
+  donationDraft = {
+    amount: 10000,
+    currency: "PKR",
+    fund: "gen",
+    frequency: "once",
+    donorName: member?.name || "",
+    email: member?.email || "",
+    anonymous: false,
+    reference: "",
+    cover: true,
+    paymentMethod: "bank",
+    ...donationDraft,
+  };
   if (FUNDS.some((f) => f.id === fund)) donationDraft.fund = fund;
   if (member) {
     donationDraft.donorName ||= member.name;
@@ -151,18 +172,74 @@ async function bankDonation(fund) {
   }
   const d = donationDraft;
   openMd(
-    "Donation details",
-    `<p class="eyebrow">Step 1 of 3 · Your gift</p><form class="form" data-live-form="donation-details"><div><label for="donation-fund">Fund</label><select id="donation-fund" name="fund">${FUNDS.map((f) => `<option value="${h(f.id)}" ${d.fund === f.id ? "selected" : ""}>${h(f.n)}</option>`).join("")}</select></div><div><label for="donation-currency">Currency</label><select id="donation-currency" name="currency"><option ${d.currency === "PKR" ? "selected" : ""}>PKR</option><option ${d.currency === "USD" ? "selected" : ""}>USD</option></select></div><div><label for="donation-amount">Amount</label><input id="donation-amount" name="amount" type="number" min="0.01" max="10000000" step="0.01" value="${h(d.amount)}" required></div><div><label for="donation-frequency">Frequency</label><select id="donation-frequency" name="frequency"><option value="once" ${d.frequency === "once" ? "selected" : ""}>One-time</option><option value="month" ${d.frequency === "month" ? "selected" : ""}>Monthly pledge (manual transfer)</option></select></div><div><label for="donation-name">Full name</label><input id="donation-name" name="donorName" value="${h(d.donorName)}" autocomplete="name" maxlength="100" required></div><div><label for="donation-email">Email</label><input id="donation-email" name="email" type="email" value="${h(d.email)}" autocomplete="email" maxlength="254" required></div><div class="w chk"><input id="donation-anonymous" name="anonymous" type="checkbox" ${d.anonymous ? "checked" : ""}><label for="donation-anonymous">Keep my name off public donor lists</label></div><div class="w">${action("open-zakat", "Calculate zakat")}</div><p class="err w" role="alert"></p><button class="btn gold">Review donation</button><p class="note w">Review your details before continuing. No money is taken at this step. Monthly pledges require manual bank transfers.</p></form>`,
+    "Give in the way of Allah",
+    `<form class="donation-picker" data-live-form="donation-details"><div class="seg" role="group" aria-label="Donation frequency">${[
+      ["once", "One-time"],
+      ["month", "Monthly"],
+    ]
+      .map(
+        ([value, label]) =>
+          `<button type="button" class="${d.frequency === value ? "on" : ""}" aria-pressed="${d.frequency === value}" data-live="donation-frequency" data-value="${value}">${label}</button>`,
+      )
+      .join(
+        "",
+      )}</div><div class="donation-amount-heading"><label class="lb" for="donation-amount">Amount</label><div class="seg donation-currency" role="group" aria-label="Currency">${["PKR", "USD"].map((value) => `<button type="button" class="${d.currency === value ? "on" : ""}" aria-pressed="${d.currency === value}" data-live="donation-currency" data-value="${value}">${value}</button>`).join("")}</div></div><div class="amts">${AMTS[d.currency].map((amount) => `<button type="button" class="${Number(d.amount) === amount ? "on" : ""}" aria-pressed="${Number(d.amount) === amount}" data-live="donation-preset" data-value="${amount}">${donationMoney(amount)}</button>`).join("")}</div><div class="amtin"><span aria-hidden="true">${d.currency === "PKR" ? "Rs" : "$"}</span><input id="donation-amount" name="amount" type="number" min="0.01" max="10000000" step="0.01" value="${h(d.amount)}" required></div><span class="lb" id="donation-fund-label">Fund</span><div class="funds" role="group" aria-labelledby="donation-fund-label">${FUNDS.map((f) => `<button type="button" class="${d.fund === f.id ? "on" : ""}" aria-pressed="${d.fund === f.id}" data-live="donation-fund" data-value="${f.id}"><b>${h(f.n)}</b><small>${h(f.d)}</small></button>`).join("")}</div>${d.fund === "zakat" ? `<p style="margin:10px 0">${action("open-zakat", "Calculate zakat")}</p>` : ""}<div class="chk donation-cover"><input id="donation-cover" name="cover" type="checkbox" ${d.cover ? "checked" : ""}><label for="donation-cover" id="donation-cover-label">Add ${donationMoney(donationProcessingCost())} toward processing costs</label></div><p class="err" role="alert"></p><button id="donation-next" class="btn gold donation-next">Donate ${donationMoney(donationTotal())}${d.frequency === "month" ? " monthly" : ""}</button><p class="donation-footnote">Review your details next · No money is collected here</p></form>`,
   );
+  $("#md").classList.add("donation-modal");
 }
 function reviewDonation() {
+  const d = donationDraft;
   openMd(
-    "Review your donation",
-    `<p class="eyebrow">Step 2 of 3 · Review</p>${donationSummary()}<div class="service-actions">${action("donation-edit", "Back to details")}${action("donation-final", "Continue to payment")}</div><p class="note">Your details are held only in this open tab until you submit an available bank-transfer record.</p>`,
+    "Confirm your donation",
+    `${donationSummary(false)}<form class="form donation-contact" data-live-form="donation-contact"><div><label for="donation-name">Full name</label><input id="donation-name" name="donorName" autocomplete="name" maxlength="100" value="${h(d.donorName)}" ${d.anonymous ? "" : "required"} placeholder="For your receipt"></div><div><label for="donation-email">Email</label><input id="donation-email" name="email" type="email" autocomplete="email" maxlength="254" value="${h(d.email)}" required placeholder="you@example.com"></div><div class="w chk"><input id="donation-anonymous" name="anonymous" type="checkbox" ${d.anonymous ? "checked" : ""}><label for="donation-anonymous">Give anonymously (hide my name from public donor lists)</label></div><div class="w"><span class="lb" id="donation-method-label">Pay with</span><div class="pm" role="group" aria-labelledby="donation-method-label">${[
+      ["card", "Card"],
+      ["jazz", "JazzCash"],
+      ["easy", "Easypaisa"],
+      ["bank", "Bank transfer"],
+    ]
+      .map(
+        ([value, label]) =>
+          `<button type="button" class="${d.paymentMethod === value ? "on" : ""}" aria-pressed="${d.paymentMethod === value}" data-live="donation-method" data-value="${value}">${label}</button>`,
+      )
+      .join(
+        "",
+      )}</div><p class="note" style="margin-top:12px">${d.paymentMethod === "bank" ? "Bank transfer instructions and availability are checked at the next step." : "Payment provider availability is checked at the next step. Never share a card or wallet PIN with the trust."}</p></div><p class="err w" role="alert"></p><div class="w donation-review-actions">${action("donation-edit", "Back")}<button class="btn gold">${d.paymentMethod === "bank" ? "Get reference number" : "Continue to secure payment"}</button></div></form>`,
   );
+}
+function updateDonationAmount() {
+  const amount = $("#donation-amount");
+  if (!amount) return;
+  donationDraft.amount = amount.value;
+  const contribution = Number.isFinite(Number(amount.value))
+    ? donationContribution()
+    : 0;
+  $("#donation-cover-label").textContent =
+    "Add " +
+    donationMoney(
+      donationDraft.cover
+        ? contribution
+        : Math.round(Number(amount.value) * 2.5) / 100,
+    ) +
+    " toward processing costs";
+  $("#donation-next").textContent =
+    "Donate " +
+    donationMoney(donationTotal()) +
+    (donationDraft.frequency === "month" ? " monthly" : "");
+  document.querySelectorAll('[data-live="donation-preset"]').forEach((b) => {
+    const selected = Number(b.dataset.value) === Number(amount.value);
+    b.classList.toggle("on", selected);
+    b.setAttribute("aria-pressed", String(selected));
+  });
 }
 async function finishDonation() {
   const settings = await api("/donation-settings");
+  if (donationDraft.paymentMethod !== "bank") {
+    openMd(
+      "Payment option opening soon",
+      `<p class="eyebrow">Final step · Payment availability</p>${donationSummary()}${empty("This payment provider is not connected yet. No money has been collected.")}<p>No donation record has been saved.</p>${action("donation-review", "Back to confirmation")}`,
+    );
+    return;
+  }
   if (!settings.enabled) {
     openMd(
       "Donations opening soon",
@@ -193,6 +270,37 @@ async function runAction(button) {
       "PATCH",
     );
     await refresh();
+    return;
+  }
+  if (
+    [
+      "donation-frequency",
+      "donation-currency",
+      "donation-preset",
+      "donation-fund",
+    ].includes(key)
+  ) {
+    const form = $('[data-live-form="donation-details"]');
+    if (form) rememberDonation(form);
+    if (key === "donation-frequency") donationDraft.frequency = value;
+    if (key === "donation-currency") {
+      donationDraft.currency = value;
+      donationDraft.amount = value === "PKR" ? 10000 : 100;
+    }
+    if (key === "donation-preset") donationDraft.amount = Number(value);
+    if (key === "donation-fund") donationDraft.fund = value;
+    await bankDonation();
+    return;
+  }
+  if (key === "donation-review") {
+    reviewDonation();
+    return;
+  }
+  if (key === "donation-method") {
+    const form = $('[data-live-form="donation-contact"]');
+    if (form) rememberDonation(form);
+    donationDraft.paymentMethod = value;
+    reviewDonation();
     return;
   }
   if (key === "donation-edit") {
@@ -488,10 +596,16 @@ document.addEventListener(
         )
           throw new Error("Enter a valid donation amount.");
         reviewDonation();
+      } else if (kind === "donation-contact") {
+        rememberDonation(form);
+        await finishDonation();
       } else if (kind === "donation") {
         donationDraft.reference = f.reference || "";
         const result = await send("/records", {
           ...donationDraft,
+          amount: donationTotal(),
+          giftAmount: Number(donationDraft.amount),
+          processingContribution: donationContribution(),
           kind,
         });
         donationDraft = null;
@@ -749,6 +863,27 @@ document.addEventListener(
   (event) => {
     const button = event.target.closest('[data-a="qtab"]');
     if (button) quranQuery = "";
+  },
+  true,
+);
+
+document.addEventListener(
+  "input",
+  (event) => {
+    if (event.target.id === "donation-amount") updateDonationAmount();
+  },
+  true,
+);
+document.addEventListener(
+  "change",
+  (event) => {
+    if (event.target.id === "donation-anonymous") {
+      $("#donation-name").required = !event.target.checked;
+    }
+    if (event.target.id === "donation-cover") {
+      donationDraft.cover = event.target.checked;
+      updateDonationAmount();
+    }
   },
   true,
 );

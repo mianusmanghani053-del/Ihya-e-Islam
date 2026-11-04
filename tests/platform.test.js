@@ -546,4 +546,62 @@ test("Community platform: privacy, consent, dual control and persistence", async
       );
     },
   );
+  await t.test(
+    "optional processing contribution stays outside beneficiary allocation budget",
+    async () => {
+      const r = await call("donor", "/records", {
+        kind: "donation",
+        amount: 5125,
+        giftAmount: 5000,
+        processingContribution: 125,
+        currency: "PKR",
+        fund: "gen",
+      });
+      assert.equal(r.status, 201);
+      assert.equal(
+        (
+          await call(
+            "finance",
+            "/v2/staff/donations",
+            { id: r.body.id, status: "confirmed", bankReference: "TEST-COVER" },
+            "PATCH",
+          )
+        ).status,
+        200,
+      );
+      assert.equal(
+        (
+          await call("finance", "/v2/allocations", {
+            donationId: r.body.id,
+            caseId: help,
+            amount: 5001,
+          })
+        ).status,
+        409,
+      );
+      assert.equal(
+        (
+          await call("finance", "/v2/allocations", {
+            donationId: r.body.id,
+            caseId: help,
+            amount: 5000,
+          })
+        ).status,
+        200,
+      );
+      assert.equal(
+        (
+          await call("donor", "/records", {
+            kind: "donation",
+            amount: 5000,
+            giftAmount: 5000,
+            processingContribution: 125,
+            currency: "PKR",
+            fund: "gen",
+          })
+        ).status,
+        400,
+      );
+    },
+  );
 });

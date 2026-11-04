@@ -1,0 +1,3 @@
+-- Optional processing contributions must not increase the gift available for beneficiary allocations.
+DROP TRIGGER allocation_budget;
+CREATE TRIGGER allocation_budget BEFORE INSERT ON donation_allocations WHEN (SELECT status FROM records WHERE id=NEW.donation_id)!='confirmed' OR NEW.currency!=json_extract((SELECT data FROM records WHERE id=NEW.donation_id),'$.currency') OR NEW.amount_paisa+COALESCE((SELECT SUM(amount_paisa) FROM donation_allocations WHERE donation_id=NEW.donation_id),0)>CAST(ROUND(COALESCE(json_extract((SELECT data FROM records WHERE id=NEW.donation_id),'$.giftAmount'),json_extract((SELECT data FROM records WHERE id=NEW.donation_id),'$.amount'))*100) AS INTEGER) BEGIN SELECT RAISE(ABORT,'Allocation exceeds confirmed gift or currency differs'); END;

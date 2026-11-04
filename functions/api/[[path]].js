@@ -479,7 +479,22 @@ export async function onRequest({ request, env, params }) {
         if (!Number.isFinite(amount) || amount <= 0 || amount > 10000000)
           fail("Enter a valid donation amount.");
         if (!["PKR", "USD"].includes(b.currency)) fail("Invalid currency.");
+        if (b.paymentMethod && b.paymentMethod !== "bank")
+          fail("Only bank transfer records are currently supported.");
+        const giftAmount = Number(b.giftAmount ?? amount),
+          processingContribution = Number(b.processingContribution ?? 0);
+        if (
+          !Number.isFinite(giftAmount) ||
+          giftAmount <= 0 ||
+          !Number.isFinite(processingContribution) ||
+          processingContribution < 0 ||
+          Math.abs(giftAmount + processingContribution - amount) > 0.005
+        )
+          fail("The gift and processing contribution must match the total.");
         data = {
+          giftAmount,
+          processingContribution,
+          paymentMethod: "bank",
           amount,
           currency: b.currency,
           donorName: text(b.donorName || user.name, 100),
@@ -683,7 +698,7 @@ export async function onRequest({ request, env, params }) {
         fail("A receipt is available after a transfer is confirmed.", 404);
       const d = JSON.parse(row.data);
       return new Response(
-        `Ihya-e-Islam\nDonation acknowledgment\nReceipt: ${row.id}\nDate: ${row.created_at}\nAmount: ${d.currency} ${d.amount}\nFund: ${d.fund}\nThank you for your support.\nThis acknowledgment does not assert tax-deductible status.`,
+        `Ihya-e-Islam\nDonation acknowledgment\nReceipt: ${row.id}\nDate: ${row.created_at}\nAmount: ${d.currency} ${d.amount}\n${d.processingContribution > 0 ? `Gift: ${d.currency} ${d.giftAmount}\nOptional processing contribution: ${d.currency} ${d.processingContribution}\n` : ""}Fund: ${d.fund}\nThank you for your support.\nThis acknowledgment does not assert tax-deductible status.`,
         {
           headers: {
             "Content-Type": "text/plain; charset=utf-8",

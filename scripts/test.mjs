@@ -82,6 +82,7 @@ try {
     process.execPath,
     [
       "--test",
+      "--test-concurrency=1",
       "tests/portal.test.js",
       "tests/admin.test.js",
       "tests/platform.test.js",

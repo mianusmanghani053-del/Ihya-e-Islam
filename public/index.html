@@ -2582,6 +2582,7 @@
         $("#mnav").hidden = true;
       }
       function openMd(title, body) {
+        $("#md").classList.remove("donation-modal");
         $("#md").innerHTML =
           `<div class="mh"><h3 id="mdt">${title}</h3><button class="x" data-a="close" aria-label="Close">✕</button></div><div class="mb">${body}</div>`;
         $("#md").hidden = false;
