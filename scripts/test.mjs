@@ -87,6 +87,7 @@ try {
       "tests/admin.test.js",
       "tests/platform.test.js",
       "tests/suggestion.test.js",
+      "tests/chairman.test.js",
     ],
     { env, stdio: "inherit" },
   );
