@@ -18,6 +18,42 @@ const amount = field("amount", "Amount (Rs)", "number");
 const notes = field("notes", "Details", "textarea", false);
 const date = field("date", "Date", "date");
 export const WORKFLOWS = {
+  digital_enquiry: {
+    title: "Digital solutions enquiries",
+    group: "community",
+    sensitive: true,
+    fields: [
+      field("organization", "Maktab, mosque or organization"),
+      field("organizationType", "Organization type", "select", true, [
+        "Religious maktab / madrasa",
+        "Mosque / mosque committee",
+        "Community trust",
+        "School / learning centre",
+        "Other",
+      ]),
+      field("contactName", "Your name"),
+      field("email", "Email", "email"),
+      field("phone", "Contact number", "text", false),
+      field("city", "City"),
+      field("solution", "Solution needed", "select", true, [
+        "Online donation / atiya",
+        "Maktab management",
+        "Mosque management",
+        "Welfare case management",
+        "Volunteer coordination",
+        "Education / skills",
+        "Clinic / blood requests",
+        "Interest-free loan records",
+        "Community website",
+        "Other",
+      ]),
+      field("requirements", "Tell us what you need", "textarea"),
+    ],
+    staffFields: [field("response", "Team response", "textarea", false)],
+    states: ["submitted", "reviewing", "contacted", "closed"],
+    edit: ["city_coordinator", "trustee"],
+  },
+
   zakat: {
     title: "Zakat planner",
     group: "donors",

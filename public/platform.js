@@ -1,4 +1,6 @@
 import { WORKFLOWS, GROUPS, STAFF_ROLES } from "./workflows.mjs";
+import { digitalSolutionsPage } from "./solutions.mjs";
+V["digital-solutions"] = digitalSolutionsPage;
 let context = null,
   contextUser = null,
   serviceRows = {},
@@ -757,3 +759,21 @@ go = () => {
       );
   }
 };
+
+document.addEventListener(
+  "click",
+  (event) => {
+    const link = event.target.closest("[data-solution-section]");
+    if (!link) return;
+    event.preventDefault();
+    document
+      .getElementById(link.dataset.solutionSection)
+      ?.scrollIntoView({
+        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "instant"
+          : "smooth",
+        block: "start",
+      });
+  },
+  true,
+);

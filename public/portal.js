@@ -749,7 +749,10 @@ V.report = () =>
       "You can check status with your tracking number in the portal.",
       "Track status with your report number and private tracking key.",
     );
-NAV.push(["activities", "Activities", "سرگرمیاں"]);
+NAV.push(
+  ["activities", "Activities", "سرگرمیاں"],
+  ["digital-solutions", "Our Digital Solutions", "ہماری ڈیجیٹل خدمات"],
+);
 LANG = localStorage.getItem("language") || "en";
 refresh();
 let quranData = [],
