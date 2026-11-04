@@ -119,6 +119,8 @@ async function refresh() {
   route();
 }
 let donationDraft = null;
+const HEART =
+  '<svg class="donation-heart" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.1 4.3 2.4.7-1.3 2.2-2.4 4.3-2.4 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg>';
 function rememberDonation(form) {
   const values = Object.fromEntries(new FormData(form));
   donationDraft = {
@@ -156,7 +158,7 @@ async function bankDonation(fund) {
     amount: 10000,
     currency: "PKR",
     fund: "gen",
-    frequency: "once",
+    frequency: "month",
     donorName: member?.name || "",
     email: member?.email || "",
     anonymous: false,
@@ -179,11 +181,11 @@ async function bankDonation(fund) {
     ]
       .map(
         ([value, label]) =>
-          `<button type="button" class="${d.frequency === value ? "on" : ""}" aria-pressed="${d.frequency === value}" data-live="donation-frequency" data-value="${value}">${label}</button>`,
+          `<button type="button" class="${d.frequency === value ? "on" : ""}" aria-pressed="${d.frequency === value}" data-live="donation-frequency" data-value="${value}">${value === "month" ? HEART : ""}${label}</button>`,
       )
       .join(
         "",
-      )}</div><div class="donation-amount-heading"><label class="lb" for="donation-amount">Amount</label><div class="seg donation-currency" role="group" aria-label="Currency">${["PKR", "USD"].map((value) => `<button type="button" class="${d.currency === value ? "on" : ""}" aria-pressed="${d.currency === value}" data-live="donation-currency" data-value="${value}">${value}</button>`).join("")}</div></div><div class="amts">${AMTS[d.currency].map((amount) => `<button type="button" class="${Number(d.amount) === amount ? "on" : ""}" aria-pressed="${Number(d.amount) === amount}" data-live="donation-preset" data-value="${amount}">${donationMoney(amount)}</button>`).join("")}</div><div class="amtin"><span aria-hidden="true">${d.currency === "PKR" ? "Rs" : "$"}</span><input id="donation-amount" name="amount" type="number" min="0.01" max="10000000" step="0.01" value="${h(d.amount)}" required></div><span class="lb" id="donation-fund-label">Fund</span><div class="funds" role="group" aria-labelledby="donation-fund-label">${FUNDS.map((f) => `<button type="button" class="${d.fund === f.id ? "on" : ""}" aria-pressed="${d.fund === f.id}" data-live="donation-fund" data-value="${f.id}"><b>${h(f.n)}</b><small>${h(f.d)}</small></button>`).join("")}</div>${d.fund === "zakat" ? `<p style="margin:10px 0">${action("open-zakat", "Calculate zakat")}</p>` : ""}<div class="chk donation-cover"><input id="donation-cover" name="cover" type="checkbox" ${d.cover ? "checked" : ""}><label for="donation-cover" id="donation-cover-label">Add ${donationMoney(donationProcessingCost())} toward processing costs</label></div><p class="err" role="alert"></p><button id="donation-next" class="btn gold donation-next">Donate ${donationMoney(donationTotal())}${d.frequency === "month" ? " monthly" : ""}</button><p class="donation-footnote">Review your details next · No money is collected here</p></form>`,
+      )}</div>${d.frequency === "once" ? `<div class="donation-monthly-nudge" role="note"><p>${HEART}<span>Thank you for your generosity. If you are able, please consider giving monthly instead. A regular gift, even a smaller one, helps us plan steady support for families all year round. You can pause or stop it at any time.</span></p><button type="button" data-live="donation-frequency" data-value="month">Make it monthly</button></div>` : ""}<div class="donation-amount-heading"><label class="lb" for="donation-amount">Amount</label><div class="seg donation-currency" role="group" aria-label="Currency">${["PKR", "USD"].map((value) => `<button type="button" class="${d.currency === value ? "on" : ""}" aria-pressed="${d.currency === value}" data-live="donation-currency" data-value="${value}">${value}</button>`).join("")}</div></div><div class="amts">${AMTS[d.currency].map((amount) => `<button type="button" class="${Number(d.amount) === amount ? "on" : ""}" aria-pressed="${Number(d.amount) === amount}" data-live="donation-preset" data-value="${amount}">${donationMoney(amount)}</button>`).join("")}</div><div class="amtin"><span aria-hidden="true">${d.currency === "PKR" ? "Rs" : "$"}</span><input id="donation-amount" name="amount" type="number" min="0.01" max="10000000" step="0.01" value="${h(d.amount)}" required></div><span class="lb" id="donation-fund-label">Fund</span><div class="funds" role="group" aria-labelledby="donation-fund-label">${FUNDS.map((f) => `<button type="button" class="${d.fund === f.id ? "on" : ""}" aria-pressed="${d.fund === f.id}" data-live="donation-fund" data-value="${f.id}"><b>${h(f.n)}</b><small>${h(f.d)}</small></button>`).join("")}</div>${d.fund === "zakat" ? `<p style="margin:10px 0">${action("open-zakat", "Calculate zakat")}</p>` : ""}<div class="chk donation-cover"><input id="donation-cover" name="cover" type="checkbox" ${d.cover ? "checked" : ""}><label for="donation-cover" id="donation-cover-label">Add ${donationMoney(donationProcessingCost())} toward processing costs</label></div><p class="err" role="alert"></p><button id="donation-next" class="btn gold donation-next">Donate ${donationMoney(donationTotal())}${d.frequency === "month" ? " monthly" : ""}</button><p class="donation-footnote">Review your details next · No money is collected here</p></form>`,
   );
   $("#md").classList.add("donation-modal");
 }

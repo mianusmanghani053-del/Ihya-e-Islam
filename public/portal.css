@@ -190,3 +190,37 @@ textarea {
   flex: 1;
   width: 0;
 }
+.donation-heart {
+  color: #d92d20;
+  flex: none;
+  vertical-align: -3px;
+  margin-right: 6px;
+}
+.donation-monthly-nudge {
+  margin: 12px 0 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid #d92d20;
+  border-radius: 10px;
+  background: var(--tint);
+}
+.donation-monthly-nudge p {
+  display: flex;
+  gap: 2px;
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.donation-monthly-nudge p .donation-heart {
+  margin-top: 5px;
+}
+.donation-monthly-nudge button {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--em);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
