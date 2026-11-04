@@ -1514,6 +1514,129 @@
         font-weight: 700;
         margin: 16px 0 6px;
       }
+      .zk-main label {
+        display: block;
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 6px;
+      }
+      .zk-amt {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 2px solid var(--em);
+        border-radius: 12px;
+        padding: 6px 14px;
+        background: var(--paper);
+      }
+      .zk-amt span {
+        font-weight: 700;
+        color: var(--sub);
+      }
+      .zk-amt input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        outline: none;
+        background: none;
+        font-size: 26px;
+        font-weight: 700;
+        padding: 6px 0;
+        font-variant-numeric: tabular-nums;
+      }
+      .zk-amt input::-webkit-inner-spin-button,
+      .zk-amt input::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      .zk-amt input {
+        -moz-appearance: textfield;
+        appearance: textfield;
+      }
+      .zk-unit input {
+        accent-color: var(--em);
+      }
+      .zk-hint {
+        display: block;
+        color: var(--sub);
+        font-size: 13px;
+        line-height: 1.45;
+        margin-top: 6px;
+      }
+      .zk-out {
+        margin: 14px 0;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: var(--tint);
+      }
+      .zk-out p {
+        margin: 0;
+      }
+      .zk-empty {
+        color: var(--sub);
+      }
+      .zk-due {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .zk-due span {
+        font-weight: 700;
+      }
+      .zk-due b {
+        font-size: 28px;
+        color: var(--em);
+        font-variant-numeric: tabular-nums;
+      }
+      .zk-calc {
+        font-variant-numeric: tabular-nums;
+        color: var(--sub);
+        font-size: 14px;
+      }
+      .zk-note {
+        margin-top: 8px !important;
+        font-size: 13.5px;
+      }
+      .zk-more {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 14px;
+        margin-top: 10px;
+      }
+      .zk-more summary {
+        cursor: pointer;
+        font-weight: 700;
+        color: var(--em);
+      }
+      .zk-more summary span {
+        font-weight: 400;
+        color: var(--sub);
+      }
+      .zk-more[open] summary {
+        margin-bottom: 8px;
+      }
+      .zk-unit {
+        display: flex;
+        gap: 16px;
+        margin: 8px 0 12px;
+        font-size: 14px;
+      }
+      .zk-warn {
+        color: var(--warn);
+        font-size: 13.5px;
+        margin: 8px 0 0;
+      }
+      .zk-warn:empty {
+        display: none;
+      }
+      .zk-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 16px;
+      }
       .zk {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -2509,8 +2632,8 @@
         },
         {
           id: "water",
-          n: "Water wells",
-          d: "Hand pump Rs 45,000",
+          n: "Water pumps",
+          d: "PKR 80,000",
           tag: ["s", "Jariyah"],
         },
       ];
@@ -3003,47 +3126,93 @@
       }
       const fee = () => Math.round(S.D.amt * 0.025 * 100) / 100;
       const tot = () => S.D.amt + (S.D.cover ? fee() : 0);
+      const TOLA = 11.664;
+      const NISAB_SILVER_G = 612.36;
       function zakatMd() {
+        const num = (id, label, hint = "", ph = "0") =>
+          `<div><label for="${id}">${label}</label><input id="${id}" type="number" inputmode="decimal" min="0" step="any" placeholder="${ph}" ${hint ? `aria-describedby="${id}-h"` : ""}>${hint ? `<small class="zk-hint" id="${id}-h">${hint}</small>` : ""}</div>`;
         openMd(
           "Zakat calculator",
-          `<p style="margin-top:0;color:var(--sub);font-size:15px">Enter what you own today, held for one lunar year. Nisab uses silver (612.36 g), the lower threshold, so more people qualify to give.</p>
- <form class="zk" data-f="zk" id="zkf">${[
-   ["zcash", "Cash in hand & bank (Rs)", 0],
-   ["zgold", "Gold (grams)", 0],
-   ["zgp", "Gold rate today (Rs / gram)", 0],
-   ["zsil", "Silver (grams)", 0],
-   ["zsp", "Silver rate today (Rs / gram)", 0],
-   ["zbiz", "Business stock & goods for sale (Rs)", 0],
-   ["zrec", "Money others owe you (Rs)", 0],
-   ["zdebt", "Debts due now (Rs)", 0],
- ]
-   .map(
-     (f) =>
-       `<div><label for="${f[0]}">${f[1]}</label><input id="${f[0]}" type="number" min="0" value="${f[2] || ""}" placeholder="0"></div>`,
-   )
-   .join("")}</form>
- <p class="note" style="margin-top:10px">Enter today's gold and silver rates from your local market. They change daily.</p>
- <div class="sum" style="margin-top:12px" id="zres"></div>
- <div style="display:flex;justify-content:space-between;margin-top:16px;gap:8px"><button class="btn" data-a="zback">Back</button><button class="btn gold" data-a="zuse" id="zuse" disabled>Give this as zakat</button></div>`,
+          `<form class="zk2" id="zkf" onsubmit="return false">
+ <div class="zk-main"><label for="ztotal">Your total savings and zakatable wealth</label>
+ <div class="zk-amt"><span aria-hidden="true">Rs</span><input id="ztotal" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 500000" aria-describedby="ztotal-h"></div>
+ <small class="zk-hint" id="ztotal-h">Cash, bank balance, gold, silver, business stock and money owed to you, minus debts due now. Held for one lunar year. Do not include your home, car or household items.</small></div>
+ <div class="zk-out" id="zres" aria-live="polite"></div>
+ <details class="zk-more"><summary>Check nisab <span>(optional)</span></summary>
+ <p class="zk-hint">Zakat is due only if your wealth is at least the nisab: the value of 52.5 tola (612.36 g) of silver.</p>
+ <div class="zk-unit" role="radiogroup" aria-label="Weight unit"><label><input type="radio" name="zunit" value="tola" checked> Tola</label><label><input type="radio" name="zunit" value="g"> Grams</label></div>
+ <div class="zk">${num("zsp", 'Silver rate today <span class="zu">(Rs per tola)</span>', "From your local market. It changes daily.")}</div></details>
+ <details class="zk-more" id="zdetail"><summary>Not sure of your total? <span>Add it up item by item</span></summary>
+ <p class="zk-hint">Fill in only what applies. The total above updates for you.</p>
+ <div class="zk">${num("zcash", "Cash in hand and bank (Rs)")}${num("zbiz", "Business stock and goods for sale (Rs)")}${num("zgold", 'Gold <span class="zu">(tola)</span>')}${num("zgp", 'Gold rate today <span class="zu">(Rs per tola)</span>')}${num("zsil", 'Silver <span class="zu">(tola)</span>')}${num("zsp2", 'Silver rate today <span class="zu">(Rs per tola)</span>', "Same as the nisab silver rate.")}${num("zrec", "Money others owe you (Rs)", "Only if you expect it back.")}${num("zdebt", "Debts due now (Rs)", "Subtracted from your total.")}</div>
+ <p class="zk-warn" id="zwarn" role="alert"></p></details>
+ </form>
+ <div class="zk-actions"><button class="btn" data-a="zback">Back</button><button class="btn gold" data-a="zuse" id="zuse" disabled>Give this as zakat</button></div>`,
         );
         zcalc();
+        $("#ztotal")?.focus();
       }
-      function zcalc() {
-        const g = (id) => +($("#" + id)?.value || 0);
-        const net =
-          g("zcash") +
-          g("zgold") * g("zgp") +
-          g("zsil") * g("zsp") +
-          g("zbiz") +
-          g("zrec") -
-          g("zdebt");
-        const nis = 612.36 * g("zsp");
-        const due = nis > 0 && net >= nis ? net * 0.025 : 0;
-        $("#zres").innerHTML =
-          `<div><span>Net zakatable wealth</span><b>${pkr(Math.max(0, net))}</b></div><div><span>Nisab (silver)</span><b>${nis ? pkr(nis) : "Enter silver rate"}</b></div><div class="tot"><span>Zakat due (2.5%)</span><span>${nis ? (due ? pkr(due) : "Below nisab: no zakat due") : "—"}</span></div>`;
+      function zcalc(e) {
+        const t = e?.target;
+        const v = (id) => Math.max(0, +($("#" + id)?.value || 0));
+        const grams = $('#zkf input[name="zunit"]:checked')?.value === "g";
+        const per = grams ? 1 : TOLA;
+        if (t?.name === "zunit") {
+          const u = grams ? "grams" : "tola";
+          document.querySelectorAll("#zkf .zu").forEach((el) => {
+            el.textContent = el.textContent.includes("Rs")
+              ? `(Rs per ${grams ? "gram" : "tola"})`
+              : `(${u})`;
+          });
+        }
+        if (t?.id === "zsp" || t?.id === "zsp2") {
+          const other = $(t.id === "zsp" ? "#zsp2" : "#zsp");
+          if (other) other.value = t.value;
+        }
+        const detailIds = [
+          "zcash",
+          "zbiz",
+          "zgold",
+          "zgp",
+          "zsil",
+          "zsp2",
+          "zrec",
+          "zdebt",
+        ];
+        const warn = [];
+        if (t && detailIds.includes(t.id)) {
+          if (v("zgold") && !v("zgp"))
+            warn.push("Add today's gold rate to include your gold.");
+          if (v("zsil") && !v("zsp2"))
+            warn.push("Add today's silver rate to include your silver.");
+          const sum =
+            v("zcash") +
+            v("zbiz") +
+            v("zgold") * v("zgp") +
+            v("zsil") * v("zsp2") +
+            v("zrec") -
+            v("zdebt");
+          $("#ztotal").value = Math.max(0, Math.round(sum)) || "";
+        }
+        if ($("#zwarn")) $("#zwarn").textContent = warn.join(" ");
+        const total = v("ztotal");
+        const nisab = v("zsp") ? (NISAB_SILVER_G / per) * v("zsp") : 0;
+        const due = Math.round(total * 0.025);
+        const below = nisab > 0 && total < nisab;
+        let out;
+        if (!total) {
+          out = `<p class="zk-empty">Enter an amount to see your zakat (2.5%).</p>`;
+        } else if (below) {
+          out = `<div class="zk-due"><span>Zakat due</span><b>None</b></div><p class="zk-note">Your wealth (${pkr(total)}) is below today's nisab of ${pkr(nisab)}, so zakat is not obligatory. Voluntary sadaqah is always welcome.</p>`;
+        } else {
+          out = `<div class="zk-due"><span>Your zakat (2.5%)</span><b>${pkr(due)}</b></div><p class="zk-calc">${pkr(total)} × 2.5% = ${pkr(due)}</p><p class="zk-note">${nisab ? `Above today's nisab of ${pkr(nisab)}.` : "Due if your wealth is at or above the nisab and has been held for one lunar year. Add today's silver rate under <b>Check nisab</b> to confirm."}</p>`;
+        }
+        $("#zres").innerHTML = out;
         const b = $("#zuse");
-        b.disabled = !due;
-        b.dataset.v = Math.round(due);
+        b.disabled = !total || below || !due;
+        b.dataset.v = due;
+        b.textContent =
+          due && !below ? `Give ${pkr(due)} as zakat` : "Give this as zakat";
       }
 
       /* ---------- actions ---------- */
@@ -3220,7 +3389,7 @@
           $('label[for="dcover"]').textContent =
             `Add ${fmt(fee())} so 100% of my gift reaches the cause`;
         }
-        if (t.closest("#zkf")) zcalc();
+        if (t.closest("#zkf")) zcalc(e);
       });
       document.addEventListener("change", (e) => {
         const t = e.target;
