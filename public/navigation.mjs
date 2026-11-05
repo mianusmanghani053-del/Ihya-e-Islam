@@ -8,6 +8,11 @@ const publicPages = [
   ["contact/form", "Contact Us Form"],
   ["contact/whatsapp", "WhatsApp"],
   ["quran", "Quran"],
+  ["quran/audio", "Audio Quran"],
+  ["quran/audio/recitations", "Audio Quran — Recitations"],
+  ["quran/audio/haramain", "Audio Quran — Haramain Taraweeh"],
+  ["quran/audio/non-hafs", "Audio Quran — Non-Hafs readings"],
+  ["quran/audio/translations", "Audio Quran — With translations"],
   ["hadith", "Hadith"],
   ["hadith/bukhari", "Sahih al-Bukhari"],
   ["seerah", "Seerah & Khulafa"],
@@ -144,7 +149,16 @@ function routeMap() {
 function breadcrumb() {
   const raw = location.hash.slice(1) || "home";
   let rows = [{ label: "Home", href: "#home" }];
-  if (raw.startsWith("hadith/bukhari")) {
+  if (raw.startsWith("quran/audio"))
+    rows.push(
+      { label: "Quran", href: "#quran" },
+      {
+        label: "Audio Quran",
+        href: raw === "quran/audio" ? null : "#quran/audio",
+      },
+      ...(raw === "quran/audio" ? [] : [{ label: nameOf(raw) }]),
+    );
+  else if (raw.startsWith("hadith/bukhari")) {
     rows.push({ label: "Hadith", href: "#hadith" });
     if (raw === "hadith/bukhari") rows.push({ label: "Sahih al-Bukhari" });
     else
