@@ -1,21 +1,30 @@
-# Audio Quran implementation status
+# Audio Quran
 
-Prepared, not deployed. The fourth Quran tab, four category routes, searchable reciter directory, recording list and persistent native audio player are implemented in `public/audio-quran.mjs` and its stylesheet. The player supports next/previous, repeat, playback speed, source links and safe error handling. Existing text Quran tabs remain available. Page branding is Audio Quran; reciter and necessary recording credits must be retained.
+**Status: catalogue imported and verified, ready to deploy.**
 
-`tests/audio-quran-browser.py` verifies the UI with explicitly isolated local fixtures. Those fixtures are not production reciters or recordings and must not be published as the full catalogue.
+The fourth Quran tab (`#quran/audio`) has four category routes, a searchable reciter directory, recording lists and a persistent audio player (next/previous, repeat, speed). Text Quran tabs are unchanged.
 
-## Blocking source import
+## Data
 
-The current environment network policy excludes the source site. A configuration draft was saved adding `quranicaudio.com`, `www.quranicaudio.com`, `api.quranicaudio.com`, and `download.quranicaudio.com` while preserving all existing custom hosts and package-manager presets. The tool returned `requires_publish: true`; the user must review/save/publish it. Do not bypass the network proxy or claim actual audio playback has been verified before those hosts are accessible.
+`public/data/audio-quran/` was generated from the public QuranicAudio.com API:
 
-After activation, inspect the website, its public catalogue API, source terms/credits and recording metadata. Import its complete four-category catalogue into `public/data/audio-quran/catalogue.json`, per-reciter track lists into `reciter-ID.json`, and provenance into `provenance.json`. Do not fabricate 114 available tracks for incomplete collections. Retain original recording URLs and credits; stream audio from the permitted host rather than copying recording archives into Git.
+- `catalogue.json`: 177 reciters (Recitations 109, Haramain Taraweeh 47, Non-Hafs 10, With translations 11).
+- `reciter-<id>.json`: 19,125 recordings. Surah titles come from `/api/surahs`. Durations are shown only where the source value is plausible.
+- `provenance.json`: source, API endpoints, import time, the source's terms of use, and the verification report.
 
-Frontend contract:
+Recordings are **streamed from `download.quranicaudio.com`**, not copied. Reciter names, Arabic names and descriptions are kept as published. Incomplete collections keep their real track counts; no tracks are invented. Duplicate source entries are removed.
 
-- Catalogue: `{reciters:[{id:number,name,arabicName,category,trackCount,description?,reading?}]}`.
-- Categories: `recitations`, `haramain`, `non-hafs`, `translations`.
-- Per-reciter: `{reciter:number,tracks:[{id:string,surah?:number,title,url,duration?}]}`.
-- Validate every published recording URL and source category; safely handle missing recordings.
-- Real catalogue JSON files have not yet been generated; do not deploy an empty or fixture catalogue.
+## Verification
 
-Then validate catalogue coverage, real media responses/range support, four category parity, mobile behavior and existing workflows. Run build/tests, commit/merge and deploy the finished feature only after actual data is available. Update the application script version to avoid stale module graphs on the live site.
+- Every reciter's first, middle and last recording was range-requested.
+- Two reciters (42, 61) list stale file names; their recordings were repaired to the working `NNN.mp3` names after confirming each one plays.
+- Nothing was dropped.
+- The audio host returns `audio/mpeg` with `206` range responses and open CORS.
+
+## Terms
+
+QuranicAudio.com says its MP3s "may be downloaded and used for personal use free of charge" and must not be used commercially. Ihya-e-Islam streams them free, with credit and without sale. The trust should confirm it is comfortable with this, or obtain permission, and keep the credit visible.
+
+## Refreshing
+
+The importer and verifier live outside the repo (one-off). Re-run them against the same API to refresh. Keep `www.quranicaudio.com`, `quranicaudio.com` and `download.quranicaudio.com` in the CSP `media-src` and the session network allow-list.
