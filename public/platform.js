@@ -1,3 +1,4 @@
+import { installBukhari } from "./bukhari.mjs";
 import { installContact } from "./contact.mjs?v=contact-form-2";
 import { installImpact } from "./impact.mjs";
 import { installSeerah } from "./seerah.mjs";
@@ -839,6 +840,7 @@ document.addEventListener(
   true,
 );
 
+installBukhari();
 installContact();
 installImpact();
 installSeerah();

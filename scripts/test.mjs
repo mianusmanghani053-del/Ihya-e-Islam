@@ -88,16 +88,17 @@ try {
       "tests/platform.test.js",
       "tests/suggestion.test.js",
       "tests/chairman.test.js",
+      "tests/bukhari.test.js",
     ],
     { env, stdio: "inherit" },
   );
   if (run.status !== 0) process.exitCode = run.status || 1;
   if (process.env.RUN_BROWSER === "1" && !process.exitCode) {
-    const browser = spawnSync("python3", ["tests/browser.py"], {
-      env,
-      stdio: "inherit",
-    });
-    process.exitCode = browser.status || 0;
+    for (const script of ["tests/browser.py", "tests/bukhari-browser.py"]) {
+      const browser = spawnSync("python3", [script], { env, stdio: "inherit" });
+      process.exitCode = browser.status || 0;
+      if (process.exitCode) break;
+    }
   }
 } catch (e) {
   console.error(e.message);

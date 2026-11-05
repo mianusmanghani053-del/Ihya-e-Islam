@@ -157,3 +157,17 @@ The official WhatsApp number is configured as the public `WHATSAPP_NUMBER` varia
 ### Private account email addresses
 
 Migration `0006_account_email_privacy.sql` adds `users.email_private`. Protected accounts have no email in staff directory results, and their address is redacted from JSON returned to other viewers, including nested enquiry or record content. Account owners retain their own sign-in and account information. Staff selectors fall back to the member reference when the email is private. Keep personal email addresses out of source control, public content and bootstrap migrations. Initial leadership roles must be explicitly authorised and assigned through audited operations; registration never automatically grants leadership.
+
+### Complete Sahih al-Bukhari reader
+
+The Hadith page links its Bukhari collection card to `#hadith/bukhari`. The reader includes all 97 books and 7,589 edition entries, covering numbered hadith 1–7563 plus split variants. Books are loaded on demand from local static files; full-collection Arabic/English search loads a separate word index. Each book has pagination, display and Arabic font controls, source links, copy and member bookmarks. Book links use `#hadith/bukhari/book/1`; stable entry links use `#hadith/bukhari/1` or a listed variant such as `402.2`.
+
+Text is imported from the Arabic `ara-bukhari` and English `eng-bukhari` editions of [Hadith API](https://github.com/fawazahmed0/hadith-api), pinned to `df57907be35291c91ad6a6691180e22ca9920784`, under the upstream Unlicense. The English edition identifies Muhsin Khan as translator. This is an independently hosted edition with Sunnah.com reference links, not an official Sunnah.com mirror or a claim of identical segmentation. Original text strings are preserved. The source has 311 zero-valued book references within combined reports; these are assigned to their report group's terminal book reference. Nine empty continuation entries explicitly link to the shared imported text within that group. No missing text is invented and no per-narration grading is generated.
+
+Reproduce the import by downloading `editions/ara-bukhari.json`, `editions/eng-bukhari.json` and `LICENSE` from the pinned revision into a local directory, then running:
+
+```sh
+node scripts/import-bukhari.mjs /path/to/pinned-downloads
+```
+
+`public/data/bukhari/catalogue.mjs` records source URLs, SHA-256 hashes, edition details and book file hashes; `LICENSE.txt` preserves the upstream licence. `npm test` verifies complete numbered coverage, unique identifiers, book hashes, shared-text references and search behavior. `npm run test:browser` also checks the full reader workflow, mobile width and fetch-error recovery.

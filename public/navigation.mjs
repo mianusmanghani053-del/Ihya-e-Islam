@@ -1,3 +1,4 @@
+import { BUKHARI } from "./data/bukhari/catalogue.mjs";
 import { READINGS } from "./seerah.mjs";
 import { WORKFLOWS, GROUPS } from "./workflows.mjs";
 const publicPages = [
@@ -8,6 +9,7 @@ const publicPages = [
   ["contact/whatsapp", "WhatsApp"],
   ["quran", "Quran"],
   ["hadith", "Hadith"],
+  ["hadith/bukhari", "Sahih al-Bukhari"],
   ["seerah", "Seerah & Khulafa"],
   ["our-work", "Our Work & Your Impact"],
   ["track-donation", "Track your donation"],
@@ -69,9 +71,20 @@ const nameOf = (route) =>
     ...READINGS.map((r) => ["seerah/" + r.slug, r.title]),
   ].find(([key]) => key === route)?.[1] ||
   WORKFLOWS[route.replace("services/", "")]?.title ||
+  (route.startsWith("hadith/bukhari/book/")
+    ? BUKHARI.books.find((b) => String(b.id) === route.split("/").at(-1))?.title
+    : null) ||
   route.replaceAll("-", " ");
 function routeMap() {
   const groups = [
+    [
+      "Sahih al-Bukhari books",
+      BUKHARI.books.map((b) => ({
+        route: "hadith/bukhari/book/" + b.id,
+        label: b.id + ". " + b.title,
+        access: "Public",
+      })),
+    ],
     [
       "Seerah reading library",
       READINGS.map((r) => ({
@@ -113,6 +126,7 @@ function routeMap() {
   const other = Object.keys(V).filter(
     (route) =>
       !known.has(route) &&
+      !/^hadith\/bukhari\/\d/.test(route) &&
       !route.startsWith("verify/") &&
       !route.startsWith("portal/"),
   );
@@ -130,7 +144,19 @@ function routeMap() {
 function breadcrumb() {
   const raw = location.hash.slice(1) || "home";
   let rows = [{ label: "Home", href: "#home" }];
-  if (raw.startsWith("contact/"))
+  if (raw.startsWith("hadith/bukhari")) {
+    rows.push({ label: "Hadith", href: "#hadith" });
+    if (raw === "hadith/bukhari") rows.push({ label: "Sahih al-Bukhari" });
+    else
+      rows.push(
+        { label: "Sahih al-Bukhari", href: "#hadith/bukhari" },
+        {
+          label: raw.includes("/book/")
+            ? nameOf(raw)
+            : "Hadith " + raw.split("/").at(-1),
+        },
+      );
+  } else if (raw.startsWith("contact/"))
     rows.push(
       { label: "Contact Us", href: "#contact" },
       { label: nameOf(raw) },

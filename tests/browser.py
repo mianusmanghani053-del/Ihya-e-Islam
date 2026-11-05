@@ -70,7 +70,7 @@ with sync_playwright() as p:
  page.keyboard.press('Escape')
  page.evaluate("location.hash='portal'")
  page.locator('[data-a="ptab"][data-v="vol"]').click()
- assert 'Teaching' in page.locator('#view').inner_text() or 'Relief' in page.locator('#view').inner_text()
+ page.wait_for_function("()=>{const text=document.querySelector('#view').textContent;return text.includes('Teaching')||text.includes('Relief')}")
  page.evaluate("location.hash='report'")
  page.locator('#rl').fill('Local test location')
  page.locator('#rd').fill('Browser test fixture, not a real incident')

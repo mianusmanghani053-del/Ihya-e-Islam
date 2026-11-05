@@ -1,0 +1,256 @@
+.bukhari-summary,
+.bukhari-back,
+.bukhari-entry-footer,
+.bukhari-reading-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+.bukhari-summary {
+  margin-top: 22px;
+}
+.bukhari-summary span {
+  border: 1px solid #ffffff30;
+  border-radius: 30px;
+  padding: 7px 14px;
+  font-size: 14px;
+}
+.bukhari-back {
+  margin-bottom: 22px;
+}
+.bukhari-search-controls {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 28px;
+}
+.bukhari-search-controls label,
+.bukhari-reading-options label,
+.bukhari-catalog-heading > label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+}
+.bukhari-search-controls input,
+.bukhari-search-controls select,
+.bukhari-reading-options select,
+.bukhari-catalog-heading input {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 11px;
+  color: var(--ink);
+  background: #fff;
+  font: inherit;
+}
+.bukhari-search-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.bukhari-search-row input {
+  flex: 1 1 180px;
+  width: 140px;
+}
+.bukhari-search-row select {
+  flex: 1 1 170px;
+  width: 180px;
+}
+.bukhari-search-row .btn {
+  flex-shrink: 0;
+}
+.bukhari-reading-options {
+  margin: 24px 0;
+  justify-content: flex-end;
+}
+.bukhari-reading-options label {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.bukhari-reading-options input[type="range"] {
+  width: 140px;
+}
+.bukhari-catalog-heading {
+  margin: 28px 0 20px;
+}
+.bukhari-catalog-heading p {
+  color: var(--sub);
+}
+.bukhari-catalog-heading input {
+  display: block;
+  margin-top: 10px;
+  width: min(100%, 430px);
+}
+.bukhari-book-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.bukhari-book {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 22px;
+}
+.bukhari-book[hidden] {
+  display: none;
+}
+.bukhari-book:hover {
+  border-color: var(--gold);
+  background: #f9fbf8;
+}
+.bukhari-book-number {
+  display: grid;
+  place-items: center;
+  min-width: 34px;
+  height: 34px;
+  background: #e5eee9;
+  border-radius: 50%;
+  color: var(--em);
+  font-weight: 700;
+}
+.bukhari-book h3 {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.4;
+}
+.bukhari-book p {
+  font-size: 19px;
+  line-height: 1.8;
+  margin: 8px 0;
+}
+.bukhari-book small {
+  color: var(--sub);
+  font-size: 12px;
+}
+.bukhari-book > span:last-child {
+  margin-inline-start: auto;
+  color: var(--gold);
+}
+.bukhari-entry {
+  margin-block: 22px;
+  scroll-margin-top: 120px;
+}
+.bukhari-entry-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+.bukhari-entry h2 {
+  margin: 8px 0;
+  font-size: 25px;
+}
+.bukhari-entry h2 a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.bukhari-ar {
+  font-family: Amiri, serif;
+  line-height: 2.1;
+  text-align: right;
+  margin: 24px 0;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.bukhari-en {
+  font-size: 17px;
+  line-height: 1.9;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.bukhari-entry-footer {
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  font-size: 13px;
+}
+.bukhari-entry-footer a {
+  color: var(--em);
+  text-underline-offset: 4px;
+}
+.bukhari-entry-footer > span {
+  flex: 1 1 250px;
+  color: var(--sub);
+}
+.bukhari-pagination {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-block: 26px;
+}
+.bukhari-pagination .btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.bukhari-source-note {
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+  margin-top: 36px;
+  color: var(--sub);
+  line-height: 1.8;
+}
+.bukhari-source-note summary {
+  cursor: pointer;
+  color: var(--em);
+  font-weight: 700;
+}
+.bukhari-source-note a {
+  color: var(--em);
+}
+.bukhari-collection-link {
+  display: block;
+  text-decoration: none;
+  color: var(--ink);
+}
+.bukhari-collection-link > b {
+  font-size: 13px;
+  color: var(--em);
+}
+#bukhari-content {
+  scroll-margin-top: 120px;
+}
+@media (max-width: 1000px) {
+  .bukhari-book-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .bukhari-search-controls {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .bukhari-book-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bukhari-entry-heading {
+    flex-direction: column;
+  }
+  .bukhari-entry {
+    padding: 20px;
+  }
+  .bukhari-search-controls {
+    padding: 20px;
+  }
+  .bukhari-reading-options {
+    justify-content: flex-start;
+  }
+  .bukhari-search-row input,
+  .bukhari-search-row select {
+    flex-basis: 100%;
+    width: 100%;
+  }
+  .bukhari-pagination .btn {
+    white-space: normal;
+  }
+  .bukhari-summary {
+    gap: 8px;
+  }
+  .bukhari-summary span {
+    font-size: 12px;
+  }
+}
