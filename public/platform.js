@@ -1,3 +1,4 @@
+import { installAudioQuran } from "./audio-quran.mjs?v=audio-quran-1";
 import { installBukhari } from "./bukhari.mjs";
 import { installContact } from "./contact.mjs?v=contact-form-2";
 import { installImpact } from "./impact.mjs";
@@ -840,6 +841,7 @@ document.addEventListener(
   true,
 );
 
+installAudioQuran();
 installBukhari();
 installContact();
 installImpact();

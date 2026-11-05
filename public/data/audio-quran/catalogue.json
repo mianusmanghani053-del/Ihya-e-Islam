@@ -1,0 +1,1333 @@
+{
+ "reciters": [
+  {
+   "id": 1,
+   "name": "Abdullah Awad al-Juhani",
+   "arabicName": "عبدالله عواد الجهني",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 2,
+   "name": "Abdullah Basfar",
+   "arabicName": "عبدالله بصفر",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 3,
+   "name": "Abu Bakr al-Shatri",
+   "arabicName": "أبو بكر الشاطرى",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 4,
+   "name": "Sa`ud ash-Shuraym",
+   "arabicName": "سعود الشريم",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 5,
+   "name": "Mishari Rashid al-`Afasy",
+   "arabicName": "مشاري راشد العفاسي",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 6,
+   "name": "Muhammad Siddiq al-Minshawi",
+   "arabicName": "محمد صديق المنشاوي",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 7,
+   "name": "Abdur-Rahman as-Sudais",
+   "arabicName": "عبدالرحمن السديس",
+   "category": "recitations",
+   "trackCount": 115
+  },
+  {
+   "id": 8,
+   "name": "Ali Abdur-Rahman al-Huthaify",
+   "arabicName": "علي عبدالرحمن الحذيفي",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 9,
+   "name": "Khalid al-Qahtani",
+   "arabicName": "خالد القحطاني",
+   "category": "recitations",
+   "trackCount": 116
+  },
+  {
+   "id": 10,
+   "name": "Nabil ar-Rifai",
+   "arabicName": "نبيل الرفاعي",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 11,
+   "name": "AbdulMuhsin al-Qasim",
+   "arabicName": "عبد المحسن القاسم",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 12,
+   "name": "Muhammad Jibreel",
+   "arabicName": "محمد جبريل",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 13,
+   "name": "Saad al-Ghamdi",
+   "arabicName": "سعد الغامدي",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 14,
+   "name": "Fares Abbad",
+   "arabicName": "فارس عباد",
+   "category": "recitations",
+   "trackCount": 113
+  },
+  {
+   "id": 15,
+   "name": "AbdulBari ath-Thubaity",
+   "arabicName": "عبدالباري الثبيتي",
+   "category": "recitations",
+   "trackCount": 115
+  },
+  {
+   "id": 16,
+   "name": "Mahmoud Khaleel Al-Husary",
+   "arabicName": "محمود خليل الحصري",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 17,
+   "name": "Sahl Yasin",
+   "arabicName": "سهل ياسين",
+   "category": "recitations",
+   "trackCount": 113
+  },
+  {
+   "id": 18,
+   "name": "Salah Bukhatir",
+   "arabicName": "صلح بوخاطر",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 19,
+   "name": "Ahmed ibn Ali al-Ajmy",
+   "arabicName": "أحمد بن علي العجمي",
+   "category": "recitations",
+   "trackCount": 115
+  },
+  {
+   "id": 20,
+   "name": "Sudais and Shuraym",
+   "arabicName": "السديس والشريم",
+   "category": "recitations",
+   "trackCount": 118
+  },
+  {
+   "id": 21,
+   "name": "AbdulAzeez al-Ahmad",
+   "arabicName": "عبدالعزيز الحمد",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 22,
+   "name": "Muhammad Ayyoob",
+   "arabicName": "محمد أيوب",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 23,
+   "name": "Tawfeeq ibn Sa`id as-Sawa'igh",
+   "arabicName": "توفيق بن سعيد الصائغ",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 24,
+   "name": "Abdullah Ali Jabir [Taraweeh]",
+   "arabicName": "عبدالله علي جابر",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 25,
+   "name": "Madinah Taraweeh 1419",
+   "arabicName": "تراويح المدينة ١٤١٩",
+   "category": "haramain",
+   "trackCount": 113,
+   "description": "This is Live Recitation from Al-Madinah. Contains 4 Imams:  <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhaynee</a>, <a href=\\\"http://quranicaudio.com/quran/15\\\">AbdulBari ath-Thubaity</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, and <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>."
+  },
+  {
+   "id": 26,
+   "name": "Muhammad al-Mehysni",
+   "arabicName": "محمد المحيسني",
+   "category": "recitations",
+   "trackCount": 113
+  },
+  {
+   "id": 27,
+   "name": "Hani ar-Rifai",
+   "arabicName": "هاني الرفاعي",
+   "category": "recitations",
+   "trackCount": 115
+  },
+  {
+   "id": 28,
+   "name": "Ibrahim Al-Jibrin",
+   "arabicName": "إبراهيم الجبرين",
+   "category": "recitations",
+   "trackCount": 69
+  },
+  {
+   "id": 29,
+   "name": "Makkah Taraweeh 1426",
+   "arabicName": "تراويح مكة ١٤٢٦",
+   "category": "haramain",
+   "trackCount": 115,
+   "description": "This is Live Recitation from Masjid al-Haram in Makkah Al-Mukarramah, 1426 H./2005 A.D.  Contains 4 Imams:  <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>, and <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>."
+  },
+  {
+   "id": 30,
+   "name": "Madinah Taraweeh 1426",
+   "arabicName": "تراويح المدينة ١٤٢٦",
+   "category": "haramain",
+   "trackCount": 115,
+   "description": "This is Live Recitation from Masjid al-Nabawi, 1426 H/2005 A.D.  Contains 4 Imams:  <a href=\\\"http://quranicaudio.com/quran/8\\\">Ali Adur-Rahman al-Huthaify</a>, Hussain Aal ash-Shaykh, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, and <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>."
+  },
+  {
+   "id": 31,
+   "name": "Saad al-Ghamdi (Partial)",
+   "arabicName": "سعد الغامدي - غير مكتمل",
+   "category": "recitations",
+   "trackCount": 50
+  },
+  {
+   "id": 32,
+   "name": "Muhammad Jibreel (Partial)",
+   "arabicName": "محمد جبريل - غير مكتمل",
+   "category": "recitations",
+   "trackCount": 27
+  },
+  {
+   "id": 33,
+   "name": "Madinah Taraweeh 1427",
+   "arabicName": "تراويح المدينة ١٤٢٧",
+   "category": "haramain",
+   "trackCount": 116,
+   "description": "This is Live Recitation from Masjid al-Nabawi, 1427 H./2006 A.D.  Contains 4 Imams:  <a href=\\\"http://quranicaudio.com/quran/8\\\">Ali Abdur-Rahman al-Huthaify</a>, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, and Hussain Aal ash-Shaykh."
+  },
+  {
+   "id": 34,
+   "name": "Makkah Taraweeh 1427",
+   "arabicName": "تراويح مكة ١٤٢٧",
+   "category": "haramain",
+   "trackCount": 116,
+   "description": "This is Live Recitation from Masjid al-Haram in Makkah Al-Mukarramah, 1427 H./2006 A.D.  Contains 4 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>, and <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>."
+  },
+  {
+   "id": 35,
+   "name": "Saleh al Taleb",
+   "arabicName": "صالح آل طالب",
+   "category": "recitations",
+   "trackCount": 32
+  },
+  {
+   "id": 36,
+   "name": "Sudais and Shuraym with Aslam Athar [Pickthall Translation]",
+   "arabicName": "السديس والشريم مع اسلم اظهر - ترجمة معاني القران الكريم باللغة النجليزية - بيكثال",
+   "category": "translations",
+   "trackCount": 114,
+   "description": "This is the complete set of the Holy Qur'an along with an English Verse-by-Verse translation. The Arabic is recited by <a href=\"http://quranicaudio.com/quran/7\">Sudais</a> and <a href=\"http://quranicaudio.com/quran/4\">Shuraim</a>.  The English is read by <b>Aslam Athar</b> using the <a href=\"https://quran.com/1?translations=19\">Pickthall Translation</a>."
+  },
+  {
+   "id": 37,
+   "name": "AbdulBaset AbdulSamad [Murattal]",
+   "arabicName": "عبد الباسط عبد الصمد - مرتل",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 39,
+   "name": "Muhammad Ayyub with Mikaal Waters [Muhsin Khan Translation]",
+   "arabicName": "محمد أيوب مع ميكال وترز - ترجمة معاني القران الكريم باللغة النجليزية - محسن خان",
+   "category": "translations",
+   "trackCount": 114,
+   "description": "This is the complete set of the Holy Qur'an along with an English Verse-by-Verse translation. The Arabic is recited by <a href=\\\"https://quranicaudio.com/quran/22\\\">Shaykh Muhammad Ayoob</a>. The English is read by <b>Mikaal Waters</b> using the Muhsin Khan Translation</a>."
+  },
+  {
+   "id": 40,
+   "name": "AbdulWadud Haneef",
+   "arabicName": "عبد الودود حنيف",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 41,
+   "name": "Muhammad Siddiq al-Minshawi [Mujawwad]",
+   "arabicName": "محمد صديق المنشاوي - مجود",
+   "category": "recitations",
+   "trackCount": 112
+  },
+  {
+   "id": 42,
+   "name": "Shakir Qasami with Aslam Athar [Pickthall Translation]",
+   "arabicName": "شاكر قاسمى مع اسلم اظهر - ترجمة معاني القران الكريم باللغة النجليزية - بيكثال",
+   "category": "translations",
+   "trackCount": 114,
+   "description": "This is the complete set of the Holy Qur'an along with an English Verse-by-Verse translation. The Arabic is recited by <b>Shaykh Shakir Qasami</b>.  The English is read by <b>Aslam Athar</b> using the <a href=\"https://quran.com/1?translations=19\">Pickthall Translation</a>."
+  },
+  {
+   "id": 43,
+   "name": "Salah al-Budair",
+   "arabicName": "صلح البدير",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 44,
+   "name": "Aziz Alili",
+   "arabicName": "عزيز عليلى",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 45,
+   "name": "Makkah Taraweeh 1425",
+   "arabicName": "تراويح مكة ١٤٢٥",
+   "category": "haramain",
+   "trackCount": 113,
+   "description": "This is Live Recitation from Masjidul-Haram in Al-Makkah Al-Mukarramah, 1425 H./2004 A.D.  Contains 2 Imams: <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a> and <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>."
+  },
+  {
+   "id": 46,
+   "name": "Madinah Taraweeh 1423",
+   "arabicName": "تراويح المدينة ١٤٢٣",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is Live Recitation from Masjidun-Nabawi, 1423 H./2002 A.D.  Contains 5 Imams:  <a href=\\\"http://quranicaudio.com/quran/8\\\">Ali Abdur-Rahman al-Huthaify</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, <a href=\\\"http://quranicaudio.com/quran/15\\\">AbdulBari ath-Thubaity</a>, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, and Hussain Aal Ash-Shaykh."
+  },
+  {
+   "id": 47,
+   "name": "AbdulBaset AbdulSamad with Naeem Sultan [Pickthall Translation]",
+   "arabicName": "عبد الباسط عبد الصمد مع نعيم سلطان - ترجمة معاني القران الكريم باللغة النجليزية - بيكثال",
+   "category": "translations",
+   "trackCount": 114,
+   "description": "This is the complete set of the Holy Qur'an along with an English Verse-by-Verse translation. The Arabic is recited by <b>AbdulBaset AbdulSamad</b> [<a href=\"http://quranicaudio.com/quran/37\">Murattal</a>/<a href=\"http://quranicaudio.com/quran/50\">Mujawwad</a>].  The English is read by <b>Naeem Sultan</b> using the <a href=\"https://quran.com/1?translations=19\">Pickthall Translation</a>."
+  },
+  {
+   "id": 48,
+   "name": "Sudais and Shuraym with Naeem Sultan [Pickthall Translation]",
+   "arabicName": "السديس والشريم مع نعيم سلطان - ترجمة معاني القران الكريم باللغة النجليزية - بيكثال",
+   "category": "translations",
+   "trackCount": 114,
+   "description": "This is the complete set of the Holy Qur'an along with an English Verse-by-Verse translation. The Arabic is recited by <a href=\"http://quranicaudio.com/quran/7\">Sudais</a> and <a href=\"http://quranicaudio.com/quran/4\">Shuraim</a>.  The English is read by <b>Naeem Sultan</b> using the <a href=\"https://quran.com/1?translations=19\">Pickthall Translation</a>."
+  },
+  {
+   "id": 49,
+   "name": "Mishari ibn Rashid al-`Afasy with Saabir [Muhsin Khan Translation]",
+   "arabicName": "مشارى راشد مع صابر - ترجمة معاني القران الكريم باللغة النجليزية - محسن خان",
+   "category": "translations",
+   "trackCount": 84,
+   "description": "This is the complete set of the Holy Qur'an along with an English Verse-by-Verse translation. The Arabic is recited by <a href=\"http://quranicaudio.com/quran/5\">Shaykh Mishaari Raashid</a>. The English is read by <b>Saabir</b> using the <a href=\"https://quran.com/1?translations=203\">Muhsin Khan Translation</a>."
+  },
+  {
+   "id": 50,
+   "name": "AbdulBaset AbdulSamad [Mujawwad]",
+   "arabicName": "عبد الباسط عبد الصمد - مجود",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 51,
+   "name": "Maher al-Muaiqly [Assorted]",
+   "arabicName": "ماهر المعيقلى - متنوعة",
+   "category": "recitations",
+   "trackCount": 30
+  },
+  {
+   "id": 52,
+   "name": "Maher al-Muaiqly [1422-1423]",
+   "arabicName": "ماهر المعيقلى - ١٤٢٢-١٤٢٣",
+   "category": "recitations",
+   "trackCount": 16
+  },
+  {
+   "id": 53,
+   "name": "Muhammad al-Luhaidan",
+   "arabicName": "محمد اللحيدان",
+   "category": "recitations",
+   "trackCount": 112
+  },
+  {
+   "id": 54,
+   "name": "AbdulBaset AbdulSamad [Warsh]",
+   "arabicName": "عبد الباسط عبد الصمد - ورش",
+   "category": "non-hafs",
+   "trackCount": 115,
+   "description": "This is the Full Quran recited by AbdulBaset AbdulSamad in the Qiraat of Warsh an Naafi'"
+  },
+  {
+   "id": 55,
+   "name": "Al-Hussayni Al-'Azazy (with Children)",
+   "arabicName": "الحسيني العزازي مع اطفال",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 56,
+   "name": "Ibrahim Al-Jibreen [1426-1427]",
+   "arabicName": "إبراهيم الجبرين - ١٤٢٦-١٤٢٧",
+   "category": "recitations",
+   "trackCount": 68
+  },
+  {
+   "id": 57,
+   "name": "AbdulBaset AbdulSamad with Ibrahim Walk [Saheeh Intl Translation]",
+   "arabicName": "عبد الباسط عبد الصمد مع إبراهيم واق - ترجمة معاني القران الكريم باللغة النجليزية - صحيح الدولي",
+   "category": "translations",
+   "trackCount": 114,
+   "description": "This is the complete set of the Holy Qur'an along with an English Verse-by-Verse translation. The Arabic is recited by <b>AbdulBaset AbdulSamad</b> [<a href=\"http://quranicaudio.com/quran/37\">Murattal</a>/<a href=\"http://quranicaudio.com/quran/50\">Mujawwad</a>].  The English is read by <b>Ibrahaim Walk</b> using the <a href=\"https://quran.com/1?translations=20\">Saheeh International Translation</a>."
+  },
+  {
+   "id": 58,
+   "name": "Mishari ibn Rashid al-`Afasy with Ibrahim Walk [Saheeh Intl Translation]",
+   "arabicName": "مشارى راشد مع إبراهيم واق - ترجمة معاني القران الكريم باللغة النجليزية - صحيح الدولي",
+   "category": "translations",
+   "trackCount": 114,
+   "description": "This is the complete set of the Holy Qur'an along with an English Verse-by-Verse translation. The Arabic is recited by <a href=\"http://quranicaudio.com/quran/5\">Shaykh Mishaari Raashid</a>. The English is read by <b>Ibrahaim Walk</b> using the <a href=\"https://quran.com/1?translations=20\">Saheeh International Translation</a>."
+  },
+  {
+   "id": 59,
+   "name": "Makkah Taraweeh 1428",
+   "arabicName": "تراويح مكة ١٤٢٨",
+   "category": "haramain",
+   "trackCount": 115,
+   "description": "This is Live Recitation from Masjidul-Haram in Al-Makkah Al-Mukarramah, 1428 H./2007 A.D.  Contains 4 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, and <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>."
+  },
+  {
+   "id": 60,
+   "name": "Abdur-Rashid Sufi [Soosi]",
+   "arabicName": "عبد الرشيد صوفي - السوسي",
+   "category": "non-hafs",
+   "trackCount": 114,
+   "description": "This is the Full Quran recited by Abdur Rashid Sufi in the Qiraat of as-Soosi an Abee 'Amru."
+  },
+  {
+   "id": 61,
+   "name": "Sadaqat `Ali",
+   "arabicName": "صدقات علي",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 62,
+   "name": "Abdur-Rashid Sufi [Khalaf]",
+   "arabicName": "عبد الرشيد صوفي - خلف",
+   "category": "non-hafs",
+   "trackCount": 116,
+   "description": "This is the Full Quran recited by Abdur Rashid Sufi in the Qiraat of Khalaf an Hamzah."
+  },
+  {
+   "id": 63,
+   "name": "Makkah Taraweeh 1424",
+   "arabicName": "تراويح مكة ١٤٢٤",
+   "category": "haramain",
+   "trackCount": 115,
+   "description": "This is Live Recitation from Masjidul-Haram in Al-Makkah Al-Mukarramah, 1424 H./2003 A.D.  Contains 3 Imams: <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, and <a href=\\\"http://quranicaudio.com/quran/35\\\">Saleh al Taleb</a>."
+  },
+  {
+   "id": 64,
+   "name": "Hamad Sinan",
+   "arabicName": "حامد سنان",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 65,
+   "name": "Maher al-Muaiqly",
+   "arabicName": "ماهر المعيقلى",
+   "category": "recitations",
+   "trackCount": 113,
+   "description": "Sheikh Maher al-Muaiqly lead at both al-Masjid al-Haram in Makkah, and at Masjid al-Nabawi in Madinah.  These recitations were converted into mp3s from the files on <a href=\\\"http://www.almuaiqly.com\\\">the official webpage</a>.  The recitations on this page are from the years 1424-1425.  Some of his other recitations can be found in the <a href=\\\"http://quranicaudio.com/quran/30\\\">Madinah Taraweeh 1426</a>, <a href=\\\"http://quranicaudio.com/quran/33\\\">Madinah Taraweeh 1427</a>, and <a href=\\\"http://quranicaudio.com/quran/59\\\">Makkah Taraweeh 1428</a> sets.  This is a high quality, 256kbps version of Sheikh Maher's recitation, courtesy of <a href=\\\"http://www.almuaiqly.com\\\">Al-Muaiqly.com</a>."
+  },
+  {
+   "id": 66,
+   "name": "Abdullah Basfar with Ibrahim Walk [Saheeh Intl Translation]",
+   "arabicName": "عبد الله بصفر مع إبراهيم واق - ترجمة معاني القران الكريم باللغة النجليزية - صحيح الدولي",
+   "category": "translations",
+   "trackCount": 114,
+   "description": "This is the complete set of the Holy Qur'an along with an English Verse-by-Verse translation. The Arabic is recited by <a href=\"http://quranicaudio.com/quran/2\">Shaykh Abdullah Basfar</a>. The English is read by <b>Ibrahaim Walk</b> using the <a href=\"https://quran.com/1?translations=20\">Saheeh International Translation</a>."
+  },
+  {
+   "id": 67,
+   "name": "Sudais and Shuraym [Urdu Translation]",
+   "arabicName": "السديس والشريم - ترجمة معاني القران الكريم باللغة الردية",
+   "category": "translations",
+   "trackCount": 136,
+   "description": "This is the complete set of the Holy Qur'an along with an Urdu translation. The Arabic is recited by <a href=\\\"http://quranicaudio.com/quran/7\\\">Sudais</a> and <a href=\\\"http://quranicaudio.com/quran/4\\\">Shuraim</a>.  Special thanks to our friends at <a href=\\\"http://aswatalislam.net\\\">Aswat Al-Islam</a> for this collection."
+  },
+  {
+   "id": 68,
+   "name": "Abdur-Razaq bin Abtan al-Dulaimi [Mujawwad]",
+   "arabicName": "عبد الرزاق بن عبطان الدليمي - مجود",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "This is the mujawwad recitation for <a href=\\\"http://www.islamhouse.com/p/108470\\\">Sheikh AbdulRazaq bin Abtan Al-Dulaimi</a>.  These files are provided courtesy of <a href=\\\"http://www.islamhouse.com/p/108470\\\">islamhouse.com</a>."
+  },
+  {
+   "id": 69,
+   "name": "Abdullah Ali Jabir",
+   "arabicName": "عبدالله علي جابر - ستديو",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 70,
+   "name": "Muhammad Abdul-Kareem",
+   "arabicName": "محمد عبدالكريم",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "May Allah reward the brothers at <a href=\\\"http://islamhouse.com\\\">IslamHouse</a> for these files."
+  },
+  {
+   "id": 71,
+   "name": "Mustafa al-`Azawi",
+   "arabicName": "مصطفى العزاوى",
+   "category": "recitations",
+   "trackCount": 115
+  },
+  {
+   "id": 72,
+   "name": "Abdullah Khayat",
+   "arabicName": "عبدالله خياط",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "Special thanks to <a href=\\\"http://mp3quran.net\\\">mp3quran.net</a> for this recitation."
+  },
+  {
+   "id": 73,
+   "name": "Madinah Taraweeh 1428",
+   "arabicName": "تراويح المدينة ١٤٢٨",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1428 H./2007 A.D.  Recited by 4 Imams: <a href=\"http://quranicaudio.com/quran/8\">Ali Abdur-Rahman al-Huthaify</a>, <a href=\"http://quranicaudio.com/quran/11\">AbdulMuhsin al-Qasim</a>, <a href=\"http://quranicaudio.com/quran/43\">Salah al-Budair</a>, and Hussain Aal ash-Shaykh."
+  },
+  {
+   "id": 74,
+   "name": "Dr. Shawqy Hamed [Murattal]",
+   "arabicName": "الدكتور شوقي حامد - مرتل",
+   "category": "recitations",
+   "trackCount": 83
+  },
+  {
+   "id": 75,
+   "name": "Dr. Shawqy Hamed [Mujawwad]",
+   "arabicName": "الدكتور شوقي حامد - مجود",
+   "category": "recitations",
+   "trackCount": 4
+  },
+  {
+   "id": 77,
+   "name": "Makkah Taraweeh 1429",
+   "arabicName": "تراويح مكة ١٤٢٩",
+   "category": "haramain",
+   "trackCount": 117,
+   "description": "This is Live Recitation from Masjidul-Haram in Al-Makkah Al-Mukarramah, 1429 H./2008 A.D.  Contains 5 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, Adil al-Kalbaani, and <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>."
+  },
+  {
+   "id": 78,
+   "name": "Mahmoud Khalil Al-Husary [Doori]",
+   "arabicName": "محمود خليل الحصري - دوري",
+   "category": "non-hafs",
+   "trackCount": 115
+  },
+  {
+   "id": 79,
+   "name": "Muhammad Hassan",
+   "arabicName": "محمد حسان",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "Special thanks to <a href=\\\"http://www.4quran.com\\\">4quran.com</a> for this recitation."
+  },
+  {
+   "id": 80,
+   "name": "Salah Al-Hashim",
+   "arabicName": "صلح الهاشم",
+   "category": "recitations",
+   "trackCount": 112,
+   "description": "Special thanks to <a href=\\\"http://www.el-moslem.com\\\">El-Moslem.com</a> for this recitation."
+  },
+  {
+   "id": 81,
+   "name": "Adel Kalbani",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 82,
+   "name": "Makkah Taraweeh 1430",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 115,
+   "description": "This is Live Recitation from Masjidul-Haram in Al-Makkah Al-Mukarramah, 1430 H./2009 A.D.  Contains 4 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, and <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>."
+  },
+  {
+   "id": 83,
+   "name": "Makkah Taraweeh 1431",
+   "arabicName": "تراويح مكة",
+   "category": "haramain",
+   "trackCount": 115,
+   "description": "This is Live Recitation from Masjidul-Haram in Al-Makkah Al-Mukarramah, 1431 H./2010 A.D.  Contains 4 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, and <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>.  Special thanks to <a href=\\\"http://www.haramainrecordings.com\\\">haramainrecordings.com</a> for this recitation."
+  },
+  {
+   "id": 84,
+   "name": "Madinah Taraweeh 1431",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 115,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1431 H./2010 A.D.  Recited by 5 Imams: <a href=\"http://quranicaudio.com/quran/8\">Ali Abdur-Rahman al-Huthaify</a>, <a href=\"http://quranicaudio.com/quran/11\">AbdulMuhsin al-Qasim</a>, <a href=\"http://quranicaudio.com/quran/43\">Salah al-Budair</a>, Khalid al-Ghamdi, and Hussain Aal ash-Shaykh."
+  },
+  {
+   "id": 85,
+   "name": "Hatem Farid",
+   "arabicName": "حاتم فريد",
+   "category": "recitations",
+   "trackCount": 60,
+   "description": "This is the recitation for Sheikh Hatem Farid.  This particular recitation was contributed by a user of this website, and many of these recitations come from <a href=\\\"http://el-moslem.com\\\">el-moslem.com</a>."
+  },
+  {
+   "id": 86,
+   "name": "Hatem Farid - Taraweeh 1432",
+   "arabicName": "حاتم فريد",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "This is the recitation for Sheikh Hatem Farid, from Salat al-Taraweeh, 1432 A.H. (2011 A.D.).  This recitation comes from <a href=\\\"http://hatemfarid.com\\\">hatemfarid.com</a>."
+  },
+  {
+   "id": 87,
+   "name": "Hatem Farid - Taraweeh 1431",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "This is the recitation for Sheikh Hatem Farid, from Salat al-Taraweeh, 1431 A.H. (2010 A.D.).  This recitation comes from <a href=\\\"http://hatemfarid.com\\\">hatemfarid.com</a>."
+  },
+  {
+   "id": 88,
+   "name": "Mostafa Ismaeel",
+   "arabicName": "مصطفى إسماعيل",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 90,
+   "name": "Muhammad Sulaiman Patel",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "This is the recitation of Sheikh Muhammad Sulaiman Patel, the Imam of <a href=\\\"http://masjideumar.co.nz\\\">Masjid e Umar</a> in Auckland, New Zealand.  The mp3 files come from their website."
+  },
+  {
+   "id": 91,
+   "name": "Mohammad Al-Tablawi",
+   "arabicName": "محمد الطبلاوي",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 92,
+   "name": "Mohammad Ismaeel Al-Muqaddim",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 93,
+   "name": "Imad Zuhair Hafez",
+   "arabicName": "عماد زهير حافظ",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "Thanks to the brothers at <a href=\\\"http://assabile.com\\\">Al-Sabeel</a> for this recitation."
+  },
+  {
+   "id": 94,
+   "name": "Makkah Taraweeh 1432",
+   "arabicName": "تراويح مكة",
+   "category": "haramain",
+   "trackCount": 115,
+   "description": "This is Live Recitation from Masjidul-Haram in Al-Makkah Al-Mukarramah, 1432 H./2011 A.D.  Contains 4 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, and <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>.  Special thanks to <a href=\\\"http://www.haramainrecordings.com\\\">haramainrecordings.com</a> for this recitation."
+  },
+  {
+   "id": 95,
+   "name": "Mishari al-`Afasy - Taraweeh 1430",
+   "arabicName": "مشاري بن راشد العفاسي",
+   "category": "recitations",
+   "trackCount": 119,
+   "description": "This is the recording of Sheikh Mishari Rashid from Salat al-Taraweeh in the year of 1430 H./2009 A.D.  It was recorded in Irvine, California during the sheikh's visit."
+  },
+  {
+   "id": 96,
+   "name": "Hatem Farid - Taraweeh 1433",
+   "arabicName": "حاتم فريد",
+   "category": "recitations",
+   "trackCount": 76,
+   "description": "This is the recitation for Sheikh Hatem Farid, from Salat al-Taraweeh, 1433 A.H. (2012 A.D.).  This recitation comes from <a href=\\\"http://hatemfarid.com\\\">hatemfarid.com</a>."
+  },
+  {
+   "id": 97,
+   "name": "Yasser ad-Dussary",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 98,
+   "name": "Makkah Taraweeh 1433",
+   "arabicName": "تراويح مكة",
+   "category": "haramain",
+   "trackCount": 117,
+   "description": "This is Live Recitation from Masjidul-Haram in Al-Makkah Al-Mukarramah, 1433 H./2012 A.D.  Contains 4 Imams:  <a href=\"http://quranicaudio.com/quran/4\">Sa'ud al-Shuraym</a>, <a href=\"http://quranicaudio.com/quran/51\">Maher al-Muaiqly</a>, <a href=\"http://quranicaudio.com/quran/7\">Abdur-Rahman as-Sudays</a>, and <a href=\"http://quranicaudio.com/quran/1\">Abdullah Awwad al-Juhany</a>."
+  },
+  {
+   "id": 99,
+   "name": "Madinah Taraweeh 1429",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1429 H./2008 A.D.  Recited by 4 Imams: <a href=\\\"http://quranicaudio.com/quran/8\\\">Ali Abdur-Rahman al-Huthaify</a>, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, and Hussain Aal ash-Shaykh."
+  },
+  {
+   "id": 100,
+   "name": "Madinah Taraweeh 1430",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1430 H./2009 A.D.  Recited by 5 Imams: <a href=\\\"http://quranicaudio.com/quran/8\\\">Ali Abdur-Rahman al-Huthaify</a>, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, <a href=\\\"http://quranicaudio.com/quran/13\\\">Saad al-Ghamdi</a>, and Hussain Aal ash-Shaykh."
+  },
+  {
+   "id": 101,
+   "name": "Madinah Taraweeh 1432",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1432 H./2011 A.D.  Recited by 5 Imams: <a href=\\\"http://quranicaudio.com/quran/8\\\">Ali Abdur-Rahman al-Huthaify</a>, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, Imaad Hafidh, and Hussain Aal ash-Shaykh."
+  },
+  {
+   "id": 102,
+   "name": "Madinah Taraweeh 1433",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 115,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1433 H./2012 A.D.  Recited by 4 Imams: <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, Khalid al-Ghamdi, and Hussain Aal ash-Shaykh."
+  },
+  {
+   "id": 103,
+   "name": "Ibrahim Al Akhdar",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 104,
+   "name": "Nasser Al Qatami",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "This is the recitation for Sheikh Nasser Al Qatami. The files for the 30th juz' come from <a href=\\\"http://mp3quran.net\\\">mp3quran.net</a>."
+  },
+  {
+   "id": 105,
+   "name": "Khalid Al Ghamdi",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 21
+  },
+  {
+   "id": 106,
+   "name": "AbdulKareem Al Hazmi",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "This is the 1433/1434H Live Taraweeh recitation of AbdulKareem Al Hazmi (from Makkah) recorded at the King Fahd Mosque / Islamic Foundation of Shaikh Ibn Taymiyah, Culver City CA."
+  },
+  {
+   "id": 107,
+   "name": "Muhammad Ayyoob [Taraweeh]",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "This is a taraweeh set for Sheikh Muhammad Ayyoob. It contains recordings over the past 20 years in 192kbps mp3 format."
+  },
+  {
+   "id": 108,
+   "name": "Abdul-Mun'im Abdul-Mubdi'",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "The original version of this recitation comes from the brothers at <a href=\\\"http://el-moslem.com\\\">el-moslem.com</a>."
+  },
+  {
+   "id": 109,
+   "name": "Abdur-Rashid Sufi",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 116
+  },
+  {
+   "id": 110,
+   "name": "Abdur-Rashid Sufi [Abi al-Haarith an al-Kasaa'ee]",
+   "arabicName": "",
+   "category": "non-hafs",
+   "trackCount": 114
+  },
+  {
+   "id": 111,
+   "name": "Abdur-Rashid Sufi [ad-Doori an Abi Amr]",
+   "arabicName": "",
+   "category": "non-hafs",
+   "trackCount": 114
+  },
+  {
+   "id": 112,
+   "name": "Abdur-Rashid Sufi [Shu'bah an Asim]",
+   "arabicName": "",
+   "category": "non-hafs",
+   "trackCount": 114
+  },
+  {
+   "id": 113,
+   "name": "Ahmad al-Huthaify",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 70
+  },
+  {
+   "id": 114,
+   "name": "Ali al-Huthaify [Qaloon]",
+   "arabicName": "",
+   "category": "non-hafs",
+   "trackCount": 114,
+   "description": "The original version of this recitation comes from the brothers at <a href=\\\"http://islamway.com\\\">islamway.com</a>."
+  },
+  {
+   "id": 115,
+   "name": "Abu Bakr al-Shatri [Taraweeh]",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 116,
+   "name": "Idrees Abkar",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 112
+  },
+  {
+   "id": 117,
+   "name": "Bandar Baleela",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 53
+  },
+  {
+   "id": 118,
+   "name": "Masjid Quba Taraweeh 1434",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 115
+  },
+  {
+   "id": 119,
+   "name": "Muhammad Khaleel",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 65
+  },
+  {
+   "id": 120,
+   "name": "Makkah Taraweeh 1434",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is Live Recitation from Masjidul-Haram in Al-Makkah Al-Mukarramah, 1434 H./2013 A.D.  Contains 6 Imams:  <a href=\"http://quranicaudio.com/quran/4\">Sa'ud al-Shuraym</a>, <a href=\"http://quranicaudio.com/quran/51\">Maher al-Muaiqly</a>, <a href=\"http://quranicaudio.com/quran/7\">Abdur-Rahman as-Sudays</a>, <a href=\"http://quranicaudio.com/quran/1\">Abdullah Awwad al-Juhany</a>, <a href=\"http://quranicaudio.com/quran/105\">Khalid al Ghamdi</a>, and <a href=\"http://quranicaudio.com/quran/117\">Bandar Baleela</a>."
+  },
+  {
+   "id": 121,
+   "name": "Muhammad al-Mehysni - Taraweeh 1435",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 115
+  },
+  {
+   "id": 122,
+   "name": "Mahmoud Khaleel Al-Husary",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "This is the broadcast version of Sheikh Al-Husary's recitation. It is one of his earliest recitations, aired on the Egyptain Quran radio station. Special thanks to <a href=\\\"http://islamway.com\\\">islamway</a> for this recitation."
+  },
+  {
+   "id": 123,
+   "name": "Madinah Taraweeh 1435",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1435 H./2014 A.D.  Recited by 6 Imams: <a href=\\\"http://quranicaudio.com/quran/8\\\">Ali Abdur-Rahman al-Huthaify</a>, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, Abdullah al-Bu'ayjan, Ahmad Hameed, and Husayn aal ash-Shaykh. Special thanks to <a href=\\\"http://www.mazameer.com\\\">Mazameer</a> for this recitation."
+  },
+  {
+   "id": 124,
+   "name": "Abdullah Matroud",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 125,
+   "name": "AbdulWadood Haneef",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 126,
+   "name": "Ahmad Nauina",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "Special thanks to <a href=\\\"http://mp3quran.net\\\">mp3quran</a> for this recitation."
+  },
+  {
+   "id": 127,
+   "name": "Akram Al-Alaqmi",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "Special thanks to <a href=\\\"http://mp3quran.net\\\">mp3quran</a> for this recitation."
+  },
+  {
+   "id": 128,
+   "name": "Ali Hajjaj Alsouasi",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "Special thanks to <a href=\\\"http://mp3quran.net\\\">mp3quran</a> for this recitation."
+  },
+  {
+   "id": 129,
+   "name": "Mahmood Ali Al-Bana",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "Special thanks to <a href=\\\"https://www.facebook.com/Islamictape\\\">IslamicTape</a> for this recitation."
+  },
+  {
+   "id": 130,
+   "name": "Wadee Hammadi Al Yamani",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 131,
+   "name": "Makkah Taraweeh 1435",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 115,
+   "description": "This is Live Recitation from Masjidul-Haram in Al-Makkah Al-Mukarramah, 1435 H./2014 A.D. Contains 6 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>, <a href=\\\"http://quranicaudio.com/quran/105\\\">Khalid al Ghamdi</a>, and <a href=\\\"http://quranicaudio.com/quran/117\\\">Bandar Baleela</a>.  This recording isn't fully edited."
+  },
+  {
+   "id": 132,
+   "name": "Makkah Taraweeh 1436",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 115,
+   "description": "This is Live Recitation from Masjidul-Haram in Al-Makkah Al-Mukarramah, 1436 H./2015 A.D. Contains 8 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>, <a href=\\\"http://quranicaudio.com/quran/105\\\">Khalid al Ghamdi</a>, <a href=\\\"http://quranicaudio.com/quran/117\\\">Bandar Baleela</a>, Hassan Bukhari, and <a href=\\\"http://quranicaudio.com/quran/97\\\">Yasser ad-Dussary</a>.  This recording isn't fully edited."
+  },
+  {
+   "id": 133,
+   "name": "Makkah Taraweeh 1437",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is Live Recitation from Masjidul-Haram in Al-Makkah Al-Mukarramah, 1437 H./2016 A.D. Contains 8 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>, <a href=\\\"http://quranicaudio.com/quran/105\\\">Khalid al Ghamdi</a>, <a href=\\\"http://quranicaudio.com/quran/117\\\">Bandar Baleela</a>, Salaah Ba'Uthmaan, and <a href=\\\"http://quranicaudio.com/quran/97\\\">Yasser ad-Dussary</a>.  Special thanks to <a href=\\\"http://quran-jed.net\\\">quran-jed.net</a>, <a href=\\\"http://haramain.info\\\">Haramain Recordings</a>, and brother Wizra for this recitation."
+  },
+  {
+   "id": 135,
+   "name": "Asim Abdul Aleem",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 136,
+   "name": "Abdallah Abdal",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "Sheikh Abdallah Abdal is the Imam of Masjid 3alya2 Al-suweedi in Madinah."
+  },
+  {
+   "id": 137,
+   "name": "Abdur-Rashid Sufi [Soosi, 2020]",
+   "arabicName": "عبد الرشيد صوفي - السوسي",
+   "category": "non-hafs",
+   "trackCount": 114,
+   "description": "The original version of this recitation comes from the brothers at <a href=\\\"https://naqaa.studio\\\">Naqaa Studio</a>."
+  },
+  {
+   "id": 138,
+   "name": "Adel Kalbani",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "This is the taraweeh recitation for sheikh Adel Kalbani from 1437 H. / 2016 A.D."
+  },
+  {
+   "id": 139,
+   "name": "Hatem Farid - Taraweeh 1430",
+   "arabicName": "حاتم فريد",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "This is the recitation for Sheikh Hatem Farid, from Salat al-Taraweeh, 1430 A.H. (2009 A.D.)."
+  },
+  {
+   "id": 140,
+   "name": "Hatem Farid - Taraweeh 1434",
+   "arabicName": "حاتم فريد",
+   "category": "recitations",
+   "trackCount": 24,
+   "description": "This is a partial recitation for Sheikh Hatem Farid, from Salat al-Taraweeh, 1434 A.H. (2013 A.D.)."
+  },
+  {
+   "id": 141,
+   "name": "Mahmoud Khaleel Al-Husary (Muallam)",
+   "arabicName": "محمود خليل الحصري (معلم)",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 142,
+   "name": "Mahmoud Khaleel Al-Husary (with Children)",
+   "arabicName": "محمود خليل الحصري (المعلم للاطفال)",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 143,
+   "name": "Madinah Taraweeh 1434",
+   "arabicName": "تراويح المدينة ١٤٣٤",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1434 H./2013 A.D.  Recited by 6 Imams: <a href=\\\"https://quranicaudio.com/quran/8\\\">Ali Abdur-Rahman al-Huthaify, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, Ahmed ibn Talib Hameed, Abdullah Buayjan, and Hussain Aal ash-Shaykh. Special thanks to the team at <a href=\\\"http://haramain.info\\\">haramain.info</a> for this recitation."
+  },
+  {
+   "id": 144,
+   "name": "Madinah Taraweeh 1436",
+   "arabicName": "تراويح المدينة ١٤٣٦",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1436 H./2015 A.D.  Recited by 8 Imams: <a href=\\\"https://quranicaudio.com/quran/8\\\">Ali Abdur-Rahman al-Huthaify, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, Ahmed ibn Talib Hameed, Abdullah Buayjan, <a href=\\\"https://quranicaudio.com/quran/107\\\">Muhammad Ayyoob</a>, Khalid Muhanna, and Hussain Aal ash-Shaykh. Special thanks to the team at <a href=\\\"http://haramain.info\\\">haramain.info</a> for this recitation."
+  },
+  {
+   "id": 145,
+   "name": "Madinah Taraweeh 1437",
+   "arabicName": "تراويح المدينة ١٤٣٧",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1437 H./2016 A.D.  Recited by 8 Imams: <a href=\\\"https://quranicaudio.com/quran/8\\\">Ali Abdur-Rahman al-Huthaify, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, Ahmed ibn Talib Hameed, Abdullah Buayjan, Muhammad Khaleel al Qaree, Khalid Muhanna, and Hussain Aal ash-Shaykh. Special thanks to the team at <a href=\\\"http://haramain.info\\\">haramain.info</a> for this recitation."
+  },
+  {
+   "id": 146,
+   "name": "Madinah Taraweeh 1439",
+   "arabicName": "تراويح المدينة ١٤٣٩",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1439 H./2018 A.D.  Recited by 7 Imams: <a href=\\\"https://quranicaudio.com/quran/113\\\">Ahmed al-Huthaify, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, Ahmed ibn Talib Hameed, Abdullah Buayjan, Mahmood Khaleel al Qaree, and Khalid Muhanna. Special thanks to the team at <a href=\\\"http://haramain.info\\\">haramain.info</a> for this recitation."
+  },
+  {
+   "id": 147,
+   "name": "Madinah Taraweeh 1440",
+   "arabicName": "تراويح المدينة ١٤٤٠",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1440 H./2019 A.D.  Recited by 7 Imams: <a href=\\\"https://quranicaudio.com/quran/113\\\">Ahmed al-Huthaify, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, Ahmed ibn Talib Hameed, Abdullah Buayjan, <a href=\\\"http://quranicaudio.com/quran/7\\\">Sudais</a>, and Khalid Muhanna. Special thanks to the team at <a href=\\\"http://haramain.info\\\">haramain.info</a> for this recitation."
+  },
+  {
+   "id": 148,
+   "name": "Madinah Taraweeh 1441",
+   "arabicName": "تراويح المدينة ١٤٤١",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1441 H./2020 A.D.  Recited by 6 Imams: <a href=\\\"https://quranicaudio.com/quran/113\\\">Ahmed al-Huthaify, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, Ahmed ibn Talib Hameed, Abdullah Buayjan, and Khalid Muhanna. Special thanks to the team at <a href=\\\"http://haramain.info\\\">haramain.info</a> for this recitation."
+  },
+  {
+   "id": 149,
+   "name": "Madinah Taraweeh 1442",
+   "arabicName": "تراويح المدينة ١٤٤١",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1442 H./2021 A.D.  Recited by 6 Imams: <a href=\\\"https://quranicaudio.com/quran/113\\\">Ahmed al-Huthaify, <a href=\\\"http://quranicaudio.com/quran/11\\\">AbdulMuhsin al-Qasim</a>, <a href=\\\"http://quranicaudio.com/quran/43\\\">Salah al-Budair</a>, Ahmed ibn Talib Hameed, Abdullah Buayjan, and Khalid Muhanna. Special thanks to the team at <a href=\\\"http://haramain.info\\\">haramain.info</a> for this recitation."
+  },
+  {
+   "id": 150,
+   "name": "Makkah Taraweeh 1438",
+   "arabicName": "تراويح مكة ١٤٣٨",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is Live Recitation from Masjid ul-Haram in Al-Makkah Al-Mukarramah, 1438 H./2017 A.D. Contains 8 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>, <a href=\\\"http://quranicaudio.com/quran/105\\\">Khalid al Ghamdi</a>, <a href=\\\"http://quranicaudio.com/quran/117\\\">Bandar Baleela</a>, Salaah Ba'Uthmaan, and <a href=\\\"http://quranicaudio.com/quran/97\\\">Yasser ad-Dussary</a>.  Special thanks to <a href=\\\"http://haramain.info\\\">Haramain Recordings</a> for this recitation."
+  },
+  {
+   "id": 151,
+   "name": "Makkah Taraweeh 1439",
+   "arabicName": "تراويح مكة ١٤٣٩",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is Live Recitation from Masjid ul-Haram in Al-Makkah Al-Mukarramah, 1439 H./2018 A.D. Contains 7 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>, <a href=\\\"http://quranicaudio.com/quran/105\\\">Khalid al Ghamdi</a>, <a href=\\\"http://quranicaudio.com/quran/117\\\">Bandar Baleela</a>, and <a href=\\\"http://quranicaudio.com/quran/97\\\">Yasser ad-Dussary</a>.  Special thanks to <a href=\\\"http://haramain.info\\\">Haramain Recordings</a> and <a href=\\\"https://www.mazameer.com\\\">mazameer.com</a> for this recitation."
+  },
+  {
+   "id": 152,
+   "name": "Makkah Taraweeh 1440",
+   "arabicName": "تراويح مكة ١٤٤٠",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is Live Recitation from Masjid ul-Haram in Al-Makkah Al-Mukarramah, 1440 H./2019 A.D. Contains 6 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>, <a href=\\\"http://quranicaudio.com/quran/117\\\">Bandar Baleela</a>, and <a href=\\\"http://quranicaudio.com/quran/97\\\">Yasser ad-Dussary</a>.  Special thanks to <a href=\\\"http://haramain.info\\\">Haramain Recordings</a> for this recitation."
+  },
+  {
+   "id": 153,
+   "name": "Makkah Taraweeh 1441",
+   "arabicName": "تراويح مكة ١٤٤١",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is Live Recitation from Masjid ul-Haram in Al-Makkah Al-Mukarramah, 1441 H./2020 A.D. Contains 6 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>, <a href=\\\"http://quranicaudio.com/quran/117\\\">Bandar Baleela</a>, and <a href=\\\"http://quranicaudio.com/quran/97\\\">Yasser ad-Dussary</a>.  Special thanks to <a href=\\\"http://haramain.info\\\">Haramain Recordings</a> for this recitation."
+  },
+  {
+   "id": 154,
+   "name": "Makkah Taraweeh 1442",
+   "arabicName": "تراويح مكة ١٤٤٢",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is Live Recitation from Masjid ul-Haram in Al-Makkah Al-Mukarramah, 1442 H./2021 A.D. Contains 6 Imams:  <a href=\\\"http://quranicaudio.com/quran/4\\\">Sa'ud al-Shuraym</a>, <a href=\\\"http://quranicaudio.com/quran/51\\\">Maher al-Muaiqly</a>, <a href=\\\"http://quranicaudio.com/quran/7\\\">Abdur-Rahman as-Sudays</a>, <a href=\\\"http://quranicaudio.com/quran/1\\\">Abdullah Awwad al-Juhany</a>, <a href=\\\"http://quranicaudio.com/quran/117\\\">Bandar Baleela</a>, and <a href=\\\"http://quranicaudio.com/quran/97\\\">Yasser ad-Dussary</a>.  Special thanks to <a href=\\\"http://haramain.info\\\">Haramain Recordings</a> for this recitation."
+  },
+  {
+   "id": 155,
+   "name": "Noreen Siddiq [ad-Doori an Abi Amr]",
+   "arabicName": "الشيخ نورين محمد صديق رواية الدوري عن ابي عامر",
+   "category": "non-hafs",
+   "trackCount": 114,
+   "description": "This recitation of sheikh Noreen Siddiq comes from the team at <a href=\\\"https://naqaa.studio\\\">Naqaa Studio</a>."
+  },
+  {
+   "id": 156,
+   "name": "Sa`ud ash-Shuraym [older recitation]",
+   "arabicName": "سعود الشريم",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 157,
+   "name": "Sudais and Shuraym [older recitation]",
+   "arabicName": "سعود الشريم",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 158,
+   "name": "Abdullah Ali Jabir",
+   "arabicName": "عبدالله علي جابر",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 159,
+   "name": "Maher al-Muaiqly",
+   "arabicName": "ماهر المعيقلى",
+   "category": "recitations",
+   "trackCount": 114,
+   "description": "This is the recitation of Sheikh Maher al-Mu3aiqaly, from the year 1440 H / 2019 A.D."
+  },
+  {
+   "id": 160,
+   "name": "Bandar Baleela",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 161,
+   "name": "Khalifah Taniji",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 162,
+   "name": "Abdulrahman al-Shahat",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 163,
+   "name": "Abdulaziz bin Saleh al-Zahrani",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 164,
+   "name": "Mahmoud Khaleel Al-Husary [Mujawwad]",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 165,
+   "name": "Ibrahim Walk",
+   "arabicName": "",
+   "category": "translations",
+   "trackCount": 114
+  },
+  {
+   "id": 166,
+   "name": "Alijon Qari",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 167,
+   "name": "Badr Al Turki",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 168,
+   "name": "Raad Mohammad al-Kurdi",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 169,
+   "name": "Peshawa Qadir al-Kurdi",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 170,
+   "name": "Farman Shawani",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  },
+  {
+   "id": 171,
+   "name": "Madinah Taraweeh 1443",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1443 H./2022 A.D. Recited by 6 Imams: Abdullah Buayjan, <a href=\"https://quranicaudio.com/quran/113\">Ahmad al-Huthaify</a>, Khalid Muhanna, <a href=\"https://quranicaudio.com/quran/43\">Salah al-Budair</a>, Ahmed ibn Talib Hameed, and <a href=\"https://quranicaudio.com/quran/11\">AbdulMuhsin al-Qasim</a>. Special thanks to the brothers at <a href=\"https://haramain.info\">Haramain Recordings</a> for this recitation."
+  },
+  {
+   "id": 172,
+   "name": "Madinah Taraweeh 1444",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1444 H./2023 A.D. Recited by 6 Imams: Khalid Muhanna, <a href=\"https://quranicaudio.com/quran/43\">Salah al-Budair</a>, Abdullah Buayjan, <a href=\"https://quranicaudio.com/quran/113\">Ahmad al-Huthaify</a>, Ahmed ibn Talib Hameed, and <a href=\"https://quranicaudio.com/quran/11\">AbdulMuhsin al-Qasim</a>. Special thanks to the brothers at <a href=\"https://haramain.info\">Haramain Recordings</a> for this recitation."
+  },
+  {
+   "id": 173,
+   "name": "Madinah Taraweeh 1445",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1445 H./2024 A.D. Recited by 8 Imams: Barhaji, <a href=\"https://quranicaudio.com/quran/11\">AbdulMuhsin al-Qasim</a>, Ahmed ibn Talib Hameed, <a href=\"https://quranicaudio.com/quran/43\">Salah al-Budair</a>, Khalid Muhanna, Qurafi, <a href=\"https://quranicaudio.com/quran/113\">Ahmad al-Huthaify</a>, and Abdullah Buayjan. Special thanks to the brothers at <a href=\"https://haramain.info\">Haramain Recordings</a> for this recitation."
+  },
+  {
+   "id": 174,
+   "name": "Madinah Taraweeh 1446",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1446 H./2025 A.D. Recited by 8 Imams: Khalid Muhanna, Qurafi, <a href=\"https://quranicaudio.com/quran/113\">Ahmad al-Huthaify</a>, <a href=\"https://quranicaudio.com/quran/43\">Salah al-Budair</a>, Barhaji, <a href=\"https://quranicaudio.com/quran/11\">AbdulMuhsin al-Qasim</a>, Ahmed ibn Talib Hameed, and Abdullah Buayjan. Special thanks to the brothers at <a href=\"https://haramain.info\">Haramain Recordings</a> for this recitation."
+  },
+  {
+   "id": 175,
+   "name": "Makkah Taraweeh 1443",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is Live Recitation from Masjid ul-Haram in Al-Makkah Al-Mukarramah, 1443 H./2022 A.D. Contains 6 Imams: <a href=\"https://quranicaudio.com/quran/7\">Abdur-Rahman as-Sudays</a>, <a href=\"https://quranicaudio.com/quran/4\">Sa`ud ash-Shuraym</a>, <a href=\"https://quranicaudio.com/quran/1\">Abdullah Awad al-Juhani</a>, <a href=\"https://quranicaudio.com/quran/51\">Maher al-Muaiqly</a>, <a href=\"https://quranicaudio.com/quran/117\">Bandar Baleela</a>, and <a href=\"https://quranicaudio.com/quran/97\">Yasser ad-Dussary</a>. Special thanks to the brothers at <a href=\"https://haramain.info\">Haramain Recordings</a> for this recitation."
+  },
+  {
+   "id": 176,
+   "name": "Makkah Taraweeh 1444",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is Live Recitation from Masjid ul-Haram in Al-Makkah Al-Mukarramah, 1444 H./2023 A.D. Contains 5 Imams: <a href=\"https://quranicaudio.com/quran/7\">Abdur-Rahman as-Sudays</a>, <a href=\"https://quranicaudio.com/quran/1\">Abdullah Awad al-Juhani</a>, <a href=\"https://quranicaudio.com/quran/117\">Bandar Baleela</a>, <a href=\"https://quranicaudio.com/quran/97\">Yasser ad-Dussary</a>, and <a href=\"https://quranicaudio.com/quran/51\">Maher al-Muaiqly</a>. Special thanks to the brothers at <a href=\"https://haramain.info\">Haramain Recordings</a> for this recitation."
+  },
+  {
+   "id": 177,
+   "name": "Makkah Taraweeh 1445",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is Live Recitation from Masjid ul-Haram in Al-Makkah Al-Mukarramah, 1445 H./2024 A.D. Contains 7 Imams: <a href=\"https://quranicaudio.com/quran/97\">Yasser ad-Dussary</a>, <a href=\"https://quranicaudio.com/quran/51\">Maher al-Muaiqly</a>, <a href=\"https://quranicaudio.com/quran/7\">Abdur-Rahman as-Sudays</a>, <a href=\"https://quranicaudio.com/quran/167\">Badr Al Turki</a>, Waleed Shamsan, <a href=\"https://quranicaudio.com/quran/117\">Bandar Baleela</a>, and <a href=\"https://quranicaudio.com/quran/1\">Abdullah Awad al-Juhani</a>. Special thanks to the brothers at <a href=\"https://haramain.info\">Haramain Recordings</a> for this recitation."
+  },
+  {
+   "id": 178,
+   "name": "Makkah Taraweeh 1446",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is Live Recitation from Masjid ul-Haram in Al-Makkah Al-Mukarramah, 1446 H./2025 A.D. Contains 7 Imams: <a href=\"https://quranicaudio.com/quran/97\">Yasser ad-Dussary</a>, <a href=\"https://quranicaudio.com/quran/51\">Maher al-Muaiqly</a>, <a href=\"https://quranicaudio.com/quran/7\">Abdur-Rahman as-Sudays</a>, <a href=\"https://quranicaudio.com/quran/167\">Badr Al Turki</a>, Waleed Shamsan, <a href=\"https://quranicaudio.com/quran/117\">Bandar Baleela</a>, and <a href=\"https://quranicaudio.com/quran/1\">Abdullah Awad al-Juhani</a>. Special thanks to the brothers at <a href=\"https://haramain.info\">Haramain Recordings</a> for this recitation."
+  },
+  {
+   "id": 179,
+   "name": "Makkah Taraweeh 1447",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is Live Recitation from Masjid ul-Haram in Al-Makkah Al-Mukarramah, 1447 H./2026 A.D. Contains 7 Imams: <a href=\"https://quranicaudio.com/quran/97\">Yasser ad-Dussary</a>, <a href=\"https://quranicaudio.com/quran/51\">Maher al-Muaiqly</a>, <a href=\"https://quranicaudio.com/quran/7\">Abdur-Rahman as-Sudays</a>, <a href=\"https://quranicaudio.com/quran/167\">Badr Al Turki</a>, Waleed Shamsan, <a href=\"https://quranicaudio.com/quran/117\">Bandar Baleela</a>, and <a href=\"https://quranicaudio.com/quran/1\">Abdullah Awad al-Juhani</a>. Special thanks to <a href=\"https://www.youtube.com/@Emam_moathen\">The official channel of the General Directorate of Imams and Muezzin Affairs</a> for this recitation."
+  },
+  {
+   "id": 180,
+   "name": "Madinah Taraweeh 1447",
+   "arabicName": "",
+   "category": "haramain",
+   "trackCount": 114,
+   "description": "This is the Live Recitation from Masjid al-Nabawi, 1447 H./2026 A.D. Recited by 7 Imams: Khalid Muhanna, Qurafi, <a href=\"https://quranicaudio.com/quran/113\">Ahmad al-Huthaify</a>, <a href=\"https://quranicaudio.com/quran/43\">Salah al-Budair</a>, Barhaji, <a href=\"https://quranicaudio.com/quran/11\">AbdulMuhsin al-Qasim</a>, and Abdullah Buayjan. Special thanks to <a href=\"https://www.youtube.com/@Emam_moathen\">The official channel of the General Directorate of Imams and Muezzin Affairs</a> for this recitation."
+  },
+  {
+   "id": 181,
+   "name": "Ahmad Tahoun",
+   "arabicName": "",
+   "category": "recitations",
+   "trackCount": 114
+  }
+ ]
+}

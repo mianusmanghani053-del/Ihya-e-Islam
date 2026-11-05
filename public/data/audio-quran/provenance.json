@@ -1,0 +1,51 @@
+{
+ "source": "QuranicAudio.com",
+ "sourceUrl": "https://quranicaudio.com",
+ "api": [
+  "https://quranicaudio.com/api/sections",
+  "https://quranicaudio.com/api/qaris",
+  "https://quranicaudio.com/api/qaris/{id}/audio_files/mp3",
+  "https://quranicaudio.com/api/surahs"
+ ],
+ "audioHost": "https://download.quranicaudio.com/quran/",
+ "importedAt": "2026-11-05T12:54:34Z",
+ "sections": [
+  {
+   "id": 1,
+   "name": "Recitations"
+  },
+  {
+   "id": 2,
+   "name": "Recitations from Haramain Taraweeh"
+  },
+  {
+   "id": 3,
+   "name": "Non-Hafs Recitations"
+  },
+  {
+   "id": 4,
+   "name": "Recitations with Translations"
+  }
+ ],
+ "terms": "QuranicAudio.com: 'Mp3s on this site may be downloaded and used for personal use free of charge. However, you may not use these files for commercial purposes as many of these files have rules and regulations that prevent their sale except by the publishing companies.' Files come from many sources (QuranicAudio.com about page). Recordings are streamed from the source host, not copied.",
+ "reciters": 177,
+ "recordings": 19125,
+ "skipped": [],
+ "verification": {
+  "method": "2-byte range request: first, middle and last track of every reciter; every track of any reciter with a failure",
+  "repaired": [
+   {
+    "reciter": 42,
+    "name": "Shakir Qasami with Aslam Athar [Pickthall Translation]",
+    "tracks": 114
+   },
+   {
+    "reciter": 61,
+    "name": "Sadaqat `Ali",
+    "tracks": 102
+   }
+  ],
+  "dropped": [],
+  "removedReciters": []
+ }
+}
